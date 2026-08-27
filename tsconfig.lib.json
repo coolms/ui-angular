@@ -1,0 +1,56 @@
+{
+    // Build-only tsconfig for ng-packagr. The admin app compiles these same
+    // sources through ITS tsconfig (source consumption via a path mapping), so
+    // this file exists purely to produce a distributable: FESM bundles plus
+    // .d.ts, with @angular/* and @coolms/core-angular left as peer imports
+    // rather than bundled.
+    //
+    // No `extends`: the package deliberately has no toolchain of its own, and
+    // its `node_modules` is a relative symlink to the admin's so that exactly
+    // one @angular tree is ever in play.
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ES2022",
+        "moduleResolution": "bundler",
+        "lib": ["ES2022", "dom"],
+        "strict": true,
+        "noImplicitOverride": true,
+        "noPropertyAccessFromIndexSignature": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "declaration": true,
+        "sourceMap": true,
+        "paths": {
+            // The layer beneath, as a BUILT peer rather than as sources.
+            //
+            // Source-consuming it here looked tidier and was wrong twice over:
+            // every core file then falls outside this package's `rootDir` (TS6059),
+            // and core would be COMPILED INTO the kit's bundle -- two copies of
+            // one runtime in any app that installs both. The admin source-consumes
+            // both because it is an application and bundles everything once; a
+            // library must leave its peers external.
+            //
+            // So `npm run build` in packages/core-angular comes first. CI does
+            // that explicitly; locally, `dist/` is usually already there.
+            "@coolms/core-angular": ["../core-angular/dist"],
+            // The richtext dynamic-form field mounts the editor. It is a peer
+            // for the same reason core is: bundling it would ship a second
+            // Tiptap instance to anyone who installs both.
+            "@coolms/editor-angular": ["../editor-angular/dist"]
+        }
+    },
+    "angularCompilerOptions": {
+        // `partial` is what makes the output a LIBRARY: the consumer's own
+        // Angular compiler finishes it, so a package built against 22.x keeps
+        // working when the app moves forward.
+        "compilationMode": "partial",
+        "strictInjectionParameters": true,
+        "strictTemplates": true
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["src/**/*.spec.ts"]
+}

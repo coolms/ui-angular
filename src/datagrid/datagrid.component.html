@@ -1,0 +1,541 @@
+@if (loading() && !config()) {
+  <app-loading />
+}
+@if (error(); as err) {
+  <app-error-banner [message]="err" [showRetry]="true" (retry)="reload()" />
+}
+
+@if (config(); as cfg) {
+  <!-- Toolbar: shown when not embedded AND the grid has a label.
+  List-layout pages omit cfg.label so this row stays hidden there;
+  the page header already owns title + actions in that context. -->
+  @if (!embedded() && cfg.label) {
+    <div class="d-flex align-items-center gap-2 mb-2 flex-shrink-0">
+      <!-- Grid label -->
+      <h5 class="mb-0 me-2">{{ cfg.label }}</h5>
+      <!-- Parent-projected toolbar extras (e.g. domain-specific filter controls) -->
+      <ng-content select="[slot='datagrid-toolbar']" />
+      <span class="flex-grow-1"></span>
+      @if (externalConfig() === null) {
+        <button class="cms-btn cms-btn-sm cms-btn-ghost"
+          title="Refresh"
+          (click)="reload()">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      }
+    </div>
+  }
+  <!-- Loading overlay while data refreshes -->
+  @if (loading()) {
+    <div class="text-muted small mb-1">Refreshing…</div>
+  }
+  <!-- Table -->
+  <div #scrollContainer
+    [class.card]="!embedded()"
+    [class.shadow-sm]="!embedded()"
+    [class.datagrid-embedded]="embedded()"
+    style="overflow:auto; flex:1; min-height:0; display:flex; flex-direction:column"
+    (click)="onBackgroundClick($event)"
+    (contextmenu)="onBackgroundContextMenu($event)">
+    <!-- #1763 — once widths are pinned the table switches to fixed layout
+    and sizes to the SUM of its columns (scrolling rather than
+    squeezing), so dragging one column moves only that column.
+    min-width keeps a narrow table filling the pane. -->
+    <table class="table table-hover table-sm mb-0"
+      [style.table-layout]="tableLayout()"
+      [style.width]="widthsPinned() ? 'max-content' : null"
+      [style.min-width]="widthsPinned() ? '100%' : null">
+      <thead class="table-light" style="position:sticky; top:0; z-index:1">
+        <!-- Header row -->
+        <tr>
+          @if (cfg.draggable) {
+            <th style="width:32px"></th>
+          }
+          <!-- data-field: the ONLY reliable way to measure a column's
+          header (#1763). The row also carries a leading drag cell
+          and a trailing chooser cell, so counting positions
+          mis-aligns fields to the wrong `th`. -->
+          @for (col of visibleColumns(); track col) {
+            <th
+              [attr.data-field]="col.field"
+              [style.width.px]="columnWidth(col.field)"
+              style="position:relative; user-select:none; padding:0">
+              <!-- Click lives on the inner div so the resize handle (z-index:1)
+              cannot intercept it. stopPropagation on the handle prevents
+              sort from firing when the user grabs the resize edge. -->
+              <div class="d-flex align-items-center gap-1"
+                [class.cursor-pointer]="col.sortable"
+                [class.sortable]="col.sortable"
+                (click)="col.sortable ? toggleSort(col.field) : null"
+                style="padding:8px 12px">
+                {{ col.label }}
+                @if (col.sortable) {
+                  <span class="sort-icon"
+                    [class.active]="sortState()?.column === col.field"
+                    style="font-size:.7rem; margin-left:2px">
+                    {{ sortIcon(col.field) }}
+                  </span>
+                }
+              </div>
+              <!-- Resize handle — stopPropagation prevents accidental sort trigger -->
+              @if (col.hideable) {
+                <div class="col-resize-handle"
+                  style="z-index:1"
+                  (mousedown)="onResizeStart($event, col.field)"
+                (click)="$event.stopPropagation()"></div>
+              }
+            </th>
+          }
+          @if (cfg.rowActions.length > 0) {
+            <th
+              [class.action-col-hidden]="!showInlineActions()"
+            style="width:120px"></th>
+          }
+          <!-- Column chooser — always present for layout; shows chooser button only when columns are hideable -->
+          <th class="col-chooser-th">
+            @if (hasHideableColumns(cfg)) {
+              <coolms-column-chooser
+                [columns]="cfg.columns"
+                [visibleFields]="visibleColumnFields()"
+                (columnsChange)="onColumnsChange($event)"
+                (resetAll)="onResetAll()" />
+            }
+          </th>
+        </tr>
+        <!-- Column filter row — rendered when at least one visible column is filterable -->
+        @if (hasFilterableColumns()) {
+          <tr class="filter-row">
+            @if (cfg.draggable) {
+              <th></th>
+            }
+            @for (col of visibleColumns(); track col) {
+              <th style="vertical-align:top; padding:4px 6px">
+                <!-- Declared filter widget (registry) — wins over the type-driven
+                inputs. The host resolves col.filterWidget.kind → component and
+                relays the emitted ActiveFilter set. Falls through to the
+                type-driven cascade below when no widget is declared/registered. -->
+                @if (hasFilterWidget(col)) {
+                  <app-datagrid-filter-host
+                    [kind]="col.filterWidget!.kind"
+                    [value]="getColumnFilters(col)"
+                    [config]="filterWidgetConfig(col)"
+                    (filterChange)="onFilterWidgetChange(col.field, $event)" />
+                }
+                <!-- Boolean filter: All / Yes / No select -->
+                @else if (col.type === 'boolean' && hasColumnFilter(col)) {
+                <select class="form-select form-select-sm"
+                  (change)="setFilterImmediate(col.field, 'eq', $any($event.target).value)">
+                  <option value="" [selected]="getFilter(col.field, 'eq') === ''">All</option>
+                  <option value="true" [selected]="getFilter(col.field, 'eq') === 'true'">Yes</option>
+                  <option value="false" [selected]="getFilter(col.field, 'eq') === 'false'">No</option>
+                </select>
+              }
+              <!-- Enum filter: select dropdown with backed-enum options -->
+              @else if (col.type === 'enum' && hasColumnFilter(col)) {
+              <select class="form-select form-select-sm"
+                (change)="setFilterImmediate(col.field, 'eq', $any($event.target).value)">
+                <option value="" [selected]="getFilter(col.field, 'eq') === ''">All</option>
+                @for (opt of getEnumOptions(col); track opt.value) {
+                  <option [value]="opt.value"
+                  [selected]="getFilter(col.field, 'eq') === ('' + opt.value)">{{ opt.label }}</option>
+                }
+              </select>
+            }
+            <!-- DataGrid Ship C — Date range filter via the shared range-picker primitive (#436).
+            Same wire shape as the legacy two-input pair: emits {start, end} which the
+            component maps to two ActiveFilter entries (op='ge' + op='le'). -->
+            @else if (col.type === 'date' && hasColumnFilter(col)) {
+            <app-date-range-picker
+              [value]="getDateRangeValue(col.field)"
+              [startLabel]="'From'"
+              [endLabel]="'To'"
+              [required]="false"
+              [size]="'sm'"
+              (valueChange)="onDateRangeFilterChange(col.field, $event)" />
+          }
+          <!-- DataGrid Ship C — Datetime range filter; ISO-8601 ge/le pair. All-day
+          toggle hidden (the column type is fixed). The picker's TZ hint reads
+          UserCalendarPreferencesService.tz() so users see filtering in their
+          configured zone. -->
+          @else if (col.type === 'datetime' && hasColumnFilter(col)) {
+          <app-datetime-range-picker
+            [value]="getDateTimeRangeValue(col.field)"
+            [startLabel]="'From'"
+            [endLabel]="'To'"
+            [required]="false"
+            [showAllDayToggle]="false"
+            [size]="'sm'"
+            (valueChange)="onDateTimeRangeFilterChange(col.field, $event)" />
+        }
+        <!-- DataGrid Ship C — Time range filter; HH:MM ge/le pair. -->
+        @else if (col.type === 'time' && hasColumnFilter(col)) {
+        <app-time-range-picker
+          [value]="getTimeRangeValue(col.field)"
+          [startLabel]="'From'"
+          [endLabel]="'To'"
+          [required]="false"
+          [size]="'sm'"
+          (valueChange)="onTimeRangeFilterChange(col.field, $event)" />
+      }
+      <!-- OptionSource ship — multi-select cell for `in`-op columns
+      with either inline enumOptions OR a tagged options.source.
+      Selected tokens OR together at the backend RQL level. -->
+      @else if (hasMultiSelectFilter(col)) {
+      <app-multi-option-select
+        [values]="getMultiSelectValues(col.field)"
+        [options]="getMultiSelectOptions(col)"
+        [apiUrl]="getMultiSelectApiUrl(col) || null"
+        [placeholder]="'— Any ' + col.label + ' —'"
+        [entityLabel]="col.label"
+        (valuesChange)="onMultiSelectFilterChange(col.field, $event)" />
+    }
+    <!-- Numeric range filter: from (≥) and to (≤) number inputs side by side.
+    `filesize` shares it — the bounds are typed in bytes, which is what
+    the column stores; only the CELL renders as KB/MB (#1710). -->
+    @else if ((col.type === 'number' || col.type === 'filesize') && hasColumnFilter(col)) {
+    <div style="display:flex; gap:4px">
+      <input type="number"
+        step="any"
+        inputmode="decimal"
+        class="form-control form-control-sm"
+        style="width:50%; min-width:0; font-size:.75rem; padding:2px 4px"
+        title="From"
+        placeholder="from"
+        [value]="getFilter(col.field, 'ge')"
+        (change)="setFilterImmediate(col.field, 'ge', $any($event.target).value)" />
+      <input type="number"
+        step="any"
+        inputmode="decimal"
+        class="form-control form-control-sm"
+        style="width:50%; min-width:0; font-size:.75rem; padding:2px 4px"
+        title="To"
+        placeholder="to"
+        [value]="getFilter(col.field, 'le')"
+        (change)="setFilterImmediate(col.field, 'le', $any($event.target).value)" />
+    </div>
+  }
+  <!-- Text / default filter: debounced input with inline × clear button -->
+  @else if (hasColumnFilter(col)) {
+  <div class="position-relative" style="min-width:80px">
+    <input type="text"
+      class="form-control form-control-sm"
+      style="padding-right:1.6rem"
+      [placeholder]="'Filter ' + col.label"
+      [value]="getPendingText(col.field, getFilterOp(col))"
+      (input)="setFilter(col.field, getFilterOp(col), $any($event.target).value)" />
+    @if (getPendingText(col.field, getFilterOp(col))) {
+      <button type="button"
+        class="btn-close position-absolute top-50 end-0 translate-middle-y me-1"
+        style="font-size:.5rem; opacity:.5"
+        aria-label="Clear filter"
+        (click)="clearTextFilter(col.field, getFilterOp(col))">
+      </button>
+    }
+  </div>
+}
+</th>
+}
+@if (cfg.rowActions.length > 0) {
+  <th
+  [class.action-col-hidden]="!showInlineActions()"></th>
+}
+<th class="col-chooser-th"></th>
+</tr>
+}
+</thead>
+<tbody
+  [cdkDropListDisabled]="!cfg.draggable"
+  cdkDropList
+  (cdkDropListDropped)="onDrop($event, cfg)">
+  @for (row of visibleRows(); track trackRow($index, row)) {
+    <tr cdkDrag [cdkDragDisabled]="!cfg.draggable"
+      [class.table-active]="selectedRowIds().has('' + row['id'])"
+      [class.table-focus]="focusedRowId() === ('' + row['id'])"
+      [class.cms-datagrid__row--flash]="flashingRowIds().has('' + row['id'])"
+      [class.cms-tree-row--match]="isRowHighlighted(row)"
+      [class.cms-tree-row--drop-target]="isDropTarget(row)"
+      [attr.aria-selected]="selectedRowIds().has('' + row['id']) ? 'true' : null"
+      [attr.tabindex]="focusedRowId() === ('' + row['id']) ? -1 : null"
+      [attr.data-row-id]="row['id']"
+      [attr.data-has-override]="row['hasOverride'] ?? null"
+      [attr.title]="row['_rowTitle'] ?? null"
+      [attr.draggable]="isTreeDragMove() ? 'true' : null"
+      (click)="onRowClick(row, $event)"
+      (dblclick)="onRowDblClick(row, $event)"
+      (contextmenu)="onRowContextMenu($event, row)"
+      (dragstart)="isTreeDragMove() && onTreeDragStart($event, row)"
+      (dragend)="isTreeDragMove() && onTreeDragEnd($event)"
+      (dragover)="isTreeDragMove() && onTreeDragOver($event, row)"
+      (dragleave)="isTreeDragMove() && onTreeDragLeave($event, row)"
+      (drop)="isTreeDragMove() && onTreeDrop($event, row)"
+      [style.cursor]="rowCursor(row)">
+      <!-- Drag preview chip -->
+      <td *cdkDragPreview colspan="99"
+        class="datagrid-drag-preview px-3 py-2 d-flex align-items-center gap-2"
+        style="list-style:none; font-size:.875rem; min-width:260px">
+        <span class="datagrid-drag-handle-glyph">⠿</span>
+        <span class="fw-semibold">{{ rowLabel(row) }}</span>
+      </td>
+      <!-- Placeholder -->
+      <td *cdkDragPlaceholder colspan="99" class="datagrid-drag-placeholder">
+      </td>
+      <!-- Drag handle -->
+      @if (cfg.draggable) {
+        <td
+          cdkDragHandle
+          class="drag-handle"
+          style="vertical-align:middle">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+          </svg>
+        </td>
+      }
+      <!-- Data cells — truncation is ON by default (.data-cell CSS);
+      set truncate: false on the column definition to allow wrapping. -->
+      @for (col of visibleColumns(); track col; let colIndex = $index) {
+        <td
+          class="data-cell"
+          [class.no-truncate]="!cellTruncates(col)"
+          [class.cms-tree-cell]="isTree() && colIndex === 0"
+          style="vertical-align:middle">
+          <!-- Tree disclosure lead (#925/#927) — lives INSIDE the first data cell
+          (not a dedicated column): because .data-cell is max-width:0 (opts out
+          of column sizing) deep nesting eats into THIS truncating cell instead
+          of widening a gutter that pushes every other column right. Layout is a
+          clean per-level grid: [indent: depth×step][toggle slot: ONE fixed-width
+          slot holding the chevron, the └ leaf-connector, or nothing][label]. The
+          single slot makes every label align per depth; a child sits exactly one
+          step in; the chevron stays visible while only the label text truncates. -->
+          @if (isTree() && colIndex === 0) {
+            <span class="cms-tree-lead">
+              @if (rowIndentPx(row) > 0) {
+                <span class="cms-tree-indent"
+                  [style.width.px]="rowIndentPx(row)"
+                aria-hidden="true"></span>
+              }
+              <span class="cms-tree-toggle">
+                @if (rowHasChildren(row)) {
+                  <button type="button"
+                    class="cms-tree-chevron"
+                    (click)="toggleExpand(row, $event)">
+                    @if (isRowLoadingChildren(row)) {
+                      <cms-loader [inline]="true" />
+                    } @else {
+                      <i class="bi"
+                        [class.bi-chevron-right]="!isRowExpanded(row)"
+                      [class.bi-chevron-down]="isRowExpanded(row)"></i>
+                    }
+                  </button>
+                } @else if (rowIsChild(row)) {
+                  <span class="cms-tree-connector" aria-hidden="true">&#9492;</span>
+                }
+              </span>
+            </span>
+          }
+          <!-- Declared cell widget (registry) — wins over the type-driven
+          renderers. The host resolves col.cellWidget.kind → component
+          and feeds it the value + full row + merged config. Falls
+          through to the type cascade when no widget is declared/registered. -->
+          @if (hasCellWidget(col)) {
+            <app-datagrid-cell-host
+              [kind]="col.cellWidget!.kind"
+              [value]="row[col.field]"
+              [row]="row"
+              [config]="cellWidgetConfig(col)" />
+          } @else {
+            @switch (col.type) {
+              @case ('boolean') {
+                @if (col.writable) {
+                  <label class="cms-toggle" (click)="$event.stopPropagation()">
+                    <input type="checkbox"
+                      [checked]="!!row[col.field]"
+                      (change)="onCellToggle(col, row, $event)" />
+                    <span class="cms-toggle__slider"></span>
+                  </label>
+                } @else {
+                  <span [class]="row[col.field] ? 'badge bg-success' : 'badge bg-secondary'">
+                    {{ row[col.field] ? 'Yes' : 'No' }}
+                  </span>
+                }
+              }
+              @case ('enum') {
+                @if (row[col.field] !== null && row[col.field] !== undefined && row[col.field] !== '') {
+                  <span [class]="getEnumBadgeClass(row[col.field])">
+                    {{ getEnumLabel(col, row[col.field]) }}
+                  </span>
+                }
+              }
+              <!-- Rich cell: coloured badge/pill (options.badgeMap / badgeLabels). -->
+              @case ('badge') {
+                @if (row[col.field] !== null && row[col.field] !== undefined && row[col.field] !== '') {
+                  <span [class]="badgeClass(col, row[col.field])">{{ badgeText(col, row[col.field]) }}</span>
+                }
+              }
+              <!-- Rich cell: link (options.hrefPrefix / hrefField / textField / external). -->
+              @case ('link') {
+                @if (linkHref(col, row); as href) {
+                  <a class="dg-link"
+                    [href]="href"
+                    [attr.target]="linkExternal(col) ? '_blank' : null"
+                    [attr.rel]="linkExternal(col) ? 'noopener noreferrer' : null"
+                  (click)="$event.stopPropagation()">{{ linkText(col, row) || href }}</a>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              }
+              <!-- Rich cell: avatar (initials/image) + name (+ options.subtitleField). -->
+              @case ('avatar') {
+                <span class="dg-avatar">
+                  <span class="dg-avatar__disc"
+                    [class]="'dg-avatar__disc--' + avatarShape(col)">
+                    @if (avatarImage(col, row); as img) {
+                      <img [src]="img" [attr.alt]="avatarName(col, row)" />
+                    } @else {
+                      {{ avatarInitials(avatarName(col, row)) }}
+                    }
+                  </span>
+                  <span class="dg-avatar__text">
+                    <span class="dg-avatar__name">{{ avatarName(col, row) }}</span>
+                    @if (avatarSubtitle(col, row); as sub) {
+                      <span class="dg-avatar__sub">{{ sub }}</span>
+                    }
+                  </span>
+                </span>
+              }
+              <!-- Rich cell: per-row glyph beside the value (#1762). -->
+              @case ('icon') {
+                <span class="dg-icon-cell">
+                  @if (iconClass(col, row); as glyph) {
+                    <i class="bi {{ glyph }} dg-icon-cell__glyph"
+                      [style.color]="iconColor(col, row) || null"
+                    aria-hidden="true"></i>
+                  }
+                  <span class="dg-icon-cell__text">{{ row[col.field] }}</span>
+                </span>
+              }
+              <!-- Rich cell: multi-line clamped snippet (options.lines). -->
+              @case ('snippet') {
+                <span class="dg-snippet" [style.--dg-snippet-lines]="snippetLines(col)">{{ row[col.field] }}</span>
+              }
+              @case ('number') {
+                <span class="small">{{ row[col.field] }}</span>
+              }
+              <!-- Bytes, rendered human-readable while the CELL VALUE stays
+              the raw number (#1710). Formatting client-side into a
+              string column instead would have sorted "886 B" above
+              "328.4 KB", because that is alphabetical order. -->
+              @case ('filesize') {
+                <span class="small">{{ formatFileSizeCell(row[col.field]) }}</span>
+              }
+              <!-- DataGrid Ship C — Date/Datetime/Time cells rendered through
+              the user's TZ + date/time format prefs (#436 prefs service). -->
+              @case ('date') {
+                <span class="small">{{ formatDateTimeCell(row[col.field], 'date') }}</span>
+              }
+              @case ('datetime') {
+                <span class="small">{{ formatDateTimeCell(row[col.field], 'datetime') }}</span>
+              }
+              @case ('time') {
+                <span class="small">{{ formatDateTimeCell(row[col.field], 'time') }}</span>
+              }
+              @default {
+                <span class="small">{{ row[col.field] }}</span>
+              }
+            }
+          }
+        </td>
+      }
+      <!-- Row actions — hidden on pointer devices when showActionColumn=false;
+      always visible on touch devices via @media (hover: none) CSS -->
+      @if (cfg.rowActions.length > 0) {
+        <td
+          [class.action-col-hidden]="!showInlineActions()"
+          style="vertical-align:middle">
+          <coolms-datagrid-row-actions
+            [actions]="cfg.rowActions"
+            [row]="row"
+            (actionTriggered)="onRowAction($event)" />
+        </td>
+      }
+      <!-- Chooser column spacer cell — balances the sticky chooser th -->
+      <td class="col-chooser-td"></td>
+    </tr>
+  }
+  <!-- Loading skeleton (#929) — shimmer rows during the initial load so the
+  grid body never flashes blank. Mutually exclusive with the empty state
+  (which is gated on !loading) and with real rows (none yet). -->
+  @if (showSkeleton()) {
+    @for (s of skeletonRows; track s) {
+      <tr class="cms-skeleton-row" aria-hidden="true">
+        @if (cfg.draggable) {
+          <td></td>
+        }
+        @for (col of visibleColumns(); track col) {
+          <td>
+            <span class="cms-skeleton-bar"></span>
+          </td>
+        }
+        @if (cfg.rowActions.length > 0) {
+          <td></td>
+        }
+        <td class="col-chooser-td"></td>
+      </tr>
+    }
+  }
+  <!-- Empty state. "Nothing exists yet" and "your filter matched
+  nothing" are DIFFERENT situations and need different words:
+  the grid used to say "No data found" for both, so a first
+  run gave a new user no orientation, and a filtered-empty
+  grid never hinted that the filter was the cause.
+  `awaitingRows()` keeps it off screen while a parent-owned
+  (loadMore) page is still in flight — otherwise a lazy grid
+  claims "No <things> yet" for a beat before its rows land. -->
+  @if (!loading() && !awaitingRows() && visibleRows().length === 0) {
+    <tr>
+      <td [attr.colspan]="colCount(cfg)" class="p-0">
+        <app-empty-state
+          [icon]="emptyStateIcon()"
+          [title]="emptyStateTitle()"
+          [hint]="emptyStateHint()" />
+      </td>
+    </tr>
+  }
+  <!-- Lazy-load sentinel — always rendered so ViewChild resolves; IO watches it -->
+  <tr #lazySentinel>
+    <td [attr.colspan]="colCount(cfg)" style="height:1px; padding:0; border:0">
+      @if (isLazy() && data()?.hasMore !== false) {
+        <div class="text-center text-muted py-2" style="font-size:.8rem">
+          Loading more…
+        </div>
+      }
+    </td>
+  </tr>
+</tbody>
+</table>
+<!-- Spacer div — grows to fill remaining space below the table rows,
+making the empty area receive click/contextmenu via #scrollContainer. -->
+<div class="datagrid-spacer"></div>
+</div>
+<!-- Pagination — hidden in external-data mode (parent manages paging via PageFooterService) -->
+@if (!isLazy() && externalData() === null && (data()?.totalPages ?? 0) > 1) {
+  <div
+    class="d-flex align-items-center justify-content-between mt-3">
+    <span class="text-muted small">
+      Page {{ data()?.page }} of {{ data()?.totalPages }}
+      &nbsp;·&nbsp; {{ data()?.totalItems }} total
+    </span>
+    <div class="d-flex gap-1">
+      <button class="cms-btn cms-btn-sm"
+        [disabled]="(data()?.page ?? 1) <= 1"
+        (click)="goToPage((data()?.page ?? 1) - 1)">
+        ‹ Prev
+      </button>
+      <button class="cms-btn cms-btn-sm"
+        [disabled]="(data()?.page ?? 1) >= (data()?.totalPages ?? 1)"
+        (click)="goToPage((data()?.page ?? 1) + 1)">
+        Next ›
+      </button>
+    </div>
+  </div>
+}
+}

@@ -1,0 +1,99 @@
+{
+  "name": "@coolms/ui-angular",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The CoolMS UI kit for Angular: the data grid, server-declared forms, page scaffolding, dialogs, pickers and the chrome an admin surface is built from.",
+  "license": "MIT",
+  "author": {
+    "name": "Dmitry Popov",
+    "email": "d.popov@coolms.com"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@coolms/core-angular": "^0.2.0",
+    "@coolms/editor-angular": "^0.1.0",
+    "@ngxs/store": "^22.0.0",
+    "rxjs": "^7.8.0",
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/lang-html": "^6.4.11",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/theme-one-dark": "^6.1.3",
+    "@codemirror/view": "^6.40.0",
+    "codemirror": "^6.0.2",
+    "centrifuge": "^5.5.3"
+  },
+  "peerDependenciesMeta": {
+    "@codemirror/lang-css": {
+      "optional": true
+    },
+    "@codemirror/lang-html": {
+      "optional": true
+    },
+    "@codemirror/lang-javascript": {
+      "optional": true
+    },
+    "@codemirror/lang-json": {
+      "optional": true
+    },
+    "@codemirror/lang-markdown": {
+      "optional": true
+    },
+    "@codemirror/theme-one-dark": {
+      "optional": true
+    },
+    "@codemirror/view": {
+      "optional": true
+    },
+    "codemirror": {
+      "optional": true
+    },
+    "centrifuge": {
+      "optional": true
+    },
+    "@coolms/editor-angular": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26"
+  },
+  "keywords": [
+    "coolms",
+    "angular",
+    "ui",
+    "components",
+    "datagrid",
+    "forms"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coolms/ui-angular.git"
+  },
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json",
+    "typecheck": "tsc -p tsconfig.lib.json --noEmit",
+    "lint": "eslint 'src/**/*.ts'",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "@angular/cdk": "^22.1.3",
+    "@angular/common": "^22.1.3",
+    "@angular/compiler": "^22.1.3",
+    "@angular/compiler-cli": "^22.1.3",
+    "@angular/core": "^22.1.3",
+    "@angular/forms": "^22.1.3",
+    "@angular/router": "^22.1.3",
+    "@ngxs/store": "^22.0.0",
+    "ng-packagr": "^22.1.1",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "typescript": "^6.0.0"
+  }
+}
