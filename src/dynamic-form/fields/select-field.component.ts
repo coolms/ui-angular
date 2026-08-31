@@ -99,28 +99,53 @@ import { MultiOptionRow, MultiOptionSelectComponent } from '../../ui/multi-optio
                         }
                     </div>
 
+                } @else if (item().dataSource?.multiple) {
+                    <!-- A SEPARATE element carrying a STATIC multiple attribute.
+                         Angular picks a control-value accessor by matching the
+                         template at COMPILE time, and the multi-value one is
+                         selected by select[multiple] - a static attribute. This
+                         used to be one element with [attr.multiple], a runtime
+                         binding, so the accessor never matched and the
+                         single-value one handled the control instead: it cannot
+                         write an ARRAY into a selection, so every saved value
+                         rendered as nothing selected. The box looked empty, and
+                         saving it would have cleared the list. Same trap as the
+                         number field, whose accessor wants a static
+                         type=number. Two elements is the price of static
+                         attributes; a binding cannot buy this. -->
+                    <select [id]="item().alias"
+                            class="form-select"
+                            multiple
+                            [class.is-invalid]="isInvalid()"
+                            [formControl]="control()"
+                            [size]="Math.min(5, filteredOptions().length + 1)">
+                        @for (opt of filteredOptions(); track opt.value) {
+                            <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                    </select>
+
                 } @else {
-                    <!-- Native select for ≤8 options or multiple -->
+                    <!-- Native single select for ≤8 options -->
                     <select [id]="item().alias"
                             class="form-select"
                             [class.is-invalid]="isInvalid()"
                             [formControl]="control()"
-                            [attr.multiple]="item().dataSource?.multiple ? true : null"
-                            [size]="item().dataSource?.multiple
-                                    ? Math.min(5, filteredOptions().length + 1) : 1">
-                        @if (!item().dataSource?.multiple) {
-                            <!-- ngValue, not value="". A form control starts as
-                                 null, and Angular resolves an unmatched value to
-                                 the literal string "null", which matches no
-                                 option: selectedIndex goes to -1 and the browser
-                                 paints an EMPTY BOX — no placeholder, no chevron,
-                                 nothing to say it is a dropdown at all. Binding
-                                 the placeholder to null gives that value
-                                 somewhere to land. Choosing it sets the control
-                                 back to null (not ""), which is the honest
-                                 answer for "not set". -->
-                            <option [ngValue]="null">{{ item().placeholder ?? '— Select —' }}</option>
-                        }
+                            [size]="1">
+                        <!-- ngValue, not value="". A form control starts as
+                             null, and Angular resolves an unmatched value to the
+                             literal string "null", which matches no option:
+                             selectedIndex goes to -1 and the browser paints an
+                             EMPTY BOX — no placeholder, no chevron, nothing to
+                             say it is a dropdown at all. Binding the placeholder
+                             to null gives that value somewhere to land. Choosing
+                             it sets the control back to null (not ""), which is
+                             the honest answer for "not set".
+
+                             Unconditional here: this branch IS the single-value
+                             one, so the guard it used to carry could only ever
+                             be true. A multi-select has no placeholder row --
+                             selecting nothing is how you say "none" there. -->
+                        <option [ngValue]="null">{{ item().placeholder ?? '— Select —' }}</option>
                         @for (opt of filteredOptions(); track opt.value) {
                             <option [value]="opt.value">{{ opt.label }}</option>
                         }

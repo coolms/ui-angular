@@ -110,6 +110,42 @@ describe('SelectFieldComponent', () => {
         expect(el.querySelector('select')?.multiple).toBeTrue();
     });
 
+    it('shows a native multi-select the value it was given', () => {
+        // The attribute was never the problem -- a sibling test already asserts
+        // select.multiple is true, and it passed throughout. Angular chooses a
+        // control-value accessor by matching the template at COMPILE time, and
+        // the multi-value one is selected by select[multiple], a STATIC
+        // attribute. While this element carried [attr.multiple] the accessor
+        // never matched, the single-value one handled the control, and it
+        // cannot write an array: a saved list rendered as nothing selected, and
+        // saving that box would have cleared it. Presence of the attribute is
+        // not the same as the value arriving.
+        const el = render(item({ multiple: true }), ['email', 'phone']);
+        const select = el.querySelector('select') as HTMLSelectElement;
+
+        expect(select.multiple).toBeTrue();
+        // The LABELS, because Angular rewrites option.value to its own
+        // id-tagged form ("0: 'email'") for a multi-select. What the operator
+        // reads is the label, and the control keeps the clean values.
+        expect([...select.selectedOptions].map(o => o.textContent?.trim())).toEqual(['Email', 'Phone']);
+    });
+
+    it('shows a native multi-select a partial selection without inventing the rest', () => {
+        const el = render(item({ multiple: true }), ['phone']);
+        const select = el.querySelector('select') as HTMLSelectElement;
+
+        expect([...select.selectedOptions].map(o => o.textContent?.trim())).toEqual(['Phone']);
+    });
+
+    it('offers a native multi-select no placeholder row to pick', () => {
+        // Selecting nothing is how a multi-select says "none"; a null row would
+        // be a value the control could actually hold.
+        const el = render(item({ multiple: true }), []);
+        const options = [...el.querySelectorAll('option')].map(o => o.textContent?.trim());
+
+        expect(options).toEqual(['Email', 'Phone']);
+    });
+
     it('writes the picker selection back as a plain array', () => {
         const field = item({ multiple: true, widget: 'select-search' });
         render(field, []);
