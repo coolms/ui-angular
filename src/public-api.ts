@@ -21,6 +21,8 @@ export * from './ui/cms-page-header.component';
 export * from './ui/cms-section-header.component';
 export * from './ui/code-editor/code-editor.component';
 export * from './ui/confirm-dialog.service';
+export * from './ui/unsaved-changes.service';
+export * from './ui/unsaved-changes.guard';
 export * from './ui/context-frame/authoring-context.service';
 export * from './ui/context-frame/cms-context-frame.component';
 export * from './ui/dialog/delete-node-dialog.component';
