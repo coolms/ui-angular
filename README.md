@@ -14,7 +14,7 @@ draws; core knows.
 npm install @coolms/ui-angular @coolms/core-angular
 ```
 
-Angular 22, NGXS 22, RxJS 7 and `@angular/cdk` are peers. The CodeMirror
+Angular, NGXS, RxJS and `@angular/cdk` are peers; the supported ranges are declared in `package.json`, which is what an install actually checks. The CodeMirror
 packages and `centrifuge` are **optional** peers: install them only if you use
 the code editor or the realtime notification client.
 
