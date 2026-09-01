@@ -96,7 +96,7 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
             transition: background 80ms;
             white-space: nowrap;
         }
-        .ctx-item:hover { background: var(--cms-border-light, #f8fafc); }
+        .ctx-item:hover { background: var(--cms-border-light, #f0f2f5); }
         .ctx-item:disabled { opacity: .45; cursor: default; }
         .ctx-item--danger { color: var(--cms-danger, #dc2626); }
         .ctx-item--danger:hover { background: var(--cms-danger-light); }
@@ -105,13 +105,13 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
             text-align: center;
             font-size: .875rem;
             flex-shrink: 0;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
         }
         .ctx-item--danger .ctx-icon { color: inherit; }
         .ctx-empty {
             padding: 10px 16px;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #9ca3af);
+            color: var(--cms-text-muted, #848b96);
         }
     `],
 })

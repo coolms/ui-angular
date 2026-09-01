@@ -174,7 +174,7 @@ type FilterField = FieldDescriptor & {
                 padding: .5rem 0;
             }
             .cms-filter-builder__state--error {
-                color: var(--cms-danger);
+                color: var(--cms-danger-text);
             }
             .cms-filter-builder__row {
                 display: grid;
@@ -209,7 +209,7 @@ type FilterField = FieldDescriptor & {
             .cms-filter-builder__value {
                 padding: .35rem .5rem;
                 border: 1px solid var(--cms-border);
-                border-radius: 4px;
+                border-radius: var(--cms-radius-sm, 4px);
                 background: var(--cms-surface);
                 color: var(--cms-text);
                 font: inherit;
@@ -224,7 +224,7 @@ type FilterField = FieldDescriptor & {
                 color: var(--cms-text-secondary);
                 width: 1.75rem;
                 height: 1.75rem;
-                border-radius: 4px;
+                border-radius: var(--cms-radius-sm, 4px);
                 cursor: pointer;
             }
             .cms-filter-builder__remove:hover {
@@ -237,7 +237,7 @@ type FilterField = FieldDescriptor & {
                 border: 1px dashed var(--cms-border);
                 background: transparent;
                 color: var(--cms-text-secondary);
-                border-radius: 4px;
+                border-radius: var(--cms-radius-sm, 4px);
                 cursor: pointer;
             }
             .cms-filter-builder__add:hover {

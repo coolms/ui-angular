@@ -144,7 +144,7 @@ import { PageFooterService } from '../ui/page-footer.service';
             position: sticky;
             top: 0;
             z-index: 1;
-            background: var(--cms-bg, #f9fafb);
+            background: var(--cms-bg, #f8f9fa);
             padding-top: 8px;
             padding-bottom: 12px;
         }

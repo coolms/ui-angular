@@ -142,7 +142,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 color: var(--cms-text-secondary);
                 font: inherit;
                 cursor: pointer;
-                border-radius: 4px;
+                border-radius: var(--cms-radius-sm, 4px);
             }
             .cms-wizard__step:disabled {
                 cursor: not-allowed;
@@ -153,7 +153,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 font-weight: 600;
             }
             .cms-wizard__step--done {
-                color: var(--cms-success);
+                color: var(--cms-success-text);
             }
             .cms-wizard__step-index {
                 display: inline-flex;
@@ -170,12 +170,15 @@ import type { WizardStepConfig } from './cms-wizard.types';
             .cms-wizard__step--active .cms-wizard__step-index {
                 background: var(--cms-accent);
                 border-color: var(--cms-accent);
-                color: var(--cms-accent-text);
+                color: var(--cms-accent-fg, #1a1a1a);
             }
+            /* The numeral is small text, so it takes the -text tier: the raw
+               hue on --cms-success-light measures 3.15 in light theme. The
+               BORDER keeps the raw hue -- non-text, and 3:1 applies there. */
             .cms-wizard__step--done .cms-wizard__step-index {
                 background: var(--cms-success-light);
                 border-color: var(--cms-success);
-                color: var(--cms-success);
+                color: var(--cms-success-text);
             }
             .cms-wizard__sep {
                 color: var(--cms-text-muted);
@@ -206,7 +209,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 align-items: center;
                 justify-content: center;
                 padding: .4rem .9rem;
-                border-radius: 4px;
+                border-radius: var(--cms-radius-sm, 4px);
                 border: 1px solid var(--cms-btn-border);
                 background: var(--cms-btn-bg);
                 color: var(--cms-text);
@@ -223,7 +226,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
             .cms-wizard__btn--primary {
                 background: var(--cms-accent);
                 border-color: var(--cms-accent);
-                color: var(--cms-accent-text);
+                color: var(--cms-accent-fg, #1a1a1a);
                 font-weight: 600;
             }
             .cms-wizard__btn--primary:hover:not(:disabled) {

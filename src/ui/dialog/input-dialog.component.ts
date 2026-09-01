@@ -150,7 +150,7 @@ export interface InputDialogContentData {
         .cms-input          { display: block; width: 100%; }
         .cms-select         { display: block; width: 100%; }
         .cms-input--invalid { border-color: var(--cms-danger) !important; }
-        .input-error        { margin-top: 4px; font-size: .8rem; color: var(--cms-danger); }
+        .input-error        { margin-top: 4px; font-size: .8rem; color: var(--cms-danger-text); }
     `],
 })
 export class InputDialogComponent implements AfterViewInit {

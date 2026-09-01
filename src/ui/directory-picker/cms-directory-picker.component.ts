@@ -177,9 +177,9 @@ type FlatRow =
             display: flex;
             flex-direction: column;
             gap: 8px;
-            border: 1px solid var(--cms-border, #d1d5db);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
-            background: var(--cms-bg, #ffffff);
+            background: var(--cms-bg, #f8f9fa);
             padding: 10px;
             font-size: 0.875rem;
         }
@@ -196,17 +196,17 @@ type FlatRow =
         .cms-dirpicker__path-input {
             width: 100%;
             padding: 6px 10px;
-            border: 1px solid var(--cms-border, #d1d5db);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
             font-family: var(--cms-font-mono, ui-monospace, SFMono-Regular, monospace);
             font-size: 0.8125rem;
-            background: var(--cms-bg, #ffffff);
+            background: var(--cms-bg, #f8f9fa);
             color: var(--cms-text, #111827);
         }
         .cms-dirpicker__path-input:focus {
             outline: none;
-            border-color: var(--cms-accent, #3b82f6);
-            box-shadow: 0 0 0 2px var(--cms-accent-light, #dbeafe);
+            border-color: var(--cms-accent, #F5A623);
+            box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
         }
         .cms-dirpicker__path-error {
             font-size: 0.75rem;
@@ -217,9 +217,9 @@ type FlatRow =
             margin: 0;
             padding: 0;
             overflow-y: auto;
-            border: 1px solid var(--cms-border-light, #f3f4f6);
+            border: 1px solid var(--cms-border-light, #f0f2f5);
             border-radius: var(--cms-radius-sm, 4px);
-            background: var(--cms-bg, #ffffff);
+            background: var(--cms-bg, #f8f9fa);
         }
         .cms-dirpicker__row {
             display: flex;
@@ -230,25 +230,25 @@ type FlatRow =
             color: var(--cms-text, #111827);
         }
         .cms-dirpicker__row:hover { background: var(--cms-bg-muted, #f3f4f6); }
-        .cms-dirpicker__row--selected { background: var(--cms-accent-light, #dbeafe); }
+        .cms-dirpicker__row--selected { background: var(--cms-accent-light, #FEF7E6); }
         .cms-dirpicker__row--unselectable {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .cms-dirpicker__row--unselectable .cms-dirpicker__name { cursor: not-allowed; }
         .cms-dirpicker__row--system .cms-dirpicker__name {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-style: italic;
         }
         .cms-dirpicker__chevron {
             border: none;
             background: transparent;
             cursor: pointer;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             padding: 0 2px;
             line-height: 1;
         }
-        .cms-dirpicker__icon { color: var(--cms-accent, #3b82f6); }
+        .cms-dirpicker__icon { color: var(--cms-accent, #F5A623); }
         .cms-dirpicker__name {
             flex: 1;
             user-select: none;
@@ -256,14 +256,14 @@ type FlatRow =
         .cms-dirpicker__placeholder {
             padding: 3px 8px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
         }
         .cms-dirpicker__placeholder--muted { font-style: italic; }
         .cms-dirpicker__placeholder--error { color: var(--cms-danger, #dc2626); }
         .cms-dirpicker__retry {
             margin-left: 6px;
-            border: 1px solid var(--cms-border, #d1d5db);
-            background: var(--cms-bg, #ffffff);
+            border: 1px solid var(--cms-border, #e5e7eb);
+            background: var(--cms-bg, #f8f9fa);
             border-radius: var(--cms-radius-sm, 4px);
             padding: 1px 6px;
             font-size: 0.75rem;
@@ -277,8 +277,8 @@ type FlatRow =
             flex-wrap: wrap;
         }
         .cms-dirpicker__newfolder-btn {
-            border: 1px solid var(--cms-border, #d1d5db);
-            background: var(--cms-bg, #ffffff);
+            border: 1px solid var(--cms-border, #e5e7eb);
+            background: var(--cms-bg, #f8f9fa);
             border-radius: var(--cms-radius-sm, 4px);
             padding: 4px 8px;
             font-size: 0.8125rem;
@@ -293,14 +293,14 @@ type FlatRow =
         }
         .cms-dirpicker__newfolder-input {
             padding: 4px 8px;
-            border: 1px solid var(--cms-border, #d1d5db);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius-sm, 4px);
             font-size: 0.8125rem;
         }
         .cms-dirpicker__newfolder-confirm,
         .cms-dirpicker__newfolder-cancel {
-            border: 1px solid var(--cms-border, #d1d5db);
-            background: var(--cms-bg, #ffffff);
+            border: 1px solid var(--cms-border, #e5e7eb);
+            background: var(--cms-bg, #f8f9fa);
             border-radius: var(--cms-radius-sm, 4px);
             padding: 2px 8px;
             font-size: 0.75rem;
@@ -316,7 +316,7 @@ type FlatRow =
             align-items: center;
             gap: 4px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             cursor: pointer;
         }
     `],

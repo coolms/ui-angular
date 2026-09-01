@@ -37,21 +37,21 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     styles: [`
         .chip-input-wrap {
             display: flex; flex-wrap: wrap; gap: 4px;
-            border: 1px solid #dee2e6; border-radius: .375rem;
+            border: 1px solid var(--cms-border); border-radius: .375rem;
             padding: 4px 8px; min-height: 38px; cursor: text;
             background: var(--cms-surface);
         }
-        .chip-input-wrap:focus-within { border-color: #86b7fe; box-shadow: 0 0 0 .25rem rgba(13,110,253,.25); }
+        .chip-input-wrap:focus-within { border-color: var(--cms-info-subtle-border); box-shadow: 0 0 0 .25rem var(--cms-accent-light, #FEF7E6); }
         .chip {
             display: inline-flex; align-items: center; gap: 4px;
-            background: #e9ecef; border-radius: 4px;
+            background: var(--cms-surface-muted); border-radius: var(--cms-radius-sm, 4px);
             padding: 1px 6px; font-size: .8rem;
         }
         .chip button {
             background: none; border: none; cursor: pointer;
-            padding: 0; line-height: 1; color: #6c757d; font-size: .9rem;
+            padding: 0; line-height: 1; color: var(--cms-text-secondary); font-size: .9rem;
         }
-        .chip button:hover { color: #dc3545; }
+        .chip button:hover { color: var(--cms-danger); }
         .chip-input-field {
             border: none; outline: none; flex: 1;
             min-width: 80px; font-size: .875rem;

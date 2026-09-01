@@ -138,7 +138,7 @@ interface BreadcrumbResponseDto {
             align-items: center;
             gap: 8px;
             min-height: 14px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-family: var(--cms-font-mono, monospace);
         }
 
         .explorer-toolbar-row__path {

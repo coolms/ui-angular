@@ -76,8 +76,8 @@ import { UserCalendarPreferencesService } from '../../util/user-calendar-prefere
             gap: 2px;
         }
         .todp__select {
-            border: 1px solid var(--cms-border, #d1d5db);
-            border-radius: 4px;
+            border: 1px solid var(--cms-border, #e5e7eb);
+            border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface, #fff);
             padding: 4px 6px;
             font-size: .85rem;

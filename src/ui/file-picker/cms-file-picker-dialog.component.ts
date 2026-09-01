@@ -78,7 +78,7 @@ export interface FilePickerDialogData {
             --cms-file-picker-list-height: 24rem;
             --cms-file-picker-list-min-height: 24rem;
         }
-        .count { margin-right: auto; font-size: 0.82rem; color: var(--cms-text-muted, #6b7280); }
+        .count { margin-right: auto; font-size: 0.82rem; color: var(--cms-text-muted, #848b96); }
     `],
 })
 export class CmsFilePickerDialogComponent {

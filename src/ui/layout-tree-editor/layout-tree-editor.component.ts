@@ -154,7 +154,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
             padding: 8px; border: 1px dashed var(--cms-border); border-radius: var(--cms-radius, 6px);
             background: var(--cms-border-light);
         }
-        .lte__tray--done { color: var(--cms-success, #2e7d32); }
+        .lte__tray--done { color: var(--cms-success, #16a34a); }
         .lte__tray-label { font-size: .75rem; font-weight: 600; color: var(--cms-text-secondary); }
         .lte__hint { font-size: .6875rem; color: var(--cms-text-muted); margin-left: auto; }
         .lte__addrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -172,7 +172,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
         .lte__type {
             font-size: .6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
             color: var(--cms-primary, #2563eb); padding: 1px 6px; border: 1px solid var(--cms-primary, #2563eb);
-            border-radius: 10px;
+            border-radius: var(--cms-radius-lg, 10px);
         }
         .lte__name { flex: 1; min-width: 120px; }
         .lte__w { display: inline-flex; align-items: center; gap: 3px; font-size: .6875rem; }
@@ -193,7 +193,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
         .lte__chip--avail { background: var(--cms-surface); color: var(--cms-text-secondary); }
         .lte__chip--placed { background: var(--cms-primary, #2563eb); color: var(--cms-text-inverse); border-color: var(--cms-primary, #2563eb); }
         .lte__chipx { background: transparent; border: none; color: inherit; cursor: pointer; font-size: .85rem; line-height: 1; }
-        .lte__danger { color: var(--cms-danger, #c0392b); }
+        .lte__danger { color: var(--cms-danger, #dc2626); }
     `],
 })
 export class LayoutTreeEditorComponent {

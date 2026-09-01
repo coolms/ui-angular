@@ -103,7 +103,7 @@ export interface DateRangeValue {
         .picker { position: relative; display: flex; flex-direction: column; gap: 4px; }
         .picker__field-label {
             font-size: .85rem;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .picker__trigger {
             display: flex;
@@ -111,21 +111,21 @@ export interface DateRangeValue {
             justify-content: space-between;
             gap: 6px;
             width: 100%;
-            border: 1px solid var(--cms-border, #d1d5db);
-            border-radius: 4px;
+            border: 1px solid var(--cms-border, #e5e7eb);
+            border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface, #fff);
             padding: 6px 8px;
             font-size: .9rem;
             font-family: inherit;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
             min-width: 0;
         }
         .picker__trigger:hover:not(:disabled) {
-            border-color: var(--cms-accent, #2563eb);
+            border-color: var(--cms-accent, #F5A623);
         }
         .picker__trigger:focus-visible {
-            outline: 2px solid var(--cms-accent, #2563eb);
+            outline: 2px solid var(--cms-accent, #F5A623);
             outline-offset: 1px;
         }
         .picker__trigger:disabled { opacity: .6; cursor: not-allowed; }
@@ -141,9 +141,9 @@ export interface DateRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #9ca3af); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #848b96); }
         .picker__icon {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -154,7 +154,7 @@ export interface DateRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;
@@ -162,8 +162,8 @@ export interface DateRangeValue {
             flex-shrink: 0;
         }
         .picker__clear:hover {
-            background: var(--cms-bg-hover, #e5e7eb);
-            color: var(--cms-text, #111);
+            background: var(--cms-bg-hover, #f3f4f6);
+            color: var(--cms-text, #111827);
         }
         .picker__overlay-anchor {
             position: fixed;

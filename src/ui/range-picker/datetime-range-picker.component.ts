@@ -182,7 +182,7 @@ export interface DateTimeRangeValue {
         .picker { position: relative; display: flex; flex-direction: column; gap: 4px; }
         .picker__field-label {
             font-size: .85rem;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .picker__trigger {
             display: flex;
@@ -190,18 +190,18 @@ export interface DateTimeRangeValue {
             justify-content: space-between;
             gap: 6px;
             width: 100%;
-            border: 1px solid var(--cms-border, #d1d5db);
-            border-radius: 4px;
+            border: 1px solid var(--cms-border, #e5e7eb);
+            border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface, #fff);
             padding: 6px 8px;
             font-size: .9rem;
             font-family: inherit;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
             min-width: 0;
         }
         .picker__trigger:hover:not(:disabled) {
-            border-color: var(--cms-accent, #2563eb);
+            border-color: var(--cms-accent, #F5A623);
         }
         .picker__trigger:disabled { opacity: .6; cursor: not-allowed; }
         .picker__trigger--sm {
@@ -216,9 +216,9 @@ export interface DateTimeRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #9ca3af); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #848b96); }
         .picker__icon {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -229,7 +229,7 @@ export interface DateTimeRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;
@@ -237,16 +237,16 @@ export interface DateTimeRangeValue {
             flex-shrink: 0;
         }
         .picker__clear:hover {
-            background: var(--cms-bg-hover, #e5e7eb);
-            color: var(--cms-text, #111);
+            background: var(--cms-bg-hover, #f3f4f6);
+            color: var(--cms-text, #111827);
         }
         .overlay {
             position: fixed;
             z-index: 1000;
             background: var(--cms-surface, #fff);
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 8px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+            border-radius: var(--cms-radius-md, 8px);
+            box-shadow: var(--cms-shadow-lg, 0 8px 24px rgba(0,0,0,.12));
             padding: 12px 16px;
             min-width: 560px;
         }
@@ -260,12 +260,12 @@ export interface DateTimeRangeValue {
         .overlay__nav {
             background: transparent;
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             padding: 4px 8px;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
-        .overlay__nav:hover { background: var(--cms-bg-hover, #e5e7eb); }
+        .overlay__nav:hover { background: var(--cms-bg-hover, #f3f4f6); }
         .overlay__summary {
             display: flex;
             align-items: center;
@@ -274,13 +274,13 @@ export interface DateTimeRangeValue {
         }
         .overlay__chip {
             padding: 2px 8px;
-            border-radius: 4px;
-            background: var(--cms-accent-bg, #dbeafe);
-            color: var(--cms-accent-text, #1e40af);
+            border-radius: var(--cms-radius-sm, 4px);
+            background: var(--cms-accent-light, #FEF7E6);
+            color: var(--cms-accent-text, #7C4D00);
             font-weight: 500;
         }
-        .overlay__placeholder { color: var(--cms-text-muted, #9ca3af); }
-        .overlay__arrow { color: var(--cms-text-muted, #9ca3af); }
+        .overlay__placeholder { color: var(--cms-text-muted, #848b96); }
+        .overlay__arrow { color: var(--cms-text-muted, #848b96); }
         .overlay__months {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -329,7 +329,7 @@ export interface DateTimeRangeValue {
             display: inline-block;
             width: 32px;
             height: 18px;
-            background: var(--cms-border, #d1d5db);
+            background: var(--cms-border, #e5e7eb);
             border-radius: 999px;
             transition: background .15s ease;
             flex-shrink: 0;
@@ -343,21 +343,21 @@ export interface DateTimeRangeValue {
             height: 14px;
             background: var(--cms-surface);
             border-radius: 50%;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+            box-shadow: var(--cms-shadow-sm, 0 1px 3px rgba(0,0,0,.08));
             transition: transform .15s ease;
         }
         .overlay__toggle-input:checked + .overlay__toggle-slider {
-            background: var(--cms-accent, #2563eb);
+            background: var(--cms-accent, #F5A623);
         }
         .overlay__toggle-input:checked + .overlay__toggle-slider::before {
             transform: translateX(14px);
         }
         .overlay__toggle-input:focus-visible + .overlay__toggle-slider {
-            outline: 2px solid var(--cms-accent, #2563eb);
+            outline: 2px solid var(--cms-accent, #F5A623);
             outline-offset: 2px;
         }
         .overlay__toggle-label {
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .overlay__time-cell {
             display: flex;
@@ -366,17 +366,17 @@ export interface DateTimeRangeValue {
         }
         .overlay__time-label {
             font-size: .85rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             white-space: nowrap;
         }
         .overlay__time-sep {
-            color: var(--cms-text-muted, #9ca3af);
+            color: var(--cms-text-muted, #848b96);
             font-size: .85rem;
         }
         .overlay__tz {
             margin: 4px 0 0;
             font-size: .7rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-style: italic;
             min-height: 1em;            /* keep its own line height even when empty */
         }
@@ -385,7 +385,7 @@ export interface DateTimeRangeValue {
         }
         .overlay__error {
             margin: 4px 0 0;
-            color: var(--cms-danger, #b91c1c);
+            color: var(--cms-danger, #dc2626);
             font-size: .75rem;
         }
         .overlay__foot {

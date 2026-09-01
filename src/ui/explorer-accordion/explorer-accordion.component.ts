@@ -101,7 +101,7 @@ import { SpaceDto } from './space-dto';
         .accordion-badge {
             font-size: .65rem; font-weight: 600;
             padding: 1px 6px; border-radius: 999px;
-            background: var(--cms-accent); color: var(--cms-text-inverse);
+            background: var(--cms-accent); color: var(--cms-accent-fg, #1a1a1a);
             text-transform: uppercase; letter-spacing: .04em;
         }
         .accordion-readonly { font-size: .75rem; color: var(--cms-text-muted); }
