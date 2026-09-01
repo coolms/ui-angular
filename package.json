@@ -1,6 +1,6 @@
 {
   "name": "@coolms/ui-angular",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "The CoolMS UI kit for Angular: the data grid, server-declared forms, page scaffolding, dialogs, pickers and the chrome an admin surface is built from.",
   "license": "MIT",
   "author": {
