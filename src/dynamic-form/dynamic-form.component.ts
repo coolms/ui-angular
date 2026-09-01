@@ -83,6 +83,22 @@ export class DynamicFormComponent implements OnInit {
     submitDisabled  = input<boolean>(false);
     /** Extra fields merged into submitted value — not rendered in the form. */
     extraPayload    = input<Record<string, unknown>>({});
+    /**
+     * Aliases to render read-only on top of whatever the definition says.
+     *
+     * For a field the DEFINITION cannot know is fixed, because the reason is
+     * runtime state rather than form design — a module setting this deployment
+     * pins in its environment, say. The definition's own `readonly` still
+     * applies; this only ever adds.
+     *
+     * ⚠️ Read-only here means the control is DISABLED, and Angular still reports
+     * a disabled control in `getRawValue()` — which {@link submit} uses, so the
+     * value is still submitted. A host that must not send these has to drop them
+     * itself; changing `getRawValue()` to `value` would silently stop submitting
+     * every definition-level readonly field across the app, several of which are
+     * identifiers the server needs.
+     */
+    readonlyFields  = input<readonly string[]>([]);
     /** Preview mode: render the form's OWN declared `actions` footer (exactly as
      *  the public SSR site will) instead of the host Cancel/Save footer. Off by
      *  default so admin CRUD dialogs keep their Cancel/Save footer unchanged. */
@@ -161,7 +177,7 @@ export class DynamicFormComponent implements OnInit {
         }
         this.saving.set(true);
         this.serverError.set(null);
-        const value = { ...this.formGroup().getRawValue(), ...this.extraPayload() };
+        const value = { ...this.asDeclaredTypes(this.formGroup().getRawValue()), ...this.extraPayload() };
         this.submitted.emit(value);
     }
 
@@ -194,12 +210,55 @@ export class DynamicFormComponent implements OnInit {
         }
     }
 
+    /**
+     * Give a `number` field a NUMBER.
+     *
+     * ⚠️ **Angular's `NumberValueAccessor` never applies here, and that is not
+     * obvious.** Its selector is `input[type=number]`, matched at COMPILE time
+     * against the static template — and this form binds `[type]="item().type"`,
+     * so the selector cannot match and the default string accessor is used
+     * instead. Every "number" field this form has ever rendered therefore
+     * submitted a STRING.
+     *
+     * That was invisible for as long as nothing checked: a settings row storing
+     * `"300"` where the module reads `is_int()` would save, read back, and be
+     * silently discarded — the exact "saves and does nothing" failure the
+     * settings tier exists to prevent. It only surfaced when a write validation
+     * started refusing the mismatch out loud.
+     *
+     * An empty field becomes `null`, not `0`: an operator who cleared a box did
+     * not ask for zero, and the server is the right place to decide whether that
+     * key may be cleared at all. A value that is not a number is left ALONE so
+     * validation can report it, rather than being coerced into `NaN`.
+     *
+     * @param value the form's raw value
+     *
+     * @return the same map with declared-numeric fields as numbers
+     */
+    private asDeclaredTypes(value: Record<string, unknown>): Record<string, unknown> {
+        const items = this.itemsMap();
+        const out: Record<string, unknown> = { ...value };
+
+        for (const [alias, raw] of Object.entries(out)) {
+            if ('number' !== items[alias]?.type) continue;
+            if ('' === raw || null === raw || undefined === raw) {
+                out[alias] = null;
+                continue;
+            }
+            const asNumber = Number(raw);
+            if (!Number.isNaN(asNumber)) out[alias] = asNumber;
+        }
+
+        return out;
+    }
+
     private buildFormGroup(items: readonly FieldItem[]): FormGroup {
         const controls: Record<string, AbstractControl> = {};
+        const pinned = new Set(this.readonlyFields());
         for (const item of items) {
             if (item.type === 'subform') continue; // handled separately
             controls[item.alias] = this.fb.control(
-                { value: null, disabled: item.readonly },
+                { value: null, disabled: item.readonly || pinned.has(item.alias) },
                 this.buildValidators(item),
             );
         }
