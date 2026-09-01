@@ -4,6 +4,7 @@ import {
     Component,
     computed,
     DestroyRef,
+    effect,
     ElementRef,
     inject,
     OnDestroy,
@@ -15,6 +16,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngxs/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EditorView, keymap } from '@codemirror/view';
+import { Compartment, type Extension } from '@codemirror/state';
 import { basicSetup } from 'codemirror';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { html } from '@codemirror/lang-html';
@@ -22,8 +24,10 @@ import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { markdown } from '@codemirror/lang-markdown';
-import { AppConfigState } from '@coolms/core-angular';
+import { AppConfigState, ThemeService, type ResolvedTheme } from '@coolms/core-angular';
 import { ToastService } from '../toast.service';
+import { ConfirmDialogService } from '../confirm-dialog.service';
+import { UnsavedChangesService } from '../unsaved-changes.service';
 import { VfsNodeDto } from '../../vfs/vfs.types';
 
 function detectLanguage(mime: string) {
@@ -33,6 +37,38 @@ function detectLanguage(mime: string) {
     if (mime.includes('json'))       return json();
     if (mime.includes('markdown'))   return markdown();
     return [];  // plain text
+}
+
+/**
+ * The light counterpart to `oneDark`.
+ *
+ * CodeMirror paints its own chrome imperatively, so unlike a template the
+ * editor cannot inherit the admin's surface -- it has to be told. Every value
+ * here is a --cms-* token rather than a literal, so this follows the palette
+ * (a user's accent override included) instead of pinning a second set of
+ * colours that would drift from the theme.
+ */
+const cmsLightTheme = EditorView.theme({
+    '&': {
+        backgroundColor: 'var(--cms-surface)',
+        color: 'var(--cms-text)',
+    },
+    '.cm-content': { caretColor: 'var(--cms-text)' },
+    '.cm-cursor, .cm-dropCursor': { borderLeftColor: 'var(--cms-text)' },
+    '.cm-gutters': {
+        backgroundColor: 'var(--cms-surface-muted)',
+        color: 'var(--cms-text-muted)',
+        border: 'none',
+    },
+    '.cm-activeLine': { backgroundColor: 'var(--cms-active-bg)' },
+    '.cm-activeLineGutter': { backgroundColor: 'var(--cms-active-bg)' },
+    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground': {
+        backgroundColor: 'var(--cms-info-subtle)',
+    },
+}, { dark: false });
+
+function themeExtension(theme: ResolvedTheme): Extension {
+    return 'dark' === theme ? oneDark : cmsLightTheme;
 }
 
 @Component({
@@ -104,7 +140,7 @@ function detectLanguage(mime: string) {
             flex-shrink: 0;
             font-size: .8125rem;
         }
-        .code-editor-dialog__dirty { color: var(--cms-warning); font-size: .75rem; }
+        .code-editor-dialog__dirty { color: var(--cms-warning-text); font-size: .75rem; }
         .code-editor-dialog__status { color: var(--cms-text-muted); }
 
         /* CodeMirror builds .cm-editor imperatively inside #editorHost, so it
@@ -126,6 +162,9 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     private readonly store      = inject(Store);
     private readonly toast      = inject(ToastService);
     private readonly destroyRef = inject(DestroyRef);
+    private readonly theme      = inject(ThemeService);
+    private readonly confirm    = inject(ConfirmDialogService);
+    private readonly unsaved    = inject(UnsavedChangesService);
 
     readonly node = this.data.node;
 
@@ -137,6 +176,25 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     );
 
     private editorView?: EditorView;
+
+    /** Lets the theme be swapped in place rather than rebuilding the view. */
+    private readonly themeCompartment = new Compartment();
+
+    constructor() {
+        // beforeunload half of the guard (#2484): the per-dialog confirm
+        // cannot see a tab close or a reload. Disposed with the component, so
+        // a closed editor stops voting.
+        this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.dirty()));
+        // The admin theme can flip while this dialog is open, so the editor
+        // reconfigures instead of staying on whatever it was built with. The
+        // effect also runs before ngAfterViewInit, when there is no view yet --
+        // harmless, because initEditor() seeds the compartment from the same
+        // signal.
+        effect(() => {
+            const ext = themeExtension(this.theme.resolved());
+            this.editorView?.dispatch({ effects: this.themeCompartment.reconfigure(ext) });
+        });
+    }
 
     ngAfterViewInit(): void {
         this.loadContent();
@@ -174,7 +232,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
                 basicSetup,
                 EditorView.lineWrapping, // wrap long lines instead of horizontal scroll (content files have long HTML lines)
                 lang,
-                oneDark,
+                this.themeCompartment.of(themeExtension(this.theme.resolved())),
                 EditorView.updateListener.of(update => {
                     if (update.docChanged) this.dirty.set(true);
                 }),
@@ -211,8 +269,24 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         });
     }
 
+    /**
+     * ⚠️ This used to be `this.dialogRef.close()` and nothing else, so the
+     * editor SHOWED "unsaved changes" in its own footer and then threw them
+     * away without a word when you pressed Cancel or the header X. The flag
+     * was rendered and never consulted.
+     */
     close(): void {
-        this.dialogRef.close();
+        if (!this.dirty()) {
+            this.dialogRef.close();
+
+            return;
+        }
+
+        this.confirm.confirmDiscard(this.node.name).pipe(
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe((discard) => {
+            if (discard) this.dialogRef.close();
+        });
     }
 
     ngOnDestroy(): void {
