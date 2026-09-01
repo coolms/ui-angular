@@ -106,7 +106,7 @@ const MONTH_NAMES = [
         .dtf__control { display: flex; align-items: center; gap: 4px; }
         .dtf__trigger {
             flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px;
-            padding: 5px 8px; border: 1px solid var(--cms-border); border-radius: 4px;
+            padding: 5px 8px; border: 1px solid var(--cms-border); border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface); color: var(--cms-text);
             font: inherit; font-size: .85rem; cursor: pointer; text-align: left;
         }
@@ -119,19 +119,19 @@ const MONTH_NAMES = [
         .dtf__clear {
             flex-shrink: 0; width: 30px; height: 30px;
             display: inline-flex; align-items: center; justify-content: center;
-            border: 1px solid var(--cms-border); border-radius: 4px;
+            border: 1px solid var(--cms-border); border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface); color: var(--cms-text-muted); cursor: pointer;
         }
         .dtf__clear:hover { color: var(--cms-danger); border-color: var(--cms-danger); }
         .dtf__panel {
             margin-top: 6px; padding: 10px;
-            border: 1px solid var(--cms-border); border-radius: 6px;
-            background: var(--cms-surface); box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+            border: 1px solid var(--cms-border); border-radius: var(--cms-radius, 6px);
+            background: var(--cms-surface); box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10));
         }
         .dtf__nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
         .dtf__nav-btn {
             width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
-            border: 1px solid transparent; border-radius: 4px; background: transparent;
+            border: 1px solid transparent; border-radius: var(--cms-radius-sm, 4px); background: transparent;
             color: var(--cms-text); cursor: pointer;
         }
         .dtf__nav-btn:hover { background: var(--cms-border-light); }

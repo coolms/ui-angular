@@ -102,7 +102,7 @@ export interface TimeRangeValue {
         .picker { position: relative; display: flex; flex-direction: column; gap: 4px; }
         .picker__field-label {
             font-size: .85rem;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .picker__trigger {
             display: flex;
@@ -110,18 +110,18 @@ export interface TimeRangeValue {
             justify-content: space-between;
             gap: 6px;
             width: 100%;
-            border: 1px solid var(--cms-border, #d1d5db);
-            border-radius: 4px;
+            border: 1px solid var(--cms-border, #e5e7eb);
+            border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface, #fff);
             padding: 6px 8px;
             font-size: .9rem;
             font-family: inherit;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
             min-width: 0;
         }
         .picker__trigger:hover:not(:disabled) {
-            border-color: var(--cms-accent, #2563eb);
+            border-color: var(--cms-accent, #F5A623);
         }
         .picker__trigger:disabled { opacity: .6; cursor: not-allowed; }
         .picker__trigger--sm {
@@ -136,9 +136,9 @@ export interface TimeRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #9ca3af); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #848b96); }
         .picker__icon {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -149,7 +149,7 @@ export interface TimeRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;
@@ -157,16 +157,16 @@ export interface TimeRangeValue {
             flex-shrink: 0;
         }
         .picker__clear:hover {
-            background: var(--cms-bg-hover, #e5e7eb);
-            color: var(--cms-text, #111);
+            background: var(--cms-bg-hover, #f3f4f6);
+            color: var(--cms-text, #111827);
         }
         .picker__overlay {
             position: fixed;
             z-index: 1000;
             background: var(--cms-surface, #fff);
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 8px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+            border-radius: var(--cms-radius-md, 8px);
+            box-shadow: var(--cms-shadow-lg, 0 8px 24px rgba(0,0,0,.12));
             padding: 12px 16px;
             min-width: 260px;
         }
@@ -179,11 +179,11 @@ export interface TimeRangeValue {
         }
         .picker__label {
             font-size: .85rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
         }
         .picker__error {
             margin: 4px 0 8px;
-            color: var(--cms-danger, #b91c1c);
+            color: var(--cms-danger, #dc2626);
             font-size: .75rem;
         }
         .picker__foot {

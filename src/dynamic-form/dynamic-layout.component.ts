@@ -216,13 +216,13 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
         }
         .form-wizard__step--done { color: var(--cms-text); }
         .form-wizard__step--done .form-wizard__step-num {
-            background: var(--cms-success, #2e7d32); color: var(--cms-text-inverse);
+            background: var(--cms-success, #16a34a); color: var(--cms-text-inverse);
         }
         .form-wizard__step--active {
             border-color: var(--cms-accent); color: var(--cms-accent-text); font-weight: 600;
         }
         .form-wizard__step--active .form-wizard__step-num {
-            background: var(--cms-accent); color: var(--cms-text-inverse);
+            background: var(--cms-accent); color: var(--cms-accent-fg, #1a1a1a);
         }
         .form-wizard__nav {
             display: flex; align-items: center; gap: 10px;
@@ -232,9 +232,9 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
         .form-wizard__final { font-size: .8125rem; color: var(--cms-text-muted); }
         .form-wizard__error {
             margin-top: 14px; padding: 8px 12px;
-            font-size: .8125rem; color: var(--cms-danger, #c0392b);
-            background: var(--cms-danger-bg, rgba(192,57,43,.08));
-            border: 1px solid var(--cms-danger, #c0392b); border-radius: var(--cms-radius, 6px);
+            font-size: .8125rem; color: var(--cms-danger, #dc2626);
+            background: var(--cms-danger-light, #fef2f2);
+            border: 1px solid var(--cms-danger, #dc2626); border-radius: var(--cms-radius, 6px);
         }
     `],
 })

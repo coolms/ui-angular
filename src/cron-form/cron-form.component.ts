@@ -192,7 +192,7 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
         .field__label {
             font-size: .8125rem;
             font-weight: 500;
-            color: var(--cms-text-secondary, #4b5563);
+            color: var(--cms-text-secondary, #6b7280);
         }
         input, select {
             border: 1px solid var(--cms-btn-border, #d1d5db);
@@ -202,35 +202,35 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
             font-family: inherit;
             box-sizing: border-box;
             max-width: 100%;
-            color: var(--cms-text, #1f2937);
+            color: var(--cms-text, #111827);
             background: var(--cms-surface);
         }
         .field > input, .field > select { width: 100%; }
         .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-family: var(--cms-font-mono, monospace);
         }
 
         /* Explainer disclosure */
         .explainer {
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 6px;
+            border-radius: var(--cms-radius, 6px);
             padding: 6px 12px;
-            background: #fafbfc;
+            background: var(--cms-surface-muted);
         }
         .explainer summary {
             cursor: pointer;
             font-size: .8rem;
-            color: var(--cms-text, #1f2937);
+            color: var(--cms-text, #111827);
             padding: 2px 0;
         }
         .explainer__body {
             margin-top: 8px;
             font-size: .8rem;
-            color: var(--cms-text, #1f2937);
+            color: var(--cms-text, #111827);
         }
         .explainer__body p { margin: 6px 0; }
         .explainer__body code {
-            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-family: var(--cms-font-mono, monospace);
             background: var(--cms-surface-muted);
             padding: 1px 4px;
             border-radius: 3px;
@@ -238,7 +238,7 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
         .explainer__diagram {
             background: var(--cms-surface-muted);
             padding: 8px 12px;
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             line-height: 1.4;
             margin: 6px 0;
             overflow-x: auto;
@@ -264,18 +264,18 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
             align-items: baseline; gap: 8px;
             margin: 0;
             padding: 6px 10px;
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
+            background: var(--cms-info-light);
+            border: 1px solid var(--cms-info-subtle-border);
             border-radius: var(--cms-radius, 4px);
             font-size: .8125rem;
         }
         .summary__label {
             font-weight: 600;
-            color: var(--cms-text, #1f2937);
+            color: var(--cms-text, #111827);
         }
-        .summary__text { color: var(--cms-text, #1f2937); }
+        .summary__text { color: var(--cms-text, #111827); }
         .summary__expr {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: .75rem;
             margin-left: auto;
         }

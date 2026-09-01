@@ -125,8 +125,8 @@ export interface DateRangeOverlayResult {
         .overlay {
             background: var(--cms-surface, #fff);
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 8px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+            border-radius: var(--cms-radius-md, 8px);
+            box-shadow: var(--cms-shadow-lg, 0 8px 24px rgba(0,0,0,.12));
             padding: 12px 16px;
             min-width: 540px;
         }
@@ -140,28 +140,28 @@ export interface DateRangeOverlayResult {
         .overlay__nav {
             background: transparent;
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             padding: 4px 8px;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
-        .overlay__nav:hover { background: var(--cms-bg-hover, #e5e7eb); }
+        .overlay__nav:hover { background: var(--cms-bg-hover, #f3f4f6); }
         .overlay__summary {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: .85rem;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .overlay__chip {
             padding: 2px 8px;
-            border-radius: 4px;
-            background: var(--cms-accent-bg, #dbeafe);
-            color: var(--cms-accent-text, #1e40af);
+            border-radius: var(--cms-radius-sm, 4px);
+            background: var(--cms-accent-light, #FEF7E6);
+            color: var(--cms-accent-text, #7C4D00);
             font-weight: 500;
         }
-        .overlay__placeholder { color: var(--cms-text-muted, #9ca3af); }
-        .overlay__arrow { color: var(--cms-text-muted, #9ca3af); }
+        .overlay__placeholder { color: var(--cms-text-muted, #848b96); }
+        .overlay__arrow { color: var(--cms-text-muted, #848b96); }
         .overlay__months {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -172,7 +172,7 @@ export interface DateRangeOverlayResult {
             text-align: center;
             font-size: .85rem;
             font-weight: 600;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
             margin-bottom: 4px;
         }
         .overlay__presets {
@@ -190,11 +190,11 @@ export interface DateRangeOverlayResult {
             padding: 2px 10px;
             font-size: .75rem;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
         }
         .overlay__preset:hover {
             background: var(--cms-bg-hover, #f3f4f6);
-            border-color: var(--cms-accent, #2563eb);
+            border-color: var(--cms-accent, #F5A623);
         }
         .overlay__foot {
             display: flex;

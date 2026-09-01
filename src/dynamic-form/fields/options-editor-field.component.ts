@@ -167,7 +167,7 @@ interface OptionRow {
             border-color: var(--cms-accent);
         }
         .options-editor-field .font-mono {
-            font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+            font-family: var(--cms-font-mono, monospace);
         }
     `],
 })

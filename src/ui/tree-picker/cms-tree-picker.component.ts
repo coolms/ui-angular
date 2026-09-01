@@ -212,7 +212,7 @@ const OVERLAY_MAX_HEIGHT_PX = 360;
             background: var(--cms-surface, #fff);
             border: 1px solid var(--cms-border);
             border-radius: var(--cms-radius);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+            box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10));
             overflow: hidden;
         }
         .cms-tree-picker__search {
@@ -281,10 +281,10 @@ const OVERLAY_MAX_HEIGHT_PX = 360;
             line-height: 1.4;
         }
         .cms-tree-picker__leaf:hover {
-            background: var(--cms-row-hover, rgba(0, 0, 0, .04));
+            background: var(--cms-surface-hover, #f3f4f6);
         }
         .cms-tree-picker__leaf--focused {
-            background: var(--cms-row-hover, rgba(0, 0, 0, .04));
+            background: var(--cms-surface-hover, #f3f4f6);
         }
         .cms-tree-picker__leaf--active {
             background: var(--cms-accent-light);

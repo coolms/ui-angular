@@ -119,7 +119,7 @@ import { ToolbarAction } from './page-toolbar.component';
         }
 
         .page-header__subtitle {
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: .8125rem;
             line-height: 1.35;
         }

@@ -69,7 +69,7 @@ import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
             width: 100%;
             padding: 6px 10px;
             border: 1px solid var(--cms-border);
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface);
             color: var(--cms-text);
             font-size: .9rem;
@@ -78,7 +78,7 @@ import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
         .cms-token-input__field:focus {
             outline: none;
             border-color: var(--cms-accent);
-            box-shadow: 0 0 0 2px var(--cms-accent-soft, color-mix(in srgb, var(--cms-accent) 25%, transparent));
+            box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
         }
 
         .cms-token-input__panel {
@@ -87,8 +87,8 @@ import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
             overflow-y: auto;
             background: var(--cms-surface);
             border: 1px solid var(--cms-border);
-            border-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+            border-radius: var(--cms-radius-sm, 4px);
+            box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10));
             padding: 4px 0;
         }
         .cms-token-input__option {

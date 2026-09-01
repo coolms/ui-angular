@@ -173,7 +173,7 @@ interface OptionGroup {
             overflow: hidden;
             &:hover { border-color: var(--cms-btn-hover-border, #9ca3af); }
         }
-        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #6b7280); }
+        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #848b96); }
         .mos-chips {
             flex: 1; min-width: 0;
             display: flex; flex-wrap: wrap; gap: 3px;
@@ -182,8 +182,8 @@ interface OptionGroup {
         .mos-chip {
             display: inline-flex; align-items: center; gap: 3px;
             padding: 1px 5px;
-            background: var(--cms-accent-light, #eff6ff);
-            color: var(--cms-accent, #1d4ed8);
+            background: var(--cms-accent-light, #FEF7E6);
+            color: var(--cms-accent-text, #7C4D00);
             border-radius: 2px;
             font-size: .7rem;
             line-height: 1.2;
@@ -202,11 +202,11 @@ interface OptionGroup {
             font-size: .9rem;
             line-height: 1;
             border-radius: 2px;
-            &:hover { background: rgba(0,0,0,.08); }
+            &:hover { background: var(--cms-surface-hover, #f3f4f6); }
         }
         .mos-chevron {
             font-size: .625rem;
-            color: var(--cms-text-secondary, #9ca3af);
+            color: var(--cms-text-secondary, #6b7280);
             flex-shrink: 0;
             transition: transform .15s;
         }
@@ -237,8 +237,8 @@ interface OptionGroup {
             font-size: .8125rem;
             outline: none;
             &:focus {
-                border-color: var(--cms-accent, #2563eb);
-                box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+                border-color: var(--cms-accent, #F5A623);
+                box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
             }
         }
         .mos-list { flex: 1; overflow-y: auto; padding: 4px 0; }
@@ -248,8 +248,8 @@ interface OptionGroup {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: .04em;
-            color: var(--cms-text-muted, #6b7280);
-            background: var(--cms-border-light, #f9fafb);
+            color: var(--cms-text-muted, #848b96);
+            background: var(--cms-border-light, #f0f2f5);
             border-top: 1px solid var(--cms-border, #e5e7eb);
             border-bottom: 1px solid var(--cms-border, #e5e7eb);
             position: sticky;
@@ -263,17 +263,17 @@ interface OptionGroup {
             cursor: pointer;
             font-size: .8125rem;
             color: var(--cms-text, #111827);
-            &:hover { background: var(--cms-border-light, #f3f4f6); }
+            &:hover { background: var(--cms-border-light, #f0f2f5); }
             input { margin: 0; cursor: pointer; }
             span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         }
-        .mos-option--checked { background: var(--cms-accent-light, #eff6ff); }
+        .mos-option--checked { background: var(--cms-accent-light, #FEF7E6); }
         .mos-option--checked span { font-weight: 500; }
         .mos-message {
             padding: 12px;
             text-align: center;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .mos-footer {
@@ -283,12 +283,12 @@ interface OptionGroup {
         }
         .mos-clear-all {
             border: 0; background: transparent;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: .75rem;
             cursor: pointer;
             padding: 2px 4px;
             border-radius: 2px;
-            &:hover { background: var(--cms-border-light, #f3f4f6); color: var(--cms-text, #111827); }
+            &:hover { background: var(--cms-border-light, #f0f2f5); color: var(--cms-text, #111827); }
         }
     `],
 })

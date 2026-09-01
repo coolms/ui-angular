@@ -92,7 +92,7 @@ export interface TokenDef {
         :host ::ng-deep .token-chip {
             display: inline-flex; align-items: center; gap: 2px;
             background: var(--cms-info-subtle); color: var(--cms-info-text);
-            border-radius: 4px; padding: 1px 6px;
+            border-radius: var(--cms-radius-sm, 4px); padding: 1px 6px;
             font-size: .8rem; user-select: none;
             cursor: default; margin: 0 2px;
         }
@@ -105,7 +105,7 @@ export interface TokenDef {
         :host ::ng-deep .token-chip-remove:hover { opacity: 1; }
         .token-chip-btn {
             font-size: .75rem; padding: 1px 8px;
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
         }
     `],
 })

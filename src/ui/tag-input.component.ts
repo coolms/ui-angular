@@ -103,7 +103,7 @@ export interface TagOption {
         .tagin-chip {
             display: inline-flex; align-items: center; gap: 4px;
             background: var(--cms-surface-muted); color: var(--cms-text);
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             padding: 1px 6px; font-size: .8rem;
         }
         .tagin-chip button {
@@ -131,7 +131,7 @@ export interface TagOption {
             padding: 6px 10px; background: none; border: none; cursor: pointer;
             border-radius: 3px; font-size: .8125rem; color: var(--cms-text, #111827);
         }
-        .tagin-menu-item:hover { background: var(--cms-border-light, #f3f4f6); }
+        .tagin-menu-item:hover { background: var(--cms-border-light, #f0f2f5); }
     `],
 })
 export class TagInputComponent implements ControlValueAccessor {

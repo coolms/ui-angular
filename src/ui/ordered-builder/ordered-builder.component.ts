@@ -160,7 +160,7 @@ export type OrderedSaveFn = (elements: OrderedElement[]) => Observable<unknown>;
             display: flex; align-items: center; gap: 6px;
         }
         .ob__card-actions { display: flex; gap: 4px; }
-        .ob__danger { color: var(--cms-danger, #c0392b); }
+        .ob__danger { color: var(--cms-danger, #dc2626); }
         .ob__body { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; }
         .ob__foot { display: flex; align-items: center; justify-content: flex-end; }
         /* Palette / action bar. Pinned to the top of the scrolling list (the host
@@ -172,7 +172,7 @@ export type OrderedSaveFn = (elements: OrderedElement[]) => Observable<unknown>;
             display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
             padding: 8px; border: 1px solid var(--cms-border);
             border-radius: var(--cms-radius, 6px); background: var(--cms-border-light);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+            box-shadow: var(--cms-shadow-sm, 0 1px 3px rgba(0,0,0,.08));
         }
         .ob__palette-label {
             font-size: .75rem; font-weight: 600; color: var(--cms-text-muted);
@@ -184,21 +184,21 @@ export type OrderedSaveFn = (elements: OrderedElement[]) => Observable<unknown>;
             background: var(--cms-surface); color: var(--cms-text);
             white-space: nowrap; transition: background .12s, border-color .12s;
         }
-        .ob__chip:hover { background: var(--cms-primary, #3a6ea5); border-color: var(--cms-primary, #3a6ea5); color: var(--cms-text-inverse); }
+        .ob__chip:hover { background: var(--cms-primary, #2563eb); border-color: var(--cms-primary, #2563eb); color: var(--cms-text-inverse); }
         .ob__chip:active { cursor: grabbing; }
-        .ob__chip.cdk-drag-preview { box-shadow: 0 4px 12px rgba(0,0,0,.18); opacity: .95; }
+        .ob__chip.cdk-drag-preview { box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10)); opacity: .95; }
         .ob__chip.cdk-drag-placeholder { opacity: .35; }
         .ob__list { display: flex; flex-direction: column; gap: 10px; }
         .ob__grip { cursor: grab; display: inline-flex; color: var(--cms-text-muted); }
         .ob__grip:active { cursor: grabbing; }
         /* CDK drag-drop visuals */
         .ob__card.cdk-drag-preview {
-            box-shadow: 0 6px 18px rgba(0,0,0,.18);
+            box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10));
             border-radius: var(--cms-radius, 6px);
         }
         .ob__card.cdk-drag-placeholder { opacity: 0; }
         .ob__card-ph {
-            height: 38px; border: 1px dashed var(--cms-primary, #3a6ea5);
+            height: 38px; border: 1px dashed var(--cms-primary, #2563eb);
             border-radius: var(--cms-radius, 6px); background: var(--cms-border-light);
         }
         .ob__list.cdk-drop-list-dragging .ob__card:not(.cdk-drag-placeholder) {

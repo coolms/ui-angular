@@ -217,18 +217,18 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         '.cms-tree-connector { color: var(--cms-text-muted); opacity: .55; font-size: .85rem; vertical-align: middle; }',
         // ── Loading skeleton (#929) — shimmer placeholder rows on initial load ──
         '.cms-skeleton-row td { vertical-align: middle; }',
-        '.cms-skeleton-bar { display: block; height: .75rem; border-radius: 4px; width: 70%; background: linear-gradient(90deg, var(--cms-border-light) 25%, var(--cms-border) 37%, var(--cms-border-light) 63%); background-size: 400% 100%; animation: cms-skeleton-shimmer 1.4s ease infinite; }',
+        '.cms-skeleton-bar { display: block; height: .75rem; border-radius: var(--cms-radius-sm, 4px); width: 70%; background: linear-gradient(90deg, var(--cms-border-light) 25%, var(--cms-border) 37%, var(--cms-border-light) 63%); background-size: 400% 100%; animation: cms-skeleton-shimmer 1.4s ease infinite; }',
         // Vary widths so the rows read as content, not a grid of identical bars.
         '.cms-skeleton-row td:first-child .cms-skeleton-bar { width: 45%; }',
         '.cms-skeleton-row td:nth-child(even) .cms-skeleton-bar { width: 85%; }',
         '@keyframes cms-skeleton-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }',
         // ── Rich cells ──────────────────────────────────────────────────────
         // Link cell.
-        '.dg-link { color: var(--cms-accent); text-decoration: none; }',
+        '.dg-link { color: var(--cms-accent-text); text-decoration: none; }',
         '.dg-link:hover { text-decoration: underline; }',
         // Avatar cell: initials/image disc + name (+ optional muted subtitle).
         '.dg-avatar { display: flex; align-items: center; gap: .5rem; min-width: 0; }',
-        '.dg-avatar__disc { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 600; text-transform: uppercase; background: var(--cms-accent-light); color: var(--cms-accent); overflow: hidden; }',
+        '.dg-avatar__disc { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .7rem; font-weight: 600; text-transform: uppercase; background: var(--cms-accent-light); color: var(--cms-accent-text); overflow: hidden; }',
         // #1704 — shape modifiers. Circle stays the default (identity); square
         // and wide exist for pictures OF things, where a disc crop throws away
         // the image. `wide` is ~16:9, the aspect a share image is authored at.

@@ -63,43 +63,43 @@ import {
             text-align: center;
             font-size: .7rem;
             font-weight: 600;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             text-transform: uppercase;
             padding: 4px 0;
         }
         .month__cell {
             border: none;
             background: transparent;
-            border-radius: 4px;
+            border-radius: var(--cms-radius-sm, 4px);
             padding: 6px 0;
             font-size: .85rem;
             cursor: pointer;
-            color: var(--cms-text, #111);
+            color: var(--cms-text, #111827);
             transition: background-color 80ms ease;
             text-align: center;
             font-family: inherit;
         }
         .month__cell:hover:not(:disabled) {
-            background: var(--cms-bg-hover, #e5e7eb);
+            background: var(--cms-bg-hover, #f3f4f6);
         }
-        .month__cell--other { color: var(--cms-text-muted, #9ca3af); }
+        .month__cell--other { color: var(--cms-text-muted, #848b96); }
         .month__cell--today {
             font-weight: 700;
-            box-shadow: inset 0 0 0 1px var(--cms-accent, #2563eb);
+            box-shadow: inset 0 0 0 1px var(--cms-accent, #F5A623);
         }
         .month__cell--in-range {
-            background: var(--cms-accent-bg, #dbeafe);
-            color: var(--cms-accent-text, #1e40af);
+            background: var(--cms-accent-light, #FEF7E6);
+            color: var(--cms-accent-text, #7C4D00);
             border-radius: 0;
         }
         .month__cell--start, .month__cell--end {
-            background: var(--cms-accent, #2563eb);
-            color: var(--cms-text-inverse);
+            background: var(--cms-accent, #F5A623);
+            color: var(--cms-accent-fg, #1a1a1a);
             font-weight: 600;
         }
         .month__cell--start { border-radius: 4px 0 0 4px; }
         .month__cell--end { border-radius: 0 4px 4px 0; }
-        .month__cell--start.month__cell--end { border-radius: 4px; }
+        .month__cell--start.month__cell--end { border-radius: var(--cms-radius-sm, 4px); }
         .month__cell--disabled {
             opacity: .35;
             cursor: not-allowed;

@@ -138,7 +138,7 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
             border: none;
             background: transparent;
             cursor: pointer;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: 1rem;
             line-height: 1;
             padding: 0 2px;
@@ -153,17 +153,17 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
         .cms-entity-picker__input {
             width: 100%;
             padding: 6px 10px;
-            border: 1px solid var(--cms-border, #d1d5db);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
             font: inherit;
             font-size: 0.875rem;
-            background: var(--cms-bg, #ffffff);
+            background: var(--cms-bg, #f8f9fa);
             color: var(--cms-text, #111827);
         }
         .cms-entity-picker__input:focus {
             outline: none;
-            border-color: var(--cms-accent, #3b82f6);
-            box-shadow: 0 0 0 2px var(--cms-accent-light, #dbeafe);
+            border-color: var(--cms-accent, #F5A623);
+            box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
         }
         .cms-entity-picker__single {
             display: flex;
@@ -171,9 +171,9 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
             justify-content: space-between;
             gap: 8px;
             padding: 6px 10px;
-            border: 1px solid var(--cms-border, #d1d5db);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
-            background: var(--cms-bg, #ffffff);
+            background: var(--cms-bg, #f8f9fa);
             font-size: 0.875rem;
             color: var(--cms-text, #111827);
         }
@@ -191,10 +191,10 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
             margin: 2px 0 0 0;
             padding: 0;
             list-style: none;
-            background: var(--cms-bg, #ffffff);
-            border: 1px solid var(--cms-border, #d1d5db);
+            background: var(--cms-bg, #f8f9fa);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--cms-shadow-md, 0 4px 12px rgba(0,0,0,.10));
             max-height: 300px;
             overflow-y: auto;
             z-index: 1000;
@@ -202,7 +202,7 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
         .cms-entity-picker__result {
             padding: 8px 10px;
             cursor: pointer;
-            border-bottom: 1px solid var(--cms-border-light, #f3f4f6);
+            border-bottom: 1px solid var(--cms-border-light, #f0f2f5);
         }
         .cms-entity-picker__result:last-child {
             border-bottom: none;
@@ -216,7 +216,7 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
         }
         .cms-entity-picker__result-secondary {
             font-size: 0.75rem;
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             margin-top: 2px;
         }
         .cms-entity-picker__empty {
@@ -226,10 +226,10 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
             right: 0;
             margin-top: 2px;
             padding: 8px 10px;
-            background: var(--cms-bg, #ffffff);
-            border: 1px solid var(--cms-border, #d1d5db);
+            background: var(--cms-bg, #f8f9fa);
+            border: 1px solid var(--cms-border, #e5e7eb);
             border-radius: var(--cms-radius, 6px);
-            color: var(--cms-text-muted, #6b7280);
+            color: var(--cms-text-muted, #848b96);
             font-size: 0.8125rem;
             text-align: center;
             z-index: 1000;
