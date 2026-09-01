@@ -21,7 +21,7 @@ export interface FileEditorDescriptor {
  *   FileEditorRegistry.register('package', { component: PageEditorComponent, mode: 'dialog' });
  *   FileEditorRegistry.register('text/*', { component: CodeEditorComponent, mode: 'drawer' });
  *
- * Resolution order: exact MIME → wildcard MIME (text/*) → NodeType → null.
+ * Resolution order: exact MIME -> wildcard MIME (text/*) -> NodeType -> null.
  */
 @Injectable({ providedIn: 'root' })
 export class FileEditorRegistry {
@@ -61,7 +61,7 @@ export class FileEditorRegistry {
      * Whether an EDITOR is installed for `mime`, without needing a node.
      *
      * Callers that hold a MIME but no `VfsNodeDto` — the Documents library
-     * decides between labelling its action "View" or "Edit" (#1678) — would
+     * decides between labelling its action "View" or "Edit" — would
      * otherwise have to fabricate a node just to ask. Same resolution order
      * as `resolve()` minus the NodeType fallback, which needs a node.
      */

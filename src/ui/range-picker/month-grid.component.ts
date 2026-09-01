@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 
 /**
- * #473 — Shared month-grid primitive used by the range-picker overlay.
+ * — Shared month-grid primitive used by the range-picker overlay.
  *
  * Renders one month as a 7-column grid with a weekday header row and 6
  * week rows (always 6 to keep the overlay height stable across months).

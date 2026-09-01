@@ -13,7 +13,7 @@ import { FieldItem } from '@coolms/core-angular';
  *
  * An empty value is meaningful rather than missing: for the admin accent it
  * means "no personal override, use the deployment's colour", which is a
- * different state from picking a colour that happens to match it (#2033).
+ * different state from picking a colour that happens to match it.
  */
 @Component({
     selector: 'app-color-field',

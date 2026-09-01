@@ -27,7 +27,7 @@ export interface CmsRangeSelectionRequest<T> {
 }
 
 /**
- * Shared item-interactions primitive (ADR-092). Normalizes click /
+ * Shared item-interactions primitive. Normalizes click /
  * dblclick / contextmenu on any list item across the four selection
  * models the admin SPA uses (Document single, Media toggle, VFS
  * range, Notification mailbox). Selection storage stays on the

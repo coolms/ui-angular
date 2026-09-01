@@ -13,7 +13,7 @@ import { MonthGridComponent } from './month-grid.component';
 import { formatLocalDate } from './prefs-format';
 
 /**
- * #473 — Shared date-range overlay panel.
+ * — Shared date-range overlay panel.
  *
  * Renders two consecutive months side-by-side, the click-start/click-end
  * state machine, hover preview, optional preset chips, and the
@@ -24,12 +24,12 @@ import { formatLocalDate } from './prefs-format';
  *
  * Selection flow:
  *   - Initial state: both pending values null (or seeded from `value`).
- *   - User clicks day A → pendingStart = A, pendingEnd = null.
- *   - User hovers day B → hoverEnd = B (drives in-range preview).
- *   - User clicks day B → pendingEnd = B; if B < A, swap so we
+ *   - User clicks day A -> pendingStart = A, pendingEnd = null.
+ *   - User hovers day B -> hoverEnd = B (drives in-range preview).
+ *   - User clicks day B -> pendingEnd = B; if B < A, swap so we
  *     always store [lo, hi] in chronological order.
- *   - User clicks Apply → emits `apply({start, end})`.
- *   - User clicks Cancel / clicks outside → emits `cancel()`.
+ *   - User clicks Apply -> emits `apply({start, end})`.
+ *   - User clicks Cancel / clicks outside -> emits `cancel()`.
  *
  * Inputs preserve the host picker's existing public contract — `min`,
  * `max`, `firstDay`, `value` — so the host just forwards them.
@@ -212,7 +212,7 @@ export interface DateRangeOverlayResult {
 export class DateRangeOverlayComponent {
     private readonly userPrefs = inject(UserCalendarPreferencesService);
 
-    // ── Inputs ───────────────────────────────────────────────────────────────
+    // -- Inputs ---------------------------------------------------------------
 
     /** Seed value (`YYYY-MM-DD` pair) — overlay opens with these selected. */
     readonly value       = input<DateRangeOverlayResult | null>(null);
@@ -223,7 +223,7 @@ export class DateRangeOverlayComponent {
     /** Hides preset chips (Today / Last 7 / etc) when false. Defaults true. */
     readonly showPresets = input<boolean>(true);
 
-    // ── Outputs ──────────────────────────────────────────────────────────────
+    // -- Outputs --------------------------------------------------------------
 
     readonly apply = output<DateRangeOverlayResult>();
     // `cancelled`, not `cancel`: an output named after a native DOM event is
@@ -231,7 +231,7 @@ export class DateRangeOverlayComponent {
     // wins is not something the reader of the template can see.
     readonly cancelled = output<void>();
 
-    // ── Internal state ───────────────────────────────────────────────────────
+    // -- Internal state -------------------------------------------------------
 
     /** First day of the LEFT month displayed (year + month index). */
     private readonly cursor = signal<{ year: number; month: number }>(initialCursor());
@@ -281,21 +281,21 @@ export class DateRangeOverlayComponent {
         }
     }
 
-    // ── Selection ────────────────────────────────────────────────────────────
+    // -- Selection ------------------------------------------------------------
 
     onDayClick(iso: string): void {
         const s = this.pendingStart();
         const e = this.pendingEnd();
         if (s === null || (s !== null && e !== null)) {
-            // Either nothing picked yet, or both picked → start fresh.
+            // Either nothing picked yet, or both picked -> start fresh.
             this.pendingStart.set(iso);
             this.pendingEnd.set(null);
             this.hoverEnd.set(null);
             return;
         }
-        // We have a start, no end → this click commits end.
+        // We have a start, no end -> this click commits end.
         if (iso < s) {
-            // Clicked before start → swap so [lo, hi] stays chronological.
+            // Clicked before start -> swap so [lo, hi] stays chronological.
             this.pendingStart.set(iso);
             this.pendingEnd.set(s);
         } else {

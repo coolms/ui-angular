@@ -47,16 +47,10 @@ this bundle — two copies of one runtime in any application that installs both.
 
 ## Status
 
-Not published. One dependency stands between this package and a standalone
-build: two dynamic-form fields import `CoolmsEditorComponent` from
-`@coolms/editor-angular`, which is not a package yet — it currently lives in
-the admin application at `src/app/coolms-editor`, already behind its own
-`public-api.ts`. Until it is extracted, `npm run build` here reports exactly
-two `TS2307`s and nothing else.
-
-The application that consumes this kit builds and tests green today, because it
-compiles the kit from source through a path mapping and resolves the editor
-from its own tree.
+A pre-release: the shape is still moving and it carries no compatibility
+promise. Two dynamic-form fields import CoolmsEditorComponent from
+@coolms/editor-angular, which is a peer -- install it alongside this kit
+if you use those fields.
 
 ## Licence
 

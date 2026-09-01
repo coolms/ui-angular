@@ -14,7 +14,7 @@ import type {
 } from './types';
 
 /**
- * ADR-099 Phase 1.5 sub-phase 1.5b -- thin client for the 7 admin
+ * Phase 1.5 sub-phase 1.5b -- thin client for the 7 admin
  * proxy endpoints shipped in 1.5a. Kept in its own service rather
  * than bolted onto `ApiService` so the admin-only surface stays
  * scoped and easy to delete if Centrifugo is ever removed.

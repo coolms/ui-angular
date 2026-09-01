@@ -23,7 +23,7 @@ const MONTH_NAMES = [
 /**
  * Single-value, preference-aware date+time field.
  *
- * The range pickers (`app-datetime-range-picker` etc.) cover start→end
+ * The range pickers (`app-datetime-range-picker` etc.) cover start->end
  * windows, but a lot of fields are a *single* optional instant — e.g. a
  * content variant's "publish at" / "unpublish at" (each independently
  * blankable). The native `<input type="datetime-local">` can't honour the
@@ -157,7 +157,7 @@ export class DateTimeFieldComponent {
 
     readonly open = signal(false);
 
-    /** Month being viewed; null → derive from the value (or today). */
+    /** Month being viewed; null -> derive from the value (or today). */
     private readonly viewOverride = signal<{ y: number; m: number } | null>(null);
 
     constructor() {

@@ -10,7 +10,7 @@ import {
 } from './explorer-view-mode';
 
 /**
- * The view-mode buttons every explorer shows (#1709).
+ * The view-mode buttons every explorer shows.
  *
  * One control, one set of icons, one order — driven by the modes the layout
  * YAML declares. It replaces three per-module implementations that had drifted

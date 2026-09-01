@@ -13,7 +13,7 @@ import { DataGridFilterWidgetConfig } from './datagrid-filter-widget-registry';
  * OptionSource primitive.
  *
  * Reads its options from `config.options`: a static `enumOptions` list and/or a
- * tagged `source` key (→ `/api/v1/options/{source}`), exactly like the
+ * tagged `source` key (-> `/api/v1/options/{source}`), exactly like the
  * type-driven multi-select branch in the grid. It owns the `in` operator
  * (falling back to the column's first operator) and stores the picked tokens as
  * a JSON-array string in a single {@link ActiveFilter} entry — the wire shape

@@ -14,7 +14,7 @@ export interface DayGroup<T> {
 
 /**
  * Split a chronologically-ordered list into per-day groups — the WhatsApp-style
- * "date chip between day runs" model for a chat thread (#1033). Each item's day
+ * "date chip between day runs" model for a chat thread. Each item's day
  * is resolved in the user's tz via {@link DateTimeFormatService}, so a single
  * date chip separates day runs and individual bubbles need only show the time.
  *

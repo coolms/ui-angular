@@ -25,7 +25,7 @@ import { AuthState } from '@coolms/core-angular';
 /**
  * One row in the multi-select dropdown.
  *
- * Mirrors the backend {@link App\Core\Domain\Option\Option} VO from the
+ * Mirrors the backend's Option value object from the
  * OptionSource ship — `value` is the stable wire token used in RQL
  * filter expressions, `label` is the human-readable display name, and
  * `group` (optional) populates the dropdown's section headers (e.g.
@@ -69,7 +69,7 @@ interface OptionGroup {
  * shows "N selected" when collapsed and the chip-list inline when
  * the parent gives it enough horizontal space.
  *
- * Built for the DataGrid `in`-op filter row (OptionSource ship #492),
+ * Built for the DataGrid `in`-op filter row (OptionSource ship),
  * but standalone — any caller wanting a grouped multi-select can wire
  * it the same way.
  */
@@ -293,7 +293,7 @@ interface OptionGroup {
     `],
 })
 export class MultiOptionSelectComponent implements OnInit {
-    // ─── Inputs ──────────────────────────────────────────────────────
+    // --- Inputs ------------------------------------------------------
 
     /** Currently-selected option values. */
     readonly values = input<readonly string[]>([]);
@@ -319,11 +319,11 @@ export class MultiOptionSelectComponent implements OnInit {
      */
     readonly options = input<readonly MultiOptionRow[]>([]);
 
-    // ─── Outputs ─────────────────────────────────────────────────────
+    // --- Outputs -----------------------------------------------------
 
     readonly valuesChange = output<readonly string[]>();
 
-    // ─── Internals ───────────────────────────────────────────────────
+    // --- Internals ---------------------------------------------------
 
     private readonly http       = inject(HttpClient);
     private readonly store      = inject(Store);
@@ -460,7 +460,7 @@ export class MultiOptionSelectComponent implements OnInit {
         ).subscribe(q => this.searchQuery.set(q ?? ''));
     }
 
-    // ─── User interactions ───────────────────────────────────────────
+    // --- User interactions -------------------------------------------
 
     @HostListener('document:click', ['$event.target'])
     onOutsideClick(target: EventTarget | null): void {
@@ -518,7 +518,7 @@ export class MultiOptionSelectComponent implements OnInit {
         this.valuesChange.emit([]);
     }
 
-    // ─── Lazy fetch ──────────────────────────────────────────────────
+    // --- Lazy fetch --------------------------------------------------
 
     /**
      * One-shot full-catalogue fetch from the OptionSource endpoint.

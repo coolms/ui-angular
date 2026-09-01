@@ -1,6 +1,6 @@
 /**
- * ADR-099 Phase 1.5 sub-phase 1.5b -- TypeScript shapes that mirror
- * the backend `App\Centrifugo\Infrastructure\ApiPlatform\Resource\*`
+ * Phase 1.5 sub-phase 1.5b -- TypeScript shapes that mirror
+ * the backend's Centrifugo admin resources
  * classes returned by `/api/v1/centrifugo/admin/*`. Field names match
  * the JSON-LD output one-for-one (camelCase per Symfony serializer).
  */

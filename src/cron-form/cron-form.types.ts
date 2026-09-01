@@ -66,7 +66,7 @@ export function buildDefaultState(): CronFormState {
 /**
  * Serialise the form state into a 5-field cron expression. The
  * resulting string is what the backend's `Cron\CronExpression` parser
- * consumes via `App\Scheduler\Infrastructure\Trigger\CronTrigger`.
+ * consumes as its cron trigger expression.
  */
 export function serialiseCron(s: CronFormState): string {
     const { minute, hour } = parseTime(s.time);
@@ -190,7 +190,7 @@ export function summariseCron(expression: string | null | undefined): string {
     return trimmed;
 }
 
-// ── helpers ─────────────────────────────────────────────────────────────────
+// -- helpers -----------------------------------------------------------------
 
 function isInt(s: string): boolean {
     return /^-?\d+$/.test(s);

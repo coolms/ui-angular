@@ -20,15 +20,15 @@ import {
 import { formatLocalDate } from './prefs-format';
 
 /**
- * #473 — Proper date range picker.
+ * — Proper date range picker.
  *
  * Renders a SINGLE trigger field showing the span as one string
- * (e.g. `2026-05-01 → 2026-05-31`) in the user's `dateFormat`. Clicking
+ * (e.g. `2026-05-01 -> 2026-05-31`) in the user's `dateFormat`. Clicking
  * the trigger opens a fixed-position overlay panel with two consecutive
  * months side-by-side, click-start / click-end selection, hover preview,
  * preset chips, and Cancel / Reset / Apply buttons.
  *
- * Public API unchanged from the legacy #436 component so consumers
+ * Public API unchanged from the legacy component so consumers
  * (DataGrid filter row, CalendarEventEditor) don't need updates:
  *
  *   Inputs:
@@ -45,7 +45,7 @@ import { formatLocalDate } from './prefs-format';
  *                                          when both endpoints are blank
  *
  * Wire format on the output (`{ start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' }`)
- * is unchanged so the backend `App\Core\Domain\ValueObject\DateRange`
+ * is unchanged so the backend's DateRange value object
  * consumes it without changes.
  */
 export interface DateRangeValue {
@@ -175,7 +175,7 @@ export class DateRangePickerComponent implements OnDestroy {
     private readonly userPrefs = inject(UserCalendarPreferencesService);
     private readonly host      = inject(ElementRef<HTMLElement>);
 
-    // ── Inputs ───────────────────────────────────────────────────────────────
+    // -- Inputs ---------------------------------------------------------------
 
     readonly value      = input<DateRangeValue | null>(null);
     readonly min        = input<string | null>(null);
@@ -204,11 +204,11 @@ export class DateRangePickerComponent implements OnDestroy {
      */
     readonly label      = input<string>('');
 
-    // ── Outputs ──────────────────────────────────────────────────────────────
+    // -- Outputs --------------------------------------------------------------
 
     readonly valueChange = output<DateRangeValue | null>();
 
-    // ── Internal state ───────────────────────────────────────────────────────
+    // -- Internal state -------------------------------------------------------
 
     private readonly _value = signal<DateRangeValue | null>(null);
     /** Mirror of `_value` consumed by the overlay's `value` input. */

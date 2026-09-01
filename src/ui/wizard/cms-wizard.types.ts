@@ -1,5 +1,5 @@
 /**
- * Phase X-2.6a — Reusable wizard primitive.
+ *-2.6a — Reusable wizard primitive.
  *
  * A `WizardStepConfig` is a step's declaration. The caller provides
  * the visual ordering and the gating predicate; the primitive owns

@@ -23,7 +23,7 @@ export const FIELD_WIDGET = new InjectionToken<readonly FieldWidgetEntry[]>('FIE
 
 /**
  * Front-end side of the field-widget registry (the backend half is
- * `App\Field\Domain\Registry\FieldWidgetRegistry`). Maps a widget `kind` — as
+ * the server's field-widget registry). Maps a widget `kind` — as
  * carried by a field descriptor's `widget.kind` from `GET /content/field-panels`
  * — to the Angular component that renders it.
  *

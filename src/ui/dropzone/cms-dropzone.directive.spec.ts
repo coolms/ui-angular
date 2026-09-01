@@ -113,7 +113,7 @@ describe('CmsDropzoneDirective', () => {
 
     it('keeps active class while dragging over a child element (enter-counter pattern)', () => {
         const { hostEl, fixture } = setup({});
-        // Two dragenter (host then child), one dragleave (host → child boundary).
+        // Two dragenter (host then child), one dragleave (host -> child boundary).
         hostEl.dispatchEvent(makeDragEvent('dragenter', { types: ['Files'] }));
         hostEl.dispatchEvent(makeDragEvent('dragenter', { types: ['Files'] }));
         hostEl.dispatchEvent(makeDragEvent('dragleave', { types: ['Files'] }));

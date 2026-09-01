@@ -16,7 +16,7 @@ export interface ContextAsset {
 
 /**
  * Renders HTML inside an ISOLATED frame carrying the site's own stylesheets
- * (#1767) — the shared "render in the real context" surface.
+ * — the shared "render in the real context" surface.
  *
  * ## Why an iframe and not shadow DOM or scoped CSS
  *
@@ -159,7 +159,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
         // body itself, and overriding it here would be this surface lying
         // about the theme in the one place it exists to be truthful.
         //
-        // Falsy check, not `null ===` (#1767): API-Platform OMITS a null
+        // Falsy check, not `null ===`: API-Platform OMITS a null
         // property, so `contentMaxWidth` arrives as `undefined` rather than
         // null and a strict null test let it through to `attr()`, which
         // crashed on `undefined.replace`. Absent and null mean the same thing

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import type { EntityFieldsResponse } from './cms-filter-builder.types';
 
 /**
- * Phase X-2.6a — thin RPC for the X-2.5 endpoint:
+ *-2.6a — thin RPC for the X-2.5 endpoint:
  *
  *   GET /api/v1/entity/{alias}/filters
  *

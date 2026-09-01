@@ -246,7 +246,7 @@ export class DynamicLayoutComponent {
     /**
      * Form id + context, threaded down from <app-dynamic-form>. When a formId is
      * present, a wizard's "Next" additionally gates on the SERVER (WZ-C) after the
-     * instant client check. Null in contexts without a form id → client-only gate.
+     * instant client check. Null in contexts without a form id -> client-only gate.
      */
     formId  = input<string | null>(null);
     context = input<'create' | 'edit'>('create');

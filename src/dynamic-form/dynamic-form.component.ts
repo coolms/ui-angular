@@ -74,7 +74,7 @@ import { ErrorBannerComponent } from '../ui/state/error-banner.component';
     `,
 })
 export class DynamicFormComponent implements OnInit {
-    // ── Inputs ────────────────────────────────────────────────────────────────
+    // -- Inputs ----------------------------------------------------------------
     formId          = input.required<string>();
     context         = input<'create' | 'edit'>('create');
     initialValue    = input<Record<string, unknown>>({});
@@ -91,7 +91,7 @@ export class DynamicFormComponent implements OnInit {
      * pins in its environment, say. The definition's own `readonly` still
      * applies; this only ever adds.
      *
-     * ⚠️ Read-only here means the control is DISABLED, and Angular still reports
+     *  Read-only here means the control is DISABLED, and Angular still reports
      * a disabled control in `getRawValue()` — which {@link submit} uses, so the
      * value is still submitted. A host that must not send these has to drop them
      * itself; changing `getRawValue()` to `value` would silently stop submitting
@@ -114,13 +114,13 @@ export class DynamicFormComponent implements OnInit {
      */
     showActions = input<boolean>(true);
 
-    // ── Outputs ───────────────────────────────────────────────────────────────
+    // -- Outputs ---------------------------------------------------------------
     submitted    = output<Record<string, unknown>>();
     cancelled    = output<void>();
     /** Emitted on every form value change — useful for dirty-state tracking. */
     formChanged  = output<void>();
 
-    // ── State ─────────────────────────────────────────────────────────────────
+    // -- State -----------------------------------------------------------------
     loading     = signal(true);
     loadError   = signal<string | null>(null);
     serverError = signal<string | null>(null);
@@ -213,7 +213,7 @@ export class DynamicFormComponent implements OnInit {
     /**
      * Give a `number` field a NUMBER.
      *
-     * ⚠️ **Angular's `NumberValueAccessor` never applies here, and that is not
+     *  **Angular's `NumberValueAccessor` never applies here, and that is not
      * obvious.** Its selector is `input[type=number]`, matched at COMPILE time
      * against the static template — and this form binds `[type]="item().type"`,
      * so the selector cannot match and the default string accessor is used

@@ -15,7 +15,7 @@ import { filter } from 'rxjs/operators';
  * `title` is read by the admin shell wrapper to render the drawer
  * header; an empty title falls back to a generic 'Panel' label.
  *
- * **Auto-close on navigation** (M1.2.f.4): every `NavigationEnd`
+ * **Auto-close on navigation** (): every `NavigationEnd`
  * closes the drawer if it's open. Without this, a panel opened on
  * page A (e.g., Calendar settings) stayed visible after navigating
  * to page B (e.g., Navigation), showing stale, irrelevant content.

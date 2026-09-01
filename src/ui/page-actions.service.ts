@@ -38,7 +38,7 @@ export class PageActionsService {
 
     /**
      * Register click handlers without touching the rendered action set.
-     * Used by ADR-127 layout-driven pages where the header buttons come
+     * Used by layout-driven pages where the header buttons come
      * from layout YAML (the layout shell renders them) and the slot
      * component only contributes behaviour. Each call merges into the
      * existing handler map (matching ids overwrite, others survive).

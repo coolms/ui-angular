@@ -1,7 +1,7 @@
 import { type Observable } from 'rxjs';
 
 /**
- * Ship B.X.1 -- generic hierarchical-select primitive (ADR-106).
+ * Ship B.X.1 -- generic hierarchical-select primitive.
  *
  * One node in the picker tree, generic over an adapter-specific
  * payload `T` that the adapter ships through unchanged. Adopters

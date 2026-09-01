@@ -24,7 +24,7 @@ import {
 } from './cms-filter-builder.types';
 import { EntityFieldsService } from './entity-fields.service';
 
-/** Phase X-2.5b -- the normalized shape the builder iterates over:
+/**-2.5b -- the normalized shape the builder iterates over:
  *  every selectable field carries an `isVirtual` flag plus an
  *  optional description that powers the row-level tooltip. Stored
  *  fields carry `isVirtual: false` and `description: null`; virtual
@@ -36,7 +36,7 @@ type FilterField = FieldDescriptor & {
 };
 
 /**
- * Phase X-2.6a — generic, entity-agnostic filter builder.
+ *-2.6a — generic, entity-agnostic filter builder.
  *
  * Reads the X-2.5 endpoint's field descriptors and renders an
  * AND-chained criterion editor on top. Each row has a field
@@ -260,7 +260,7 @@ export class CmsFilterBuilderComponent {
 
     /** All stored fields the endpoint reported. */
     private readonly allFields = signal<ReadonlyArray<FieldDescriptor>>([]);
-    /** Phase X-2.5b -- virtual (computed) fields reported under the
+    /**-2.5b -- virtual (computed) fields reported under the
      *  endpoint's `virtualFields` slot. Empty when the entity
      *  declares no virtual fields. */
     private readonly virtualFields = signal<ReadonlyArray<VirtualFieldDescriptor>>([]);
@@ -344,7 +344,7 @@ export class CmsFilterBuilderComponent {
         });
     }
 
-    // ─── Row mutation ────────────────────────────────────────────────────
+    // --- Row mutation ----------------------------------------------------
 
     protected addRow(): void {
         const first = this.filterableFields()[0];
@@ -401,7 +401,7 @@ export class CmsFilterBuilderComponent {
         this.rows.set(this.rows().map((r) => (r.id === id ? { ...r, value } : r)));
     }
 
-    // ─── Read helpers used by the template ──────────────────────────────
+    // --- Read helpers used by the template ------------------------------
 
     protected isValueless(op: string): boolean {
         return VALUELESS_OPERATORS.has(op);
@@ -439,7 +439,7 @@ export class CmsFilterBuilderComponent {
         return Number.isFinite(n) ? n : null;
     }
 
-    // ─── RQL composition ────────────────────────────────────────────────
+    // --- RQL composition ------------------------------------------------
 
     private composeRql(rows: ReadonlyArray<FilterRow>): string {
         const tokens: string[] = [];
@@ -463,11 +463,11 @@ export class CmsFilterBuilderComponent {
         // repeated params (`RqlParser::extractFilterParams` reads
         // `filter[]=a&filter[]=b` first, repeated `filter=` second).
         //
-        // This used to join with a literal ' and ' (#1670), which produced a
+        // This used to join with a literal ' and ', which produced a
         // single filter whose VALUE swallowed the rest of the expression —
         // and the damage depended on which criterion came first. Leading with
         // a real boolean column (`isActive eq true and fullName cn dzm`) made
-        // Postgres reject `"true and fullName cn dzm"` as a boolean → 500 →
+        // Postgres reject `"true and fullName cn dzm"` as a boolean -> 500 ->
         // "Unable to compute count." Leading with a VIRTUAL field
         // (`fullName cn dzm and isActive eq true`) was worse: the virtual
         // preprocessor peels it off before the visitor, so it searched for

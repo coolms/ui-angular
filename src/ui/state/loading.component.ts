@@ -6,7 +6,7 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
  * "Loading…" text / blank panels each page rolled on its own, so a page never
  * just goes silently blank while data loads.
  *
- * It draws {@link CmsLoaderComponent}, the platform mark (#2073). It used to
+ * It draws {@link CmsLoaderComponent}, the platform mark. It used to
  * draw a Bootstrap `spinner-border`, which is how a settings screen ended up
  * showing the same spinner as every other product on the web while the branded
  * loader sat one directory away, opt-in. A shared component is the only place

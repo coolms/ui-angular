@@ -37,7 +37,7 @@
     style="overflow:auto; flex:1; min-height:0; display:flex; flex-direction:column"
     (click)="onBackgroundClick($event)"
     (contextmenu)="onBackgroundContextMenu($event)">
-    <!-- #1763 — once widths are pinned the table switches to fixed layout
+ <!-- — once widths are pinned the table switches to fixed layout
     and sizes to the SUM of its columns (scrolling rather than
     squeezing), so dragging one column moves only that column.
     min-width keeps a narrow table filling the pane. -->
@@ -52,7 +52,7 @@
             <th style="width:32px"></th>
           }
           <!-- data-field: the ONLY reliable way to measure a column's
-          header (#1763). The row also carries a leading drag cell
+ header. The row also carries a leading drag cell
           and a trailing chooser cell, so counting positions
           mis-aligns fields to the wrong `th`. -->
           @for (col of visibleColumns(); track col) {
@@ -141,7 +141,7 @@
                 }
               </select>
             }
-            <!-- DataGrid Ship C — Date range filter via the shared range-picker primitive (#436).
+            <!-- DataGrid Ship C — Date range filter via the shared range-picker primitive.
             Same wire shape as the legacy two-input pair: emits {start, end} which the
             component maps to two ActiveFilter entries (op='ge' + op='le'). -->
             @else if (col.type === 'date' && hasColumnFilter(col)) {
@@ -191,7 +191,7 @@
     }
     <!-- Numeric range filter: from (≥) and to (≤) number inputs side by side.
     `filesize` shares it — the bounds are typed in bytes, which is what
-    the column stores; only the CELL renders as KB/MB (#1710). -->
+ the column stores; only the CELL renders as KB/MB. -->
     @else if ((col.type === 'number' || col.type === 'filesize') && hasColumnFilter(col)) {
     <div style="display:flex; gap:4px">
       <input type="number"
@@ -298,7 +298,7 @@
           [class.no-truncate]="!cellTruncates(col)"
           [class.cms-tree-cell]="isTree() && colIndex === 0"
           style="vertical-align:middle">
-          <!-- Tree disclosure lead (#925/#927) — lives INSIDE the first data cell
+          <!-- Tree disclosure lead — lives INSIDE the first data cell
           (not a dedicated column): because .data-cell is max-width:0 (opts out
           of column sizing) deep nesting eats into THIS truncating cell instead
           of widening a gutter that pushes every other column right. Layout is a
@@ -402,7 +402,7 @@
                   </span>
                 </span>
               }
-              <!-- Rich cell: per-row glyph beside the value (#1762). -->
+              <!-- Rich cell: per-row glyph beside the value. -->
               @case ('icon') {
                 <span class="dg-icon-cell">
                   @if (iconClass(col, row); as glyph) {
@@ -421,14 +421,14 @@
                 <span class="small">{{ row[col.field] }}</span>
               }
               <!-- Bytes, rendered human-readable while the CELL VALUE stays
-              the raw number (#1710). Formatting client-side into a
+ the raw number. Formatting client-side into a
               string column instead would have sorted "886 B" above
               "328.4 KB", because that is alphabetical order. -->
               @case ('filesize') {
                 <span class="small">{{ formatFileSizeCell(row[col.field]) }}</span>
               }
               <!-- DataGrid Ship C — Date/Datetime/Time cells rendered through
-              the user's TZ + date/time format prefs (#436 prefs service). -->
+ the user's TZ + date/time format prefs. -->
               @case ('date') {
                 <span class="small">{{ formatDateTimeCell(row[col.field], 'date') }}</span>
               }
@@ -461,7 +461,7 @@
       <td class="col-chooser-td"></td>
     </tr>
   }
-  <!-- Loading skeleton (#929) — shimmer rows during the initial load so the
+  <!-- Loading skeleton — shimmer rows during the initial load so the
   grid body never flashes blank. Mutually exclusive with the empty state
   (which is gated on !loading) and with real rows (none yet). -->
   @if (showSkeleton()) {

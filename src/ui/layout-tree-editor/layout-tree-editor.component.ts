@@ -23,7 +23,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
 /**
  * Recursive editor for a form's `formOptions.layout` (Form Builder richness FB-3).
  *
- * Edits the container tree (tabs → tab → group → grid → column) + places field
+ * Edits the container tree (tabs -> tab -> group -> grid -> column) + places field
  * aliases into containers. Self-recurses via an `<ng-template>` outlet (a
  * standalone component can't list itself in `imports`, so template recursion is
  * the clean approach) — ONE component owns all mutation logic operating on a
@@ -198,7 +198,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
 })
 export class LayoutTreeEditorComponent {
     /** Container node types (everything else in `children` is a field-alias leaf).
-     *  `wizard`→`step` are the multi-step variant (structurally like `tabs`→`tab`);
+     *  `wizard`->`step` are the multi-step variant (structurally like `tabs`->`tab`);
      *  the dynamic-form renderer paints Back/Next step navigation for them. */
     readonly containerTypes: ReadonlyArray<string> = ['tabs', 'tab', 'wizard', 'step', 'group', 'grid', 'column'];
     readonly operators: ReadonlyArray<{ id: string; label: string }> = [
@@ -230,7 +230,7 @@ export class LayoutTreeEditorComponent {
 
     @Output() readonly nodesChange = new EventEmitter<LayoutNode[]>();
 
-    // ── Node-shape helpers (the model is opaque Records / strings) ────────────
+    // -- Node-shape helpers (the model is opaque Records / strings) ------------
 
     isContainer(node: unknown): boolean {
         return !!node && typeof node === 'object' && !Array.isArray(node)
@@ -258,7 +258,7 @@ export class LayoutTreeEditorComponent {
         return node['children'] as unknown[];
     }
 
-    // ── showWhen helpers ──────────────────────────────────────────────────────
+    // -- showWhen helpers ------------------------------------------------------
 
     private showWhen(node: LayoutNode): ShowWhen | null {
         const w = node['showWhen'];
@@ -276,7 +276,7 @@ export class LayoutTreeEditorComponent {
         return op !== 'empty' && op !== 'notEmpty';
     }
 
-    // ── Mutations (operate in place on the local model, then emit) ────────────
+    // -- Mutations (operate in place on the local model, then emit) ------------
 
     setProp(node: LayoutNode, key: string, value: unknown): void {
         if (value === '' || value === false || value == null) delete node[key];

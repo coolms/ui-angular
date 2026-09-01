@@ -13,7 +13,7 @@ import { AuthRefreshCoordinator, AuthState, RealtimeTokenClient } from '@coolms/
 const ACCESS_TOKEN_REFRESH_GRACE_MS = 30_000;
 
 /**
- * ADR-099 sub-phase 2d -- root-level singleton that owns one
+ * sub-phase 2d -- root-level singleton that owns one
  * `Centrifuge` instance per SPA session. Components never construct
  * their own client; they go through `CentrifugoNotificationStreamService`
  * (which calls `connect()` lazily and then `subscribe()`).

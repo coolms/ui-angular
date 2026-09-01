@@ -101,7 +101,7 @@ export interface MultiselectOption {
     styles: [`
         :host { display: block; }
 
-        /* ── Tag chips ── */
+        /* -- Tag chips -- */
         .ms-tags { display: flex; flex-wrap: wrap; gap: 4px; }
         .ms-tag {
             display: inline-flex; align-items: center; gap: 4px;
@@ -114,7 +114,7 @@ export interface MultiselectOption {
         }
         .ms-tag-remove[disabled] { cursor: not-allowed; opacity: .5; }
 
-        /* ── Dropdown panel ── */
+        /* -- Dropdown panel -- */
         .ms-panel {
             background: var(--cms-surface);
             border: 1px solid var(--cms-border);

@@ -304,8 +304,8 @@ export class CronFormComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['value'] && !changes['value'].firstChange) {
             // Only adopt external value changes when they differ from what we'd
-            // emit — prevents the cycle: emit → parent stores → input updates →
-            // parse → emit (which would also be lossy on custom expressions).
+            // emit — prevents the cycle: emit -> parent stores -> input updates ->
+            // parse -> emit (which would also be lossy on custom expressions).
             const current = serialiseCron(this.state());
             const incoming = (this.value ?? '').trim();
             if (incoming !== current) {

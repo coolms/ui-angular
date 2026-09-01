@@ -34,7 +34,7 @@ export interface DeleteNodeDialogResult {
  * hand-rolled `cms-dialog-*` divs. Already opened via CDK `Dialog.open()`,
  * so this is a template-only swap; consumers (data in, result out) are
  * unchanged. The Delete button uses the global `.cms-btn-danger` so it
- * matches the converged confirm dialog ([#894]).
+ * matches the converged confirm dialog ().
  */
 @Component({
     selector: 'app-delete-node-dialog',

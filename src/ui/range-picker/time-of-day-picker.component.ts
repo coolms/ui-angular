@@ -10,7 +10,7 @@ import {
 import { UserCalendarPreferencesService } from '../../util/user-calendar-preferences.service';
 
 /**
- * #473 — Small time-of-day picker primitive used inside the time-range
+ * — Small time-of-day picker primitive used inside the time-range
  * and datetime-range overlays.
  *
  * Renders an hour `<select>` (00-23 or 1-12 + AM/PM) + a minute

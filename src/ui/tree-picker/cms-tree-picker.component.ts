@@ -47,7 +47,7 @@ const OVERLAY_OFFSET_Y_PX = 2;
 const OVERLAY_MAX_HEIGHT_PX = 360;
 
 /**
- * Ship B.X.1 -- generic hierarchical-select primitive (ADR-106).
+ * Ship B.X.1 -- generic hierarchical-select primitive.
  *
  * Accepts a `CmsTreePickerSource<T>` adapter and renders an overlay
  * dropdown anchored to a trigger button. The dropdown shows a flat

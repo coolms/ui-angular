@@ -1,5 +1,5 @@
 /**
- * Phase X-2.6a — types for `CmsFilterBuilder`.
+ *-2.6a — types for `CmsFilterBuilder`.
  *
  * Wire shapes mirror the backend's `EntityFieldsResource`
  * (`/api/v1/entity/{alias}/filters`, X-2.5).
@@ -26,11 +26,11 @@ export interface FieldDescriptor {
     readonly filterOperators: ReadonlyArray<string>;
     readonly sortable: boolean;
     readonly searchable: boolean;
-    /** Backed-enum case value → display label. Null for non-enum fields. */
+    /** Backed-enum case value -> display label. Null for non-enum fields. */
     readonly enumValues: Readonly<Record<string, string>> | null;
 }
 
-/** Phase X-2.5b -- one virtual (computed) field as exposed under
+/**-2.5b -- one virtual (computed) field as exposed under
  *  the response's `virtualFields` slot. Virtual fields are
  *  implicitly filterable; the wizard renders them alongside stored
  *  fields with a `[computed]` marker. */
@@ -47,7 +47,7 @@ export interface EntityFieldsResponse {
     readonly alias: string;
     readonly entityType: string;
     readonly fields: ReadonlyArray<FieldDescriptor>;
-    /** Phase X-2.5b -- absent on pre-X-2.5b deployments; the builder
+    /**-2.5b -- absent on pre-X-2.5b deployments; the builder
      *  defaults to an empty list and the UI is unchanged. */
     readonly virtualFields?: ReadonlyArray<VirtualFieldDescriptor>;
 }

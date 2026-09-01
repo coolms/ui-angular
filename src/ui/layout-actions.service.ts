@@ -3,7 +3,7 @@ import { LayoutHeaderAction, NaviGraphService } from '@coolms/core-angular';
 import { ToolbarAction } from './page-toolbar.component';
 
 /**
- * Turns layout-config actions (ADR-127) into rendered ToolbarActions.
+ * Turns layout-config actions into rendered ToolbarActions.
  *
  * Two things live here that used to live in every page that has a
  * config-driven header or footer.
@@ -35,7 +35,7 @@ export class LayoutActionsService {
 
     /**
      * @param actions  the layout's `headerActions` / `footerActions` (absent = none)
-     * @param context  what the conditions are evaluated against, ADR-093 strict:
+     * @param context  what the conditions are evaluated against, strict:
      *                 a condition naming a field the page never published is FALSE
      * @param allows   decides a `requires` token; omitted means every token passes,
      *                 so a config gate cannot silently hide an action from a page

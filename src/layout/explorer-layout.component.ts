@@ -162,7 +162,7 @@ interface PanelSlotConfig {
             border-top: 1px solid var(--cms-border);
         }
 
-        /* ── Panels ─────────────────────────────────────────────────────── */
+        /* -- Panels ------------------------------------------------------- */
 
         .explorer-panel {
             flex-shrink: 0;
@@ -193,7 +193,7 @@ interface PanelSlotConfig {
             min-width: 0;
         }
 
-        /* ── Resize handles ─────────────────────────────────────────────── */
+        /* -- Resize handles ----------------------------------------------- */
 
         .resize-handle {
             width: 5px;
@@ -245,7 +245,7 @@ export class ExplorerLayoutComponent implements OnInit {
     readonly headerIcon  = signal<string | null>(null);
 
     /**
-     * View modes this explorer offers, from the layout YAML (#1709). Empty =
+     * View modes this explorer offers, from the layout YAML. Empty =
      * no switcher. The host reads these to render the control; the layout does
      * not render it itself, because the mode belongs to whatever draws the
      * items and only the host knows what that is.
@@ -343,7 +343,7 @@ export class ExplorerLayoutComponent implements OnInit {
         this.headerTitle.set((cfg.title as string) ?? null);
         this.headerIcon.set((cfg.icon  as string) ?? null);
 
-        // #1709 — which view modes this explorer offers, declared in YAML.
+ // — which view modes this explorer offers, declared in YAML.
         // Unknown tokens are DROPPED rather than defaulted: a typo should cost
         // that one button, not silently add a mode the host cannot render.
         // An empty/absent list means "this explorer has no switcher", which is

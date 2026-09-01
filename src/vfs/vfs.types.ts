@@ -40,7 +40,7 @@ export interface VfsNodeDto {
     readonly permissions: { readonly read: boolean; readonly write: boolean; readonly execute: boolean };
     /**
      * Module-owned metadata bag. Always been on the wire; declared here since
-     * #1774, where the DTMPL editor reads `documentNative` to know it is
+ * An earlier fix, where the DTMPL editor reads `documentNative` to know it is
      * opening an authored DOCUMENT rather than a page fragment.
      *
      * Optional and loosely typed on purpose: every module stamps its own keys,
@@ -74,7 +74,7 @@ export interface VfsDirectoryPage {
 
 /**
  * One entry in the New File menu, contributed by an installed module and served
- * by `GET /vfs/file-kinds` (#2056).
+ * by `GET /vfs/file-kinds`.
  *
  * The client stays generic: it never knows what a "Word template" IS, only that
  * creating one means POSTing to `endpoint` with the typed name under

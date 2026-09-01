@@ -14,7 +14,7 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
  *
  * ## Why this exists
  * Three list-page shapes had drifted across the admin SPA:
- *   1. the mature pattern — `*-page.component.ts` → `<cms-list-layout>` →
+ *   1. the mature pattern — `*-page.component.ts` -> `<cms-list-layout>` ->
  *      `*-list` with `<app-page-toolbar treeSlug>` + grid, wired through
  *      `PageActionsService` (consistent, but ~2 components + 2 YAMLs +
  *      a service bridge of boilerplate per page);

@@ -5,7 +5,7 @@ import { CentrifugoClientService } from './centrifugo-client.service';
 import type { NotificationStreamService } from './notification-stream.service';
 
 /**
- * ADR-099 sub-phase 2d -- Centrifugo-backed replacement for
+ * sub-phase 2d -- Centrifugo-backed replacement for
  * `PollingNotificationStreamService`. Exposes the same
  * `watch(channel): Observable<void>` contract, so swapping the
  * provider in `app.config.ts` is a single line and every existing

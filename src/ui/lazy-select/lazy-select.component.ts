@@ -93,7 +93,7 @@ export type LazySelectSearchStyle = 'rql' | 'q';
  *  - Calendar selectors pass `searchField:'title'` (or use the static
  *    `options` mode when they've already fetched the list).
  *
- * See task #437 for the full ship plan.
+ * See task for the full ship plan.
  */
 @Component({
     selector: 'app-lazy-select',
@@ -265,7 +265,7 @@ export type LazySelectSearchStyle = 'rql' | 'q';
     `],
 })
 export class LazySelectComponent implements OnInit {
-    // ─── Inputs ──────────────────────────────────────────────────────
+    // --- Inputs ------------------------------------------------------
 
     /** Currently-selected option id. Empty string = nothing selected. */
     value = input<string>('');
@@ -282,7 +282,7 @@ export class LazySelectComponent implements OnInit {
     /** How many rows to request per page (server mode). */
     pageSize = input<number>(50);
 
-    // ─── Server-search mode ──────────────────────────────────────────
+    // --- Server-search mode ------------------------------------------
 
     /**
      * REST collection endpoint. When set, the component builds its own
@@ -311,7 +311,7 @@ export class LazySelectComponent implements OnInit {
      * Field on each API row treated as the wire-format identifier
      * (server mode). Defaults to `id` for resource-style endpoints;
      * OptionSource endpoints (`/api/v1/options/{source}`) use
-     * `value` since they're not Doctrine-backed and don't carry an
+     * `value` since they're not relational and don't carry an
      * `id`. The trigger and the form model both bind to this token.
      */
     valueKey = input<string>('id');
@@ -338,7 +338,7 @@ export class LazySelectComponent implements OnInit {
      */
     loader = input<LazySelectLoader | null>(null);
 
-    // ─── Client-side mode ────────────────────────────────────────────
+    // --- Client-side mode --------------------------------------------
 
     /**
      * Static option list. Used when neither `apiUrl` nor `loader` is
@@ -354,11 +354,11 @@ export class LazySelectComponent implements OnInit {
      */
     preloadedSelection = input<LazySelectOption | null>(null);
 
-    // ─── Outputs ─────────────────────────────────────────────────────
+    // --- Outputs -----------------------------------------------------
 
     valueChange = output<string>();
 
-    // ─── Internals ───────────────────────────────────────────────────
+    // --- Internals ---------------------------------------------------
 
     private readonly http       = inject(HttpClient);
     private readonly store      = inject(Store);
@@ -485,7 +485,7 @@ export class LazySelectComponent implements OnInit {
         });
     }
 
-    // ─── User interactions ───────────────────────────────────────────
+    // --- User interactions -------------------------------------------
 
     @HostListener('document:click', ['$event.target'])
     onOutsideClick(target: EventTarget | null): void {
@@ -530,7 +530,7 @@ export class LazySelectComponent implements OnInit {
         this.valueChange.emit('');
     }
 
-    // ─── Server-mode loader plumbing ─────────────────────────────────
+    // --- Server-mode loader plumbing ---------------------------------
 
     /**
      * Fetch options for the given query. Uses the custom `loader` when

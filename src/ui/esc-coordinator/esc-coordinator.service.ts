@@ -9,7 +9,7 @@ import { DestroyRef, inject, Injectable, NgZone } from '@angular/core';
 export type EscHandler = () => boolean;
 
 /**
- * Shared ESC coordinator (ADR-092 §3). Replaces 3 modal-scope
+ * Shared ESC coordinator ( §3). Replaces 3 modal-scope
  * `@HostListener('document:keydown.escape')` bindings that compete on
  * the same global keystroke. LIFO stack — last registered fires
  * first — matches visual z-index stacking so the topmost overlay

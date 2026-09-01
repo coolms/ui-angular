@@ -30,7 +30,7 @@ import { PageFooterService } from '../ui/page-footer.service';
  *
  * ## Content projection
  * The `content.main` slot can be filled in two ways:
- *  1. Via YAML config (`layoutId` → ConfigService → `slots.content.main.component`)
+ *  1. Via YAML config (`layoutId` -> ConfigService -> `slots.content.main.component`)
  *     which renders a registered component through `<app-slot>`.
  *  2. Via direct content projection: `<cms-list-layout><foo slot="content.main" /></cms-list-layout>`.
  *     Used when the content component needs dynamic inputs (e.g. route params).

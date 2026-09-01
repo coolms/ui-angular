@@ -23,7 +23,7 @@ export interface FilePickerDialogData {
 }
 
 /**
- * `<cms-file-picker>` in its own modal (#1745).
+ * `<cms-file-picker>` in its own modal.
  *
  * The picker was designed to embed, and the newsletter Compose dialog did embed
  * it — which put a scrolling VFS tree inside an already-tall form. The dialog

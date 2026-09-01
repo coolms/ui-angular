@@ -14,7 +14,7 @@ import { CmsWizardStepDirective } from './cms-wizard.directives';
 import type { WizardStepConfig } from './cms-wizard.types';
 
 /**
- * Phase X-2.6a — reusable wizard primitive.
+ *-2.6a — reusable wizard primitive.
  *
  * Modal-agnostic, navigation-only: the host (e.g. document-
  * generation wizard) supplies the step list and the current step
@@ -31,8 +31,8 @@ import type { WizardStepConfig } from './cms-wizard.types';
  * itself on the next change.
  *
  * Keyboard contract:
- *   - Esc → emits `cancelled`
- *   - Enter (when canProceed) → advances; on the final step, this
+ *   - Esc -> emits `cancelled`
+ *   - Enter (when canProceed) -> advances; on the final step, this
  *     emits `completed`
  *
  * ARIA: the progress strip is a `tablist`; each dot is a `tab`;
@@ -45,7 +45,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
     imports: [CommonModule],
     template: `
         <div class="cms-wizard">
-            <!-- Progress strip ─────────────────────────────────────────────-->
+            <!-- Progress strip ----------------------------------------------->
             <div class="cms-wizard__progress"
                  role="tablist"
                  [attr.aria-label]="ariaLabel()">
@@ -68,7 +68,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 }
             </div>
 
-            <!-- Active step content ─────────────────────────────────────────-->
+            <!-- Active step content ------------------------------------------->
             <div class="cms-wizard__body"
                  role="tabpanel"
                  [attr.id]="'cms-wizard-panel-' + currentStepId()"
@@ -82,7 +82,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 }
             </div>
 
-            <!-- Footer actions ──────────────────────────────────────────────-->
+            <!-- Footer actions ------------------------------------------------>
             <div class="cms-wizard__footer">
                 <button type="button"
                         class="cms-wizard__btn cms-wizard__btn--ghost"

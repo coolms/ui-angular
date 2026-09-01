@@ -1,5 +1,5 @@
 /**
- * Range-picker locale-respect helpers (#458) — date + time format/parse
+ * Range-picker locale-respect helpers — date + time format/parse
  * routines keyed off `UserCalendarPreferencesService`'s catalogue.
  *
  * The pickers store **canonical** values internally (`YYYY-MM-DD` +

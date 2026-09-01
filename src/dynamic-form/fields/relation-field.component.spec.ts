@@ -27,13 +27,13 @@ import { provideFieldWidget } from '../../ui/field-widgets/field-widget-registry
  * carrying a comment asking future editors to keep the copy in sync by hand.
  * It could not do otherwise: `RelationFieldComponent` is reachable from
  * `DynamicFormComponent`, whose rich-text field pulls `@coolms/editor-angular`
- * → `@coolms/document-engine`, and the old webpack karma builder could not
+ * -> `@coolms/document-engine`, and the old webpack karma builder could not
  * follow that package's ESM `'./x.js'` specifiers to its `.ts` sources, so a
  * spec that imported the component killed the WHOLE suite at build time. The
  * copy therefore proved exactly nothing about the shipped code: delete the
  * `isMany()` condition from the real handler and the old file stayed green.
  *
- * #2035 moved the `test` target to `@angular/build:karma` (esbuild, sharing
+ * moved the `test` target to `@angular/build:karma` (esbuild, sharing
  * the `build` target's resolution), so the component itself can be mounted.
  * Every assertion below drives the real `onSelectChange` through a real
  * `<select>` `change` event over a real `FormControl`.
@@ -156,7 +156,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
     // the field is round-tripping options the backend already inlined.
     afterEach(() => http.verify());
 
-    // ── cardinality: one — the picker IS the display ─────────────────────────
+    // -- cardinality: one — the picker IS the display -------------------------
 
     it('writes the picked value into the FormControl and dirties it', () => {
         mount('one');
@@ -269,7 +269,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         expect(displayedLabel()).toBe('Gamma');
     });
 
-    // ── cardinality: many — the picker is a queue, tags are the display ──────
+    // -- cardinality: many — the picker is a queue, tags are the display ------
 
     it('appends the first pick and DOES reset the select', () => {
         mount('many');

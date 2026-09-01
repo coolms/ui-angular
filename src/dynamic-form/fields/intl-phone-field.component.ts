@@ -209,7 +209,7 @@ export class IntlPhoneFieldComponent implements OnInit {
         return `+${dial}${digits}`;
     }
 
-    /** "044 668 18 00" → "### ### ## ##" (digits → #, separators preserved). */
+    /** "044 668 18 00" -> "### ### ## ##" (digits -> #, separators preserved). */
     private maskTemplate(example: string | null | undefined): string {
         return example ? example.replace(/\d/g, '#') : '';
     }

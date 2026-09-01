@@ -181,7 +181,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     private readonly themeCompartment = new Compartment();
 
     constructor() {
-        // beforeunload half of the guard (#2484): the per-dialog confirm
+        // beforeunload half of the guard: the per-dialog confirm
         // cannot see a tab close or a reload. Disposed with the component, so
         // a closed editor stops voting.
         this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.dirty()));
@@ -270,7 +270,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     }
 
     /**
-     * ⚠️ This used to be `this.dialogRef.close()` and nothing else, so the
+     *  This used to be `this.dialogRef.close()` and nothing else, so the
      * editor SHOWED "unsaved changes" in its own footer and then threw them
      * away without a word when you pressed Cancel or the header X. The flag
      * was rendered and never consulted.

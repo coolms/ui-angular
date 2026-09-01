@@ -209,9 +209,9 @@ export class RelationFieldComponent implements OnInit {
 
     /**
      * Widget type from relation.dataSource.widget — drives which picker is rendered.
-     * select-tree → SelectTreeComponent (self-contained, handles own fetch + tree)
-     * select-search → (future) integrated search dropdown
-     * select (default) → native <select> with optional stacked search input
+     * select-tree -> SelectTreeComponent (self-contained, handles own fetch + tree)
+     * select-search -> (future) integrated search dropdown
+     * select (default) -> native <select> with optional stacked search input
      */
     widgetType = computed<DataSourceWidget>(() =>
         this.item().relation?.dataSource?.widget ?? 'select',
@@ -305,7 +305,7 @@ export class RelationFieldComponent implements OnInit {
         }
 
         if (ds.type === 'api' && ds.url) {
-            // ── Lazy loading ──────────────────────────────────────────────────
+            // -- Lazy loading --------------------------------------------------
             if (ds.loading === 'lazy') {
                 this.setupLazySearch(
                     ds,
@@ -315,7 +315,7 @@ export class RelationFieldComponent implements OnInit {
                 return;
             }
 
-            // ── Eager loading ─────────────────────────────────────────────────
+            // -- Eager loading -------------------------------------------------
             this.loadingOptions.set(true);
             this.http.get<Record<string, unknown>>(ds.url, {
                 headers: { Accept: 'application/ld+json' },
@@ -425,8 +425,8 @@ export class RelationFieldComponent implements OnInit {
      * file, and that is load-bearing rather than a bundle-size tweak. The
      * static import closed a cycle —
      *
-     *   relation-field → inline-create-modal → dynamic-form
-     *                  → dynamic-layout → dynamic-field → relation-field
+     *   relation-field -> inline-create-modal -> dynamic-form
+     *                  -> dynamic-layout -> dynamic-field -> relation-field
      *
      * — and in a cycle, whichever module the bundler happens to evaluate FIRST
      * is the one still mid-initialisation when the last edge points back at

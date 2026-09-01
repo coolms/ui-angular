@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
 /**
- * Phase 2 (ADR-094) generic entity picker — drop-in replacement for
+ * Phase 2 generic entity picker — drop-in replacement for
  * a scalar text input when a template's contextSchema declares a
  * variable's `entityType`.
  *

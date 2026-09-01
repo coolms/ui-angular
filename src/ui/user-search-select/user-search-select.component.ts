@@ -9,14 +9,14 @@ import { LazySelectComponent } from '../lazy-select/lazy-select.component';
 /**
  * Back-compat wrapper around {@link LazySelectComponent} that defaults
  * the search to the Identity `identifier` field with the historical
- * label-fallback chain `name → fullName → email → identifier`.
+ * label-fallback chain `name -> fullName -> email -> identifier`.
  *
  * **New code should prefer `<app-lazy-select>` directly** — this
  * adapter exists so the half-dozen existing call sites (Sections
  * members, Media permissions, VFS chown, etc.) keep working without
  * touching template/output names.
  *
- * The original UserSearchSelect implementation lived here; #437
+ * The original UserSearchSelect implementation lived here;
  * extracted the engine into LazySelect.
  */
 @Component({

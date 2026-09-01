@@ -17,14 +17,14 @@ import { TimeOfDayPickerComponent } from './time-of-day-picker.component';
 import { formatLocalTime } from './prefs-format';
 
 /**
- * #473 — Proper time range picker.
+ * — Proper time range picker.
  *
  * Single-trigger field showing the time span as one string (e.g.
- * `09:00 → 17:30` or `9:00 AM → 5:30 PM`). Click opens a small popover
+ * `09:00 -> 17:30` or `9:00 AM -> 5:30 PM`). Click opens a small popover
  * with two `<cms-time-of-day-picker>` controls and Cancel / Apply
  * buttons.
  *
- * Public API preserved from #436. Wire format unchanged:
+ * Public API preserved. Wire format unchanged:
  * `{ start: 'HH:mm', end: 'HH:mm' }` — what the Working Hours editor
  * already uses for its per-weekday windows.
  */
@@ -202,14 +202,14 @@ export class TimeRangePickerComponent implements OnDestroy {
     private readonly userPrefs = inject(UserCalendarPreferencesService);
     private readonly host      = inject(ElementRef<HTMLElement>);
 
-    // ── Inputs ───────────────────────────────────────────────────────────────
+    // -- Inputs ---------------------------------------------------------------
 
     readonly value      = input<TimeRangeValue | null>(null);
     readonly startLabel = input<string>('From');
     readonly endLabel   = input<string>('To');
     readonly required   = input<boolean>(true);
     readonly disabled   = input<boolean>(false);
-    /** Minute granularity for the select dropdowns (default 15 → 00/15/30/45). */
+    /** Minute granularity for the select dropdowns (default 15 -> 00/15/30/45). */
     readonly step       = input<number>(15);
     /** Trigger sizing — 'sm' matches DataGrid filter-row inputs. */
     readonly size       = input<'sm' | 'md'>('md');
@@ -229,7 +229,7 @@ export class TimeRangePickerComponent implements OnDestroy {
 
     readonly valueChange = output<TimeRangeValue | null>();
 
-    // ── Internal state ───────────────────────────────────────────────────────
+    // -- Internal state -------------------------------------------------------
 
     private readonly _value = signal<TimeRangeValue | null>(null);
 

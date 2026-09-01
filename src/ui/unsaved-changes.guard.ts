@@ -14,19 +14,19 @@ export interface HasUnsavedChanges {
 }
 
 /**
- * Confirms before the ROUTER leaves a page with unsaved work (#2487).
+ * Confirms before the ROUTER leaves a page with unsaved work.
  *
  * The three layers, and why each is needed:
  *
- *   dialog close   the per-editor confirm from #2483 -- Cancel and the X
- *   beforeunload   UnsavedChangesService from #2485 -- tab close, reload
+ * dialog close the per-editor confirm -- Cancel and the X
+ * beforeunload UnsavedChangesService -- tab close, reload
  *   canDeactivate  THIS -- a sidebar link, the back button, any in-SPA nav
  *
  * A page editor is the case where the third matters most: a dialog is left by
  * a button we own, but a route is left by the router, and neither of the other
  * two layers sees that happen.
  *
- * ⚠️ Attach this ONLY to routes whose component actually exposes `dirty()`.
+ *  Attach this ONLY to routes whose component actually exposes `dirty()`.
  * Adding it to a route that does not is worse than leaving it off -- the route
  * config then reads as guarded while nothing is checked, and the next person
  * has no reason to look.

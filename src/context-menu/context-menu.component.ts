@@ -144,12 +144,12 @@ export class ContextMenuComponent {
             });
         });
 
-        // Phase E3 (ADR-092 §3): register the menu-close ESC handler
+        // Phase E3 ( §3): register the menu-close ESC handler
         // only while a menu is actually open. Pushes onto the
         // EscCoordinator stack on open; pops on close. When the
         // Document Properties panel is also open, the menu's handler
         // registers LATER (open is user-driven, panel is already
-        // open) → LIFO fires it first → menu closes, panel stays.
+        // open) -> LIFO fires it first -> menu closes, panel stays.
         // Fixes #4.8 double-close.
         effect((onCleanup) => {
             if (!this.svc.menu()) {

@@ -223,7 +223,7 @@ export interface ToolbarAction {
     `],
 })
 export class PageToolbarComponent {
-    // ── Direct action lists (used when treeSlug is NOT set) ──────────────────
+    // -- Direct action lists (used when treeSlug is NOT set) ------------------
     leftActions  = input<ToolbarAction[]>([]);
     rightActions = input<ToolbarAction[]>([]);
     /**
@@ -236,7 +236,7 @@ export class PageToolbarComponent {
     compact      = input<boolean>(false);
 
     /**
-     * Render the bar even when it carries no ACTIONS (#1709).
+     * Render the bar even when it carries no ACTIONS.
      *
      * The visibility test only ever counted actions, so a toolbar whose whole
      * job is to host projected controls — a search box, a filter, the view
@@ -267,7 +267,7 @@ export class PageToolbarComponent {
      */
     headerActionsChanged = output<ToolbarAction[]>();
 
-    // ── NaviGraph self-loading ────────────────────────────────────────────────
+    // -- NaviGraph self-loading ------------------------------------------------
     /** When set, loads actions from the NaviGraph tree with this slug. */
     readonly treeSlug = input<string | null>(null);
     /** Evaluation context for showWhen / activeWhen conditions. */

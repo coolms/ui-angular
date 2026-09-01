@@ -16,7 +16,7 @@ export interface AuthoringContextDto {
 }
 
 /**
- * Fetches the theme stylesheets an authoring surface should adopt (#1767).
+ * Fetches the theme stylesheets an authoring surface should adopt.
  *
  * Cached per (section, pageSize): the answer changes only when a section's
  * theme assignment or the page's size does, and an editor that re-fetched on

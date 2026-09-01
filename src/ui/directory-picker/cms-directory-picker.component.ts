@@ -359,7 +359,7 @@ export class CmsDirectoryPickerComponent {
     private readonly destroyRef = inject(DestroyRef);
 
     /**
-     * `path → children`. Each fetch populates this; `flatRows`
+     * `path -> children`. Each fetch populates this; `flatRows`
      * walks it. Mutated in place where convenient; `signal` wraps it
      * for change-detection notifications.
      */
@@ -412,7 +412,7 @@ export class CmsDirectoryPickerComponent {
         });
     }
 
-    // ─── Template helpers ─────────────────────────────────────────────────────
+    // --- Template helpers -----------------------------------------------------
 
     protected rowIndentPx(depth: number): number {
         return 4 + depth * 18;
@@ -448,7 +448,7 @@ export class CmsDirectoryPickerComponent {
         return node.permissions.write && !node.isSystem;
     }
 
-    // ─── User actions ─────────────────────────────────────────────────────────
+    // --- User actions ---------------------------------------------------------
 
     protected onToggle(node: VfsNodeDto): void {
         if (!node.isContainer) return;
@@ -564,7 +564,7 @@ export class CmsDirectoryPickerComponent {
             });
     }
 
-    // ─── Internal cache management ────────────────────────────────────────────
+    // --- Internal cache management --------------------------------------------
 
     private appendChildren(out: FlatRow[], parent: string, depth: number): void {
         const children = this.childrenMap().get(parent);

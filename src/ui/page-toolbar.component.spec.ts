@@ -181,7 +181,7 @@ describe('PageToolbarComponent state conditions', () => {
         expect(headerActionsFor([node('/plain', { action: 'plain' })], {})[0].active).toBeUndefined();
     });
 
-    it('applies ADR-093 strict semantics to a missing context field', () => {
+    it('treats a missing context field strictly, not as a match', () => {
         // A page that forgets to publish _importing does not get a button stuck
         // disabled: the leaf predicate is false, so the action stays enabled,
         // and the page's own context spec is what catches the omission.

@@ -19,7 +19,7 @@ import { PageActionsService } from '../ui/page-actions.service';
 import { PageFooterService } from '../ui/page-footer.service';
 
 /**
- * Inspector page layout shell (ADR-127 reference template).
+ * Inspector page layout shell ( reference template).
  *
  * Renders a header (cms-page-header with optional subtitle + header
  * actions) followed by a vertical stack of body sections, each carrying
@@ -40,7 +40,7 @@ import { PageFooterService } from '../ui/page-footer.service';
  *    scope so slot components can register dynamic header actions and
  *    footer counts (same pattern as `cms-list-layout`).
  *
- * ## Inputs the layout YAML exposes (see ADR-127 §"The contract")
+ * ## Inputs the layout YAML exposes ( §"The contract")
  *
  *  - title       (required)  — page title rendered in cms-page-header
  *  - subtitle    (optional)  — one-line description under the title

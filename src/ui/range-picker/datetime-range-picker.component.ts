@@ -18,10 +18,10 @@ import { TimeOfDayPickerComponent } from './time-of-day-picker.component';
 import { formatLocalDate, formatLocalTime } from './prefs-format';
 
 /**
- * #473 — Proper datetime range picker.
+ * — Proper datetime range picker.
  *
  * Single-trigger field showing the datetime span as one string (e.g.
- * `2026-05-01 09:00 → 2026-05-31 17:30`). Click opens a fixed-position
+ * `2026-05-01 09:00 -> 2026-05-31 17:30`). Click opens a fixed-position
  * overlay with:
  *  - Optional all-day toggle (input `showAllDayToggle`)
  *  - Two consecutive months side-by-side (click-start / click-end)
@@ -29,7 +29,7 @@ import { formatLocalDate, formatLocalTime } from './prefs-format';
  *  - TZ hint line (when tz differs from UTC)
  *  - Cancel / Reset / Apply footer
  *
- * Public API preserved from the legacy #436 component. Wire format
+ * Public API preserved from the legacy component. Wire format
  * unchanged: ISO-8601 (or `YYYY-MM-DD` when all-day) per side.
  */
 export interface DateTimeRangeValue {
@@ -404,7 +404,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
     private readonly userPrefs = inject(UserCalendarPreferencesService);
     private readonly host      = inject(ElementRef<HTMLElement>);
 
-    // ── Inputs ───────────────────────────────────────────────────────────────
+    // -- Inputs ---------------------------------------------------------------
 
     readonly value            = input<DateTimeRangeValue | null>(null);
     readonly startLabel       = input<string>('Start');
@@ -430,7 +430,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
 
     readonly valueChange = output<DateTimeRangeValue | null>();
 
-    // ── Internal state ───────────────────────────────────────────────────────
+    // -- Internal state -------------------------------------------------------
 
     private readonly _value = signal<DateTimeRangeValue | null>(null);
 
@@ -528,7 +528,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
         });
     }
 
-    // ── Open / close ─────────────────────────────────────────────────────────
+    // -- Open / close ---------------------------------------------------------
 
     toggle(): void {
         if (this.disabled()) return;
@@ -567,7 +567,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
         }
     }
 
-    // ── Selection ────────────────────────────────────────────────────────────
+    // -- Selection ------------------------------------------------------------
 
     onDayClick(iso: string): void {
         const s = this.pendingStartDate();
@@ -644,7 +644,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
         return `${date}T${time}`;
     }
 
-    // ── Positioning + lifecycle ──────────────────────────────────────────────
+    // -- Positioning + lifecycle ----------------------------------------------
 
     private positionOverlay(): void {
         const rect = this.host.nativeElement.getBoundingClientRect();

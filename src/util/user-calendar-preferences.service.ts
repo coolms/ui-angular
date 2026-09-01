@@ -5,7 +5,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { AuthState, AppConfigState, IdentityApiClient } from '@coolms/core-angular';
 
 /**
- * Task #433 (M1.2.f.2) -- centralised reactive access to the user's
+ * Task () -- centralised reactive access to the user's
  * Calendar preferences (timezone, date/time format, week start,
  * default calendar).
  *
@@ -36,7 +36,7 @@ export interface CalendarPrefs {
 /**
  * Last-resort fallback used only when the API manifest carries no
  * `platformDefaults` (older backend, or the manifest hasn't loaded). F6
- * (ADR-128) made the deployment-configured `platformDefaults` the real
+ * made the deployment-configured `platformDefaults` the real
  * source of these values; see `platformDefaults()` below.
  */
 const HARDCODED_FALLBACK: CalendarPrefs = {
@@ -62,7 +62,7 @@ export class UserCalendarPreferencesService {
 
     private loadOnce$?: Observable<CalendarPrefs>;
 
-    // ── Public signals (read-only) ────────────────────────────────────────────
+    // -- Public signals (read-only) --------------------------------------------
 
     /** Whole preferences VO. */
     readonly prefs              = this._prefs.asReadonly();
@@ -92,7 +92,7 @@ export class UserCalendarPreferencesService {
      */
     readonly firstDay = computed<0 | 1>(() => this._prefs().weekStart === 'sunday' ? 0 : 1);
 
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    // -- Lifecycle -------------------------------------------------------------
 
     /**
      * Trigger a one-shot load of `/auth/me/settings`. Subsequent calls
@@ -158,7 +158,7 @@ export class UserCalendarPreferencesService {
         this.loadOnce$ = undefined;
     }
 
-    // ── Internals ─────────────────────────────────────────────────────────────
+    // -- Internals -------------------------------------------------------------
 
     private merge(overrides: Partial<CalendarPrefs>): CalendarPrefs {
         // The floor a user's stored overrides sit on: the deployment's

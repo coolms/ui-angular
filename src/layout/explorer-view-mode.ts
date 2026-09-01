@@ -1,5 +1,5 @@
 /**
- * How an explorer's main pane renders its items (#1709).
+ * How an explorer's main pane renders its items.
  *
  * ONE vocabulary for every explorer. Before this, each module invented its own:
  * Documents had `grid | list`, Media had `large | medium | small | list`, Pages

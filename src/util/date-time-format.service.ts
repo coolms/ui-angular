@@ -4,13 +4,13 @@ import { UserCalendarPreferencesService } from './user-calendar-preferences.serv
 import { formatLocalDate, formatLocalTime } from '../ui/range-picker/prefs-format';
 
 /**
- * Platform-wide, preference-aware date/time formatter (#1032).
+ * Platform-wide, preference-aware date/time formatter.
  *
  * The single seam every surface (Messages, Dynamic Chat, Designer, Editor, …)
- * should use to render an instant, so a user's **Profile → Calendar** choices
+ * should use to render an instant, so a user's **Profile -> Calendar** choices
  * (12h/24h time, date format, timezone) are honoured EVERYWHERE — not just in
  * the Calendar. Before this, each surface hand-rolled `toLocaleTimeString([])`,
- * which defers to the BROWSER locale (→ 12h regardless of the saved pref) and
+ * which defers to the BROWSER locale (-> 12h regardless of the saved pref) and
  * ignored the timezone.
  *
  * It reuses the existing infrastructure rather than reinventing it:
@@ -19,7 +19,7 @@ import { formatLocalDate, formatLocalTime } from '../ui/range-picker/prefs-forma
  *    (cascading over the deployment's platform defaults). Despite its
  *    `features/calendars/` home it IS the platform's user date/time pref source.
  *  - {@link formatLocalDate} / {@link formatLocalTime} (the range-picker
- *    helpers) — the same canonical → display routines the pickers use, so a
+ *    helpers) — the same canonical -> display routines the pickers use, so a
  *    date renders identically in a filter input and a chat bubble.
  *
  * An ISO instant is first projected into the user's timezone (via `Intl` with

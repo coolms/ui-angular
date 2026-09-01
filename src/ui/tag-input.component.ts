@@ -88,7 +88,7 @@ export interface TagOption {
     styles: [`
         :host { display: block; position: relative; }
         /* Was entirely on Bootstrap's palette — border, focus ring, chip and
-           its close button (#2038). The focus ring in particular was Bootstrap
+ its close button. The focus ring in particular was Bootstrap
            blue while every other field in the admin rings amber. */
         .tagin-wrap {
             display: flex; flex-wrap: wrap; gap: 4px;
@@ -155,7 +155,7 @@ export class TagInputComponent implements ControlValueAccessor {
 
     /**
      * Emits the live typed text as the user types — lets a parent drive an ASYNC
-     * suggestions source (debounce → fetch → feed the result back via `options`).
+     * suggestions source (debounce -> fetch -> feed the result back via `options`).
      * With only a static `suggestions`/`options` vocabulary this can be ignored.
      */
     readonly queryChange = output<string>();
@@ -180,7 +180,7 @@ export class TagInputComponent implements ControlValueAccessor {
         return opts.length > 0 ? opts : this.suggestions().map(s => ({ value: s, label: s }));
     });
 
-    /** value → label, merging the vocabulary with any free-added labels. */
+    /** value -> label, merging the vocabulary with any free-added labels. */
     private readonly labelByValue = computed<Map<string, string>>(() => {
         const map = new Map<string, string>();
         for (const o of this.optionList()) map.set(o.value, o.label);

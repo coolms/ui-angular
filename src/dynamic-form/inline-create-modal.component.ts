@@ -58,7 +58,7 @@ export class InlineCreateModalComponent {
     private resolveCreateUrl(manifest: ApiManifest | null, formId: string): string | null {
         if (!manifest) return null;
 
-        // Map formId → manifest create URL. Extend as more form IDs are added.
+        // Map formId -> manifest create URL. Extend as more form IDs are added.
         const map: Record<string, string | undefined> = {
             'section:site_section': manifest.sections?.create,
             'navi:navi_tree':       manifest.navi?.treesCreate,

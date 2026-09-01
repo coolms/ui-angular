@@ -18,7 +18,7 @@ interface OptionRow {
  * Reusable choice-list editor for the dynamic form: add / edit / remove
  * `{ value, label }` rows. The form control's value is a plain
  * `Array<{ value, label }>`, matching the backend `selectOptions` shape
- * (`Definition::$selectOptions` → `options['selectOptions']`).
+ * (`Definition::$selectOptions` -> `options['selectOptions']`).
  *
  * Source of truth is the FormControl itself — every edit writes the whole
  * array back immutably and marks the control dirty, so the surrounding form's
@@ -28,7 +28,7 @@ interface OptionRow {
  *
  * Typing into an empty `value` cell is unnecessary in the common case: when the
  * value cell is still blank, editing the label live-derives a slug into it
- * (`Open` → `open`), so authors usually only fill the label column. Once a
+ * (`Open` -> `open`), so authors usually only fill the label column. Once a
  * value is set (typed or derived) it is never overwritten by later label edits.
  *
  * This is the FE half of the select-options editor — persistence-agnostic; the
@@ -227,7 +227,7 @@ export class OptionsEditorFieldComponent {
     }
 }
 
-/** Gentle key slug: lowercase, non-alphanumerics → `_`, trimmed. */
+/** Gentle key slug: lowercase, non-alphanumerics -> `_`, trimmed. */
 function slugify(label: string): string {
     return label
         .toLowerCase()

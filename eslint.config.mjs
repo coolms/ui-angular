@@ -77,7 +77,7 @@ export default tseslint.config(
             // where the hazard is real.
             '@typescript-eslint/unbound-method': ['error', { ignoreStatic: true }],
 
-            // ⚠️ These are the admin's deferrals, carried over deliberately.
+            //  These are the admin's deferrals, carried over deliberately.
             // 147 files arrived here already written; promoting them to error
             // in the same commit that moved the directory would have buried a
             // structural change under hundreds of unrelated edits. They are

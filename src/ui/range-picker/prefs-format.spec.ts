@@ -6,12 +6,12 @@ import {
 } from './prefs-format';
 
 /**
- * Task #458 — locale-respect helpers for the range pickers.
+ * Task — locale-respect helpers for the range pickers.
  *
  * Coverage:
  *   - formatLocalDate respects all five Profile-Calendar-tab patterns.
- *   - parseLocalDate round-trips its own output exactly (format → parse
- *     → format invariant).
+ *   - parseLocalDate round-trips its own output exactly (format -> parse
+ *     -> format invariant).
  *   - parseLocalDate rejects malformed / impossible dates (Feb 30, etc.).
  *   - formatLocalTime emits 24h "HH:mm" or 12h "h:mm AM/PM".
  *   - parseLocalTime tolerates whitespace, casing, missing leading zero,
@@ -20,7 +20,7 @@ import {
  */
 describe('range-picker prefs-format helpers', () => {
 
-    // ─── formatLocalDate ─────────────────────────────────────────────
+    // --- formatLocalDate ---------------------------------------------
 
     it('formats yyyy-MM-dd (ISO 8601)', () => {
         expect(formatLocalDate('2026-05-30', 'yyyy-MM-dd')).toBe('2026-05-30');
@@ -47,7 +47,7 @@ describe('range-picker prefs-format helpers', () => {
         expect(formatLocalDate('2026-05-30', undefined)).toBe('2026-05-30');
     });
 
-    // ─── parseLocalDate ──────────────────────────────────────────────
+    // --- parseLocalDate ----------------------------------------------
 
     it('round-trips every supported format (format → parse)', () => {
         for (const fmt of ['yyyy-MM-dd', 'dd/MM/yyyy', 'MM/dd/yyyy', 'dd MMM yyyy', 'MMM d, yyyy']) {
@@ -78,7 +78,7 @@ describe('range-picker prefs-format helpers', () => {
         expect(parseLocalDate('   ', 'yyyy-MM-dd')).toBe('');
     });
 
-    // ─── formatLocalTime ─────────────────────────────────────────────
+    // --- formatLocalTime ---------------------------------------------
 
     it('formats 24h as HH:mm', () => {
         expect(formatLocalTime('14:30', '24h')).toBe('14:30');
@@ -93,7 +93,7 @@ describe('range-picker prefs-format helpers', () => {
         expect(formatLocalTime('23:59', '12h')).toBe('11:59 PM');
     });
 
-    // ─── parseLocalTime ──────────────────────────────────────────────
+    // --- parseLocalTime ----------------------------------------------
 
     it('parses 24h HH:mm', () => {
         expect(parseLocalTime('14:30', '24h')).toBe('14:30');

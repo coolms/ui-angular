@@ -6,7 +6,7 @@ import { VfsTreeService } from './vfs-tree.service';
 import type { VfsNodeDto } from '../../vfs/vfs.types';
 
 /**
- * Phase X-1 — behaviour spec for the generic directory picker.
+ *-1 — behaviour spec for the generic directory picker.
  *
  * Coverage:
  *   1. Mount fires an initial `listChildren` for the root.

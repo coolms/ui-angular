@@ -6,7 +6,7 @@ import { IdentityApiClient } from '@coolms/core-angular';
 import { UserCalendarPreferencesService } from './user-calendar-preferences.service';
 
 /**
- * `update()` is the seam the Profile page saves through, and #2033 fed it a
+ * `update()` is the seam the Profile page saves through, and fed it a
  * keyless Hydra bag for as long as `updateSettings()` went out without
  * `Accept: application/json`.
  *

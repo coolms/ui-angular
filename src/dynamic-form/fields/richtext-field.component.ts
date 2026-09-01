@@ -18,7 +18,7 @@ import { FieldItem } from '@coolms/core-angular';
  * dynamic-form pipeline doesn't expose that lever today, so all richtext
  * fields driven by FormConfig speak HTML in/out for now. Backend
  * RichTextProfileValidator validates the stored HTML against the same
- * profile via App\Editor\Application\Service\ContentSanitizer.
+ * profile via the server's content sanitizer.
  */
 @Component({
     selector: 'app-richtext-field',

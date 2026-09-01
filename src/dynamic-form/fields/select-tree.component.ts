@@ -166,7 +166,7 @@ export class SelectTreeComponent implements OnInit {
     });
 
     /**
-     * Depth-annotated flat list in DFS pre-order (root → children → grandchildren…).
+     * Depth-annotated flat list in DFS pre-order (root -> children -> grandchildren…).
      * Used when there is no active search query.
      */
     treeNodes = computed<TreeOption[]>(() => this.buildFlatTree(this.allOptions()));
@@ -234,7 +234,7 @@ export class SelectTreeComponent implements OnInit {
         const ds = this.item().relation?.dataSource ?? this.item().dataSource;
         if (!ds?.url) return;
 
-        // ── Lazy loading ──────────────────────────────────────────────────
+        // -- Lazy loading --------------------------------------------------
         if (ds.loading === 'lazy') {
             this.setupLazySearch(
                 ds,
@@ -244,7 +244,7 @@ export class SelectTreeComponent implements OnInit {
             return;
         }
 
-        // ── Eager loading ─────────────────────────────────────────────────
+        // -- Eager loading -------------------------------------------------
         this.loadingOptions.set(true);
         this.http.get<Record<string, unknown>>(ds.url, {
             headers: { Accept: 'application/ld+json' },

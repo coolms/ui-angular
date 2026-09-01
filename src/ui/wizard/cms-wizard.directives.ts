@@ -1,7 +1,7 @@
 import { Directive, TemplateRef, inject, input } from '@angular/core';
 
 /**
- * Phase X-2.6a — structural directive that registers a step's
+ *-2.6a — structural directive that registers a step's
  * template with the surrounding `<cms-wizard>` and tags it with
  * the step id the parent will match against.
  *

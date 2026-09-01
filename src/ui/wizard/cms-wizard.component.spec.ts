@@ -6,7 +6,7 @@ import { CmsWizardStepDirective } from './cms-wizard.directives';
 import type { WizardStepConfig } from './cms-wizard.types';
 
 /**
- * Phase X-2.6a — behaviour spec for the reusable wizard primitive.
+ *-2.6a — behaviour spec for the reusable wizard primitive.
  *
  * Exercises:
  *   1. Renders the visible-step strip, omitting hidden steps.

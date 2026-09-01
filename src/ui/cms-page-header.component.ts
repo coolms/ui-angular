@@ -24,7 +24,7 @@ import { ToolbarAction } from './page-toolbar.component';
                          slug/identifier ribbon, etc). Consumers project via
                          an element carrying the [header-meta] attribute so
                          the content sits on the same baseline as the title.
-                         Adopted by CalendarDetail in [#441 follow-up] to
+ Adopted by CalendarDetail in [ follow-up] to
                          fold the slug chip out of a dedicated sub-head row
                          into the header itself. -->
                     <ng-content select="[header-meta]" />

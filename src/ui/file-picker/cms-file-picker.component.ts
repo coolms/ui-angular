@@ -44,7 +44,7 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
  * something they may not read — the picker adds no second authority of its own.
  * `selectableWhen` narrows further for callers with an extra rule.
  *
- * ⚠️ That filtering is a UX affordance, NOT the security boundary. Whatever
+ *  That filtering is a UX affordance, NOT the security boundary. Whatever
  * consumes the emitted path must re-check on its own terms — the newsletter
  * attachment path, for instance, is re-read under the sending user at delivery
  * time and dropped if unreadable, precisely because a path chosen at compose
@@ -141,7 +141,7 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
         /* Bounded so a large folder scrolls inside the picker instead of pushing
            a hosting dialog's footer off-screen. */
         /*
-         * Host-tunable (#1745). The default suits an EMBEDDED picker, where the
+         * Host-tunable. The default suits an EMBEDDED picker, where the
          * tree shares a form with other fields and must not dominate it. A host
          * that gives the picker a surface of its own — the file-picker dialog —
          * raises it, instead of wrapping the component in a taller box, which
@@ -195,7 +195,7 @@ export class CmsFilePickerComponent {
      * it, so a user looking for a file they can see but not pick gets an answer
      * instead of a mystery.
      *
-     * ⚠️ Composed WITH the read check, never instead of it: a caller supplying
+     *  Composed WITH the read check, never instead of it: a caller supplying
      * a narrower predicate must not accidentally widen selection to files the
      * user cannot read.
      */
@@ -265,7 +265,7 @@ export class CmsFilePickerComponent {
     /**
      * A file is pickable only if the caller can actually READ it.
      *
-     * ⚠️ Listing and reading are different permissions — correctly so, and this
+     *  Listing and reading are different permissions — correctly so, and this
      * is the trap. Unix `ls` shows a directory's entries whether or not you can
      * open each one, and the VFS listing endpoint faithfully does the same: it
      * checks `r` on the CONTAINER, then returns every child with a per-node

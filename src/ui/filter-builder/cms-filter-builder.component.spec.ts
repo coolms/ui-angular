@@ -6,7 +6,7 @@ import { CmsFilterBuilderComponent } from './cms-filter-builder.component';
 import type { EntityFieldsResponse } from './cms-filter-builder.types';
 
 /**
- * Phase X-2.6a — behaviour spec for CmsFilterBuilder.
+ *-2.6a — behaviour spec for CmsFilterBuilder.
  *
  * Mirrors the X-2.5 endpoint shape.
  *
@@ -154,7 +154,7 @@ describe('CmsFilterBuilderComponent', () => {
     }));
 
     /**
-     * The regression (#1670). Two criteria used to join with a literal
+     * The regression. Two criteria used to join with a literal
      * ' and ', which the RQL DSL has no notion of — the whole tail became
      * the FIRST criterion's value. Depending on field order that was a 500
      * ("Unable to compute count.") or, worse, a confident "No users match
@@ -176,7 +176,7 @@ describe('CmsFilterBuilderComponent', () => {
         addBtn.click();
         f.detectChanges();
 
-        // Second row → `name cn admin`, so the two rows differ.
+        // Second row -> `name cn admin`, so the two rows differ.
         const fields = f.nativeElement.querySelectorAll('.cms-filter-builder__field') as NodeListOf<HTMLSelectElement>;
         fields[1].value = 'name';
         fields[1].dispatchEvent(new Event('change'));

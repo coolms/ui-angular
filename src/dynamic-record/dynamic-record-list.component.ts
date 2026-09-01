@@ -216,11 +216,11 @@ export class DynamicRecordListComponent implements OnInit {
         });
     }
 
-    // ── Lifecycle ──────────────────────────────────────────────────────────────
+    // -- Lifecycle --------------------------------------------------------------
 
     ngOnInit(): void {
         if (!this.embedded()) {
-            // Wire footer pagination buttons → prev/next page (standalone mode only)
+            // Wire footer pagination buttons -> prev/next page (standalone mode only)
             this.footer?.prevPage$.pipe(takeUntilDestroyed(this.destroyRef))
                 .subscribe(() => this.prevPage());
             this.footer?.nextPage$.pipe(takeUntilDestroyed(this.destroyRef))
@@ -263,13 +263,13 @@ export class DynamicRecordListComponent implements OnInit {
         });
     }
 
-    // ── Config error handler ───────────────────────────────────────────────────
+    // -- Config error handler ---------------------------------------------------
 
     onConfigError(): void {
         this.configLoadFailed.set(true);
     }
 
-    // ── Row actions ────────────────────────────────────────────────────────────
+    // -- Row actions ------------------------------------------------------------
 
     onRowActionEvent(event: { action: string; row: Record<string, unknown> }): void {
         const record = event.row as DynamicRecordDto;
@@ -279,8 +279,8 @@ export class DynamicRecordListComponent implements OnInit {
 
     /**
      * Handles lazy-scroll loadMore events emitted by DataGrid's IntersectionObserver.
-     * `reset: true`  → replace records (sort/filter changed, or first page)
-     * `reset: false` → append next page of records
+     * `reset: true`  -> replace records (sort/filter changed, or first page)
+     * `reset: false` -> append next page of records
      *
      * NOTE: the DataGrid's onSentinelVisible() always emits reset:false, including
      * on the initial config-load kick-off. When offset === 0 the sentinel has no
@@ -305,7 +305,7 @@ export class DynamicRecordListComponent implements OnInit {
         this.loadRecords(isReset ? 'replace' : 'append');
     }
 
-    // ── Pagination ─────────────────────────────────────────────────────────────
+    // -- Pagination -------------------------------------------------------------
 
     prevPage(): void {
         if (this.page() <= 1) return;
@@ -319,7 +319,7 @@ export class DynamicRecordListComponent implements OnInit {
         this.loadRecords('replace');
     }
 
-    // ── CRUD ───────────────────────────────────────────────────────────────────
+    // -- CRUD -------------------------------------------------------------------
 
     openCreate(): void {
         this.dialog.open(DynamicRecordFormComponent, {
@@ -349,7 +349,7 @@ export class DynamicRecordListComponent implements OnInit {
             });
     }
 
-    // ── Private ────────────────────────────────────────────────────────────────
+    // -- Private ----------------------------------------------------------------
 
     private loadRecords(mode: 'replace' | 'append' = 'replace'): void {
         this.loading.set(true);

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 
 /**
- * The browser-level half of the unsaved-changes guard (#2483).
+ * The browser-level half of the unsaved-changes guard.
  *
- * The per-dialog confirm added in #2483 covers Cancel and the header X. It
+ * The per-dialog confirm covers Cancel and the header X. It
  * does nothing for the ways the PAGE goes away: closing the tab, hitting
  * reload, or following a link out of the SPA. MEASURED before this existed:
  * zero `beforeunload` handlers in the entire frontend, against 30 files
@@ -22,12 +22,12 @@ import { Injectable } from '@angular/core';
  * because that is state to keep correct for no gain: with no sources the
  * handler asks an empty set and returns immediately.
  *
- * ⚠️ **The wording is the browser's, not ours.** Chrome, Firefox and Safari
+ *  **The wording is the browser's, not ours.** Chrome, Firefox and Safari
  * all ignore a custom string and show their own "Leave site?" prompt. Anything
  * we wrote here would be dead code that reads like a feature -- so nothing is
  * written, and `preventDefault()` is the whole of the contract.
  *
- * ⚠️ **A prompt that fires when nothing is dirty is worse than none**: it
+ *  **A prompt that fires when nothing is dirty is worse than none**: it
  * trains people to click through it, and then the one that mattered is
  * clicked through too. Sources are asked at event time rather than cached,
  * and a source that throws is treated as clean rather than blocking the exit.

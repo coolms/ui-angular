@@ -6,17 +6,17 @@ import { DataGridComponent } from './datagrid.component';
 import type { ActiveFilter } from './datagrid.types';
 
 /**
- * Task #452 — behaviour spec for DataGrid Ship C: range-filter bridges
- * between the three range-picker primitives (#436) and the column-filter
+ * Behaviour spec for the DataGrid range-filter bridges
+ * between the three range-picker primitives and the column-filter
  * `ActiveFilter` state.
  *
  * Coverage:
- *   1. `<app-date-range-picker>` (valueChange) → two ActiveFilter entries
+ *   1. `<app-date-range-picker>` (valueChange) -> two ActiveFilter entries
  *      for the same column with ops 'ge' + 'le'.
- *   2. `<app-datetime-range-picker>` (valueChange) → ISO-8601 ge/le pair;
+ *   2. `<app-datetime-range-picker>` (valueChange) -> ISO-8601 ge/le pair;
  *      the picker's `allDay` flag is intentionally ignored (the column
  *      type is fixed, and the filter row hides the toggle).
- *   3. `<app-time-range-picker>` (valueChange) → HH:MM ge/le pair.
+ *   3. `<app-time-range-picker>` (valueChange) -> HH:MM ge/le pair.
  *   4. Reverse direction: getDateRangeValue / getDateTimeRangeValue /
  *      getTimeRangeValue reconstruct the picker model from the
  *      current ge/le entries (so the picker shows what's applied).
@@ -57,7 +57,7 @@ describe('DataGridComponent — range-filter bridges (Ship C)', () => {
         return filtersOf(component)().filter(f => f.column === column);
     }
 
-    // ─── Date range ──────────────────────────────────────────────────
+    // --- Date range --------------------------------------------------
 
     it('onDateRangeFilterChange emits two ActiveFilter entries (ge bare + le end-of-day)', () => {
         component.onDateRangeFilterChange('birthdate', {
@@ -104,7 +104,7 @@ describe('DataGridComponent — range-filter bridges (Ship C)', () => {
         expect(component.getDateRangeValue('birthdate')).toBeNull();
     });
 
-    // ─── Datetime range ──────────────────────────────────────────────
+    // --- Datetime range ----------------------------------------------
 
     it('onDateTimeRangeFilterChange emits ISO ge/le pair and ignores allDay', () => {
         component.onDateTimeRangeFilterChange('createdAt', {
@@ -132,7 +132,7 @@ describe('DataGridComponent — range-filter bridges (Ship C)', () => {
         });
     });
 
-    // ─── Time range ──────────────────────────────────────────────────
+    // --- Time range --------------------------------------------------
 
     it('onTimeRangeFilterChange emits HH:MM ge/le pair', () => {
         component.onTimeRangeFilterChange('shiftStart', {
@@ -157,7 +157,7 @@ describe('DataGridComponent — range-filter bridges (Ship C)', () => {
         });
     });
 
-    // ─── Tz-aware cell formatting ────────────────────────────────────
+    // --- Tz-aware cell formatting ------------------------------------
     // These tests assert the function tolerates each Angular-token-style
     // pattern produced by user preferences. We don't pin specific
     // formatted strings (the values depend on the host TZ environment

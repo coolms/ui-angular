@@ -29,7 +29,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
     `,
     styles: [`
         .uav { position: relative; display: inline-flex; flex-shrink: 0; }
-        /* Presence dot (#1019) — bottom-right, ringed in the surface color so it
+        /* Presence dot — bottom-right, ringed in the surface color so it
            reads against both a photo and a colored-initials avatar. */
         .uav__dot { position: absolute; right: 0; bottom: 0; border-radius: 50%;
                     border: 2px solid var(--cms-surface, #fff); box-sizing: content-box; }
@@ -45,7 +45,7 @@ export class UserAvatarComponent {
 
     @Input() size: 'sm' | 'md' | 'lg' = 'md';
 
-    /** Self-set presence status (online/away/busy/offline) → colored dot, #1019. */
+ /** Self-set presence status (online/away/busy/offline) -> colored dot,. */
     @Input() status?: string | null;
 
     private static readonly DOT: Record<string, string> = {

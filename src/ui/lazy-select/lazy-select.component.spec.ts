@@ -5,7 +5,7 @@ import { AuthState } from '@coolms/core-angular';
 import { LazySelectComponent, LazySelectOption } from './lazy-select.component';
 
 /**
- * Task #444 — behaviour spec for the generic lazy-loading select.
+ * Task — behaviour spec for the generic lazy-loading select.
  *
  * Coverage:
  *   1. Client-side mode filters the static `options` by typed query
@@ -47,7 +47,7 @@ describe('LazySelectComponent', () => {
 
     afterEach(() => httpMock.verify());
 
-    // ─── Client-side mode ────────────────────────────────────────────
+    // --- Client-side mode --------------------------------------------
 
     it('client-side mode filters static options by case-insensitive substring on label', () => {
         fixture.componentRef.setInput('options', makeOptions('Apple', 'Banana', 'Avocado'));
@@ -69,7 +69,7 @@ describe('LazySelectComponent', () => {
         expect(component.filteredOptions().length).toBe(0);
     });
 
-    // ─── Server-search mode: RQL ─────────────────────────────────────
+    // --- Server-search mode: RQL -------------------------------------
 
     it('server mode + RQL style builds `filter=field cn "query"` parameter', fakeAsync(() => {
         fixture.componentRef.setInput('apiUrl', '/api/v1/calendar');
@@ -85,7 +85,7 @@ describe('LazySelectComponent', () => {
         );
         init.flush({ member: [], totalItems: 0 });
 
-        // Type a query → debounce → one request with the RQL filter
+        // Type a query -> debounce -> one request with the RQL filter
         component.searchControl.setValue('ops');
         tick(299);
         // Not yet — debounce window still open
@@ -99,7 +99,7 @@ describe('LazySelectComponent', () => {
         req.flush({ member: [{ id: 'cal-1', title: 'Ops' }], totalItems: 1 });
     }));
 
-    // ─── Server-search mode: q style ─────────────────────────────────
+    // --- Server-search mode: q style ---------------------------------
 
     it('server mode + q style builds `q=<query>` parameter', fakeAsync(() => {
         fixture.componentRef.setInput('apiUrl', '/api/v1/calendar');
@@ -117,7 +117,7 @@ describe('LazySelectComponent', () => {
         req.flush({ member: [], totalItems: 0 });
     }));
 
-    // ─── ensureSelectedInList ────────────────────────────────────────
+    // --- ensureSelectedInList ----------------------------------------
 
     it('fetches the selected row individually when it is not in the first page', fakeAsync(() => {
         fixture.componentRef.setInput('apiUrl', '/api/v1/calendar');
@@ -134,7 +134,7 @@ describe('LazySelectComponent', () => {
         expect(component.selectedOption()?.label).toBe('Missing One');
     }));
 
-    // ─── valueChange semantics ───────────────────────────────────────
+    // --- valueChange semantics ---------------------------------------
 
     it('selectOption emits the option id and closes the dropdown', () => {
         const emitted: string[] = [];
@@ -158,7 +158,7 @@ describe('LazySelectComponent', () => {
         expect((event.stopPropagation as jasmine.Spy).calls.count()).toBe(1);
     });
 
-    // ─── Label fallback chain ────────────────────────────────────────
+    // --- Label fallback chain ----------------------------------------
 
     it('rowToOption follows the labelKeys fallback chain', fakeAsync(() => {
         fixture.componentRef.setInput('apiUrl', '/api/v1/identity/users');

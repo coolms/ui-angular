@@ -247,13 +247,13 @@ export class OrderedBuilderComponent {
         this.dirty.set(true);
     }
 
-    /** Reset dirty after a fresh load (a parent → child `elements` write does
+    /** Reset dirty after a fresh load (a parent -> child `elements` write does
      *  not itself mark dirty, but a re-load over a dirtied builder needs this). */
     markPristine(): void {
         this.dirty.set(false);
     }
 
-    // ── Structural mutations (immutable on the model) ───────────────────────
+    // -- Structural mutations (immutable on the model) -----------------------
 
     /** Append a fresh element of `id` (palette click). */
     append(id: string): void {
@@ -313,7 +313,7 @@ export class OrderedBuilderComponent {
         }
     }
 
-    // ── Persistence ─────────────────────────────────────────────────────────
+    // -- Persistence ---------------------------------------------------------
 
     /**
      * The save as a **cold** Observable, for an embedded host that has to

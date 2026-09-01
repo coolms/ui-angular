@@ -1,7 +1,7 @@
 import { Directive, HostBinding, HostListener, input, output } from '@angular/core';
 
 /**
- * Per ADR-092 §1 — config inputs accepted on the directive selector.
+ * Per §1 — config inputs accepted on the directive selector.
  * `accept` is a list of MIME patterns; `'<type>/*'` wildcards match
  * any subtype, exact strings match exactly, empty/undefined accepts
  * all files.
@@ -13,7 +13,7 @@ export interface CmsDropzoneConfig {
 }
 
 /**
- * Shared dropzone primitive (ADR-092). Apply to any element via
+ * Shared dropzone primitive. Apply to any element via
  * `[cmsDropzone]`. Captures drag-drop of files from the OS, filters
  * by MIME, and emits `(filesDropped)`. Toggles the `cms-dropzone--active`
  * class while a file drag is over the host so consumers can style

@@ -21,7 +21,7 @@ import { LocaleFieldComponent } from '../../ui/locale-selector.component';
  * the others untouched. Untouched / single-locale deployments collapse to a
  * plain input.
  *
- * This is the FE half of the "localized text" form type (#706). It is
+ * This is the FE half of the "localized text" form type. It is
  * persistence-agnostic — the `{en,uk}` map is just the control value; where it
  * lands (entity `extras`, a catalogue, …) is the consuming form's concern.
  */

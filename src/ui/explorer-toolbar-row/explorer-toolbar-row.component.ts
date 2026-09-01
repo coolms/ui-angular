@@ -299,7 +299,7 @@ export class ExplorerToolbarRowComponent {
      * Kept generic — the host supplies the vocabulary. Documents passes
      * `{'.templates': 'Templates'}` so its breadcrumb reads
      * `Root / Documents / Templates` while the path it navigates by
-     * stays the real `<space>/.templates` (#1683). Renaming the
+     * stays the real `<space>/.templates`. Renaming the
      * directory itself was not an option: `.templates` is a security
      * gate, not a naming convention — `TemplateRootResolver` decides
      * "is this Node a template?" from that exact segment.
@@ -319,7 +319,7 @@ export class ExplorerToolbarRowComponent {
      * yet the module has no view for any of them. Left clickable they
      * emitted a path outside every space, which the host then treated
      * as a space — the breadcrumb read `Root / Templates` and the pane
-     * listed nothing (#1683).
+     * listed nothing.
      *
      * `null` (default) keeps the whole chain navigable.
      */
@@ -350,7 +350,7 @@ export class ExplorerToolbarRowComponent {
      * It has to be static. Component-local memory is wiped when the explorer
      * remounts on navigation, which is exactly when the placeholder is needed:
      * the instance rebuilding the breadcrumb is often not the one that had
-     * already resolved those labels. A path→label mapping is stable for the
+     * already resolved those labels. A path->label mapping is stable for the
      * lifetime of the page, so caching it app-wide is safe; a rename is
      * followed by a fresh request that overwrites the entry.
      */
@@ -366,7 +366,7 @@ export class ExplorerToolbarRowComponent {
 
     /**
      * The floor rule itself, by PATH — shared by the breadcrumb segments and
-     * the typed-path input (#1762) so the two cannot disagree about what is
+     * the typed-path input so the two cannot disagree about what is
      * reachable. A rule the display enforces and the input does not is worse
      * than no rule: it looks like a guarantee.
      */
@@ -486,9 +486,9 @@ export class ExplorerToolbarRowComponent {
     }
 
     /**
-     * Submit the typed path. Normalises trailing slashes; empty → '/'.
+     * Submit the typed path. Normalises trailing slashes; empty -> '/'.
      *
-     * Honours `navigableFrom` (#1762). The breadcrumb has always disabled
+     * Honours `navigableFrom`. The breadcrumb has always disabled
      * segments above the floor, but the text input emitted whatever was typed
      * — so an operator could leave the space root by hand and land in a tree
      * the explorer around them does not describe. Typing `/` in Documents took

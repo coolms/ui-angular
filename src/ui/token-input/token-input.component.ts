@@ -186,7 +186,7 @@ export class TokenInputComponent implements ControlValueAccessor {
         this.onInput();
     }
 
-    // ── Serialization ────────────────────────────────────────────────────────
+    // -- Serialization --------------------------------------------------------
 
     /**
      * Convert HTML (with chip spans) to a pattern string using {const:token} syntax.

@@ -49,7 +49,7 @@ export type DataGridColumnType =
     | 'enum'
     | 'link'
     | 'avatar'
-    // A glyph beside the value — file-type icons and the like (#1762).
+    // A glyph beside the value — file-type icons and the like.
     // Distinct from `avatar`, whose fallback is INITIALS: a Word document has
     // no initials, and "WE" beside "welcome-letter" is noise where a document
     // icon is information. Reads `options.iconField` (a Bootstrap-icon class)
@@ -66,7 +66,7 @@ export interface EnumOption {
 
 /**
  * Declares a custom filter-row input for a column — mirrors the PHP
- * `App\DataGrid\Domain\Config\FilterWidgetConfig` VO.
+ * server's filter-widget config value object.
  *
  * `kind` is resolved to an Angular component via the
  * `DataGridFilterWidgetRegistry`; `options` is an opaque per-widget config bag.
@@ -81,7 +81,7 @@ export interface FilterWidgetConfigDto {
 
 /**
  * Declares a custom cell renderer for a column — the display-side twin of
- * {@link FilterWidgetConfigDto}, mirroring the PHP `App\DataGrid\Domain\Config\
+ * {@link FilterWidgetConfigDto}, mirroring the server's `
  * CellWidgetConfig` VO.
  *
  * `kind` is resolved to an Angular component via the `DataGridCellWidgetRegistry`;
@@ -147,13 +147,13 @@ export interface DataGridColumnDef {
     /**
      * Controls text truncation for data cells in this column.
      *
-     * Omitted        → truncate with ellipsis, EXCEPT for `avatar` / `snippet`
+     * Omitted        -> truncate with ellipsis, EXCEPT for `avatar` / `snippet`
      *                   columns and cell widgets, which lay themselves out.
-     * true           → truncate, including those three (#1710). Pair it with
+     * true           -> truncate, including those three. Pair it with
      *                   `width` on a column whose values can be long: under
      *                   `table-layout: auto` a declared width is only advisory
      *                   against content that refuses to shrink.
-     * false          → allow text to wrap (sets white-space:normal on the cell).
+     * false          -> allow text to wrap (sets white-space:normal on the cell).
      *
      * Truncation uses max-width:0 + overflow:hidden + text-overflow:ellipsis so that
      * the column's table-assigned width (from the <th>) acts as the clipping boundary.

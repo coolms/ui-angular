@@ -21,7 +21,7 @@ import { SpaceDto } from './space-dto';
  * is "active" at a time; clicking a section header emits
  * `(spaceChange)` with the selected key. Expansion state is persisted
  * per-namespace via {@link UserPreferencesService} (key:
- * `accordion.{persistKey}.expanded` → `string[]`).
+ * `accordion.{persistKey}.expanded` -> `string[]`).
  *
  * Body content is projected via `<ng-content>`; the host page is
  * responsible for rendering the active space's subtree (e.g. the
@@ -125,7 +125,7 @@ export class ExplorerAccordionComponent implements OnInit {
     @Output() readonly spaceChange = new EventEmitter<string>();
 
     /**
-     * Right-click on a space header (#1679). The accordion is shared by
+     * Right-click on a space header. The accordion is shared by
      * Documents / Articles / Media, and each has its own action vocabulary —
      * so it only reports the gesture and the space, and the consumer decides
      * what the menu contains. Consumers that ignore it keep the browser's
@@ -150,7 +150,7 @@ export class ExplorerAccordionComponent implements OnInit {
         // This must be an effect, not a one-shot read in ngOnInit: the
         // active key arrives from an async spaces fetch, so at init it is
         // still '' and a read there silently does nothing. Same trap as
-        // #1588 -- init-time reads of async-derived state see the
+ // -- init-time reads of async-derived state see the
         // bootstrap value, and the failure is invisible.
         //
         // Only `activeKey` is tracked, so a user who deliberately collapses

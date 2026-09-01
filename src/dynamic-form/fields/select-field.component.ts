@@ -327,7 +327,7 @@ export class SelectFieldComponent implements OnInit {
         }
 
         if (ds.type === 'api' && ds.url) {
-            // ── Lazy loading ──────────────────────────────────────────────────
+            // -- Lazy loading --------------------------------------------------
             if (ds.loading === 'lazy') {
                 this.setupLazySearch(
                     ds,
@@ -337,7 +337,7 @@ export class SelectFieldComponent implements OnInit {
                 return;
             }
 
-            // ── Eager loading ─────────────────────────────────────────────────
+            // -- Eager loading -------------------------------------------------
             this.loadingOptions.set(true);
             this.http.get<Record<string, unknown>>(ds.url, {
                 headers: { Accept: 'application/ld+json' },
