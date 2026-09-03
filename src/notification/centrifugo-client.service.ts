@@ -1,6 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy, Signal, inject, signal } from '@angular/core';
-import { Centrifuge, UnauthorizedError, type Subscription } from 'centrifuge';
+/**
+ * Type-only, so nothing here reaches the emitted bundle.
+ *
+ *  `centrifuge` is declared an OPTIONAL peer, and a static import
+ * made that a lie: ng-packagr emits one fesm bundle with no code splitting, so
+ * a top-level import must resolve for every consumer while `optional` tells
+ * npm not to install it. `npm install @coolms/ui-angular` then produced a
+ * package that could not build, and nothing said so.
+ *
+ * The SDK is loaded on demand in `bootstrap()` instead -- which costs nothing,
+ * because `connect()` was already async and idempotent.
+ */
+import type * as CentrifugeSdk from 'centrifuge';
+import type { Centrifuge, Subscription } from 'centrifuge';
 import { Store } from '@ngxs/store';
 import { firstValueFrom } from 'rxjs';
 import { AuthRefreshCoordinator, AuthState, RealtimeTokenClient } from '@coolms/core-angular';
@@ -52,6 +65,8 @@ export class CentrifugoClientService implements OnDestroy {
 
     private centrifuge: Centrifuge | null = null;
     private connectPromise: Promise<Centrifuge> | null = null;
+    /** The loaded module, kept so `UnauthorizedError` is reachable later. */
+    private sdk: typeof CentrifugeSdk | null = null;
 
     /**
      * Notification Sub-phase K -- reactive WebSocket connection state.
@@ -122,7 +137,11 @@ export class CentrifugoClientService implements OnDestroy {
                     // auth interceptor already tried to refresh — rethrows so the SDK's
                     // normal transient resubscribe still applies.
                     if (err instanceof HttpErrorResponse && err.status === 403) {
-                        throw new UnauthorizedError(`Subscription to "${ctx.channel}" is not permitted.`);
+                        // `sdk` is non-null here: getOrCreateSubscription
+                        // refuses before connect(), and connect() loads it.
+                        throw new this.sdk!.UnauthorizedError(
+                            `Subscription to "${ctx.channel}" is not permitted.`,
+                        );
                     }
                     throw err;
                 }
@@ -138,8 +157,12 @@ export class CentrifugoClientService implements OnDestroy {
     }
 
     private async bootstrap(): Promise<Centrifuge> {
+        // The one place the SDK is loaded. Every other use goes through
+        // `this.sdk`, which is set before any of them can run: nothing reaches
+        // a subscription without connecting first.
+        this.sdk = await import('centrifuge');
         const initial = await firstValueFrom(this.tokens.connectionToken());
-        const client = new Centrifuge(initial.wsUrl, {
+        const client = new this.sdk.Centrifuge(initial.wsUrl, {
             token: initial.token,
             getToken: async () => {
                 await this.ensureFreshAccessToken();

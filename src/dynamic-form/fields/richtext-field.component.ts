@@ -33,10 +33,30 @@ import { FieldItem } from '@coolms/core-angular';
                 @if (item().required) { <span class="text-danger">*</span> }
             </label>
 
-            <coolms-editor
-                [profile]="profileName()"
-                [content]="contentValue()"
-                (contentChange)="onContentChange($event)" />
+            <!-- The defer block is what makes the editor a genuinely OPTIONAL
+                 peer: used only inside it, the Angular compiler loads the
+                 component dynamically instead of importing it at the top of
+                 the bundle. A static import made the optional flag a lie --
+                 ng-packagr emits one fesm bundle with no code splitting, so
+                 every consumer of the kit had to install the editor whether
+                 or not they used a richtext field. The error branch is the
+                 honest ending for a peer nobody installed: a plain textarea
+                 still edits the value. -->
+            @defer (on immediate) {
+                <coolms-editor
+                    [profile]="profileName()"
+                    [content]="contentValue()"
+                    (contentChange)="onContentChange($event)" />
+            } @placeholder {
+                <div class="form-control cms-input" aria-busy="true">Loading the editor…</div>
+            } @error {
+                <textarea
+                    class="form-control cms-input"
+                    rows="4"
+                    [value]="contentValue()"
+                    (input)="onContentChange($any($event.target).value)"
+                ></textarea>
+            }
 
             @if (item().hint) {
                 <div class="form-text text-muted">{{ item().hint }}</div>

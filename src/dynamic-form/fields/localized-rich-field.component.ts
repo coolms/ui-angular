@@ -40,12 +40,29 @@ import { LocaleFieldComponent } from '../../ui/locale-selector.component';
     template: `
         <div class="form-group localized-rich-field">
             <app-locale-field [label]="labelWithRequired()" [(activeLocale)]="activeLocale">
-                @if (editorAvailable()) {
+                <!-- Deferring on editorAvailable() keeps the existing rule --
+                     an unconfigured profile gets the textarea -- and makes the
+                     editor a genuinely OPTIONAL peer at the same time: used
+                     only inside the defer block, the compiler loads it
+                     dynamically rather than importing it at the top of the
+                     bundle. The placeholder branch covers "no profile", the
+                     error branch covers "the peer was never installed"; both
+                     are the same textarea, because to the person filling the
+                     form they are the same situation. -->
+                @defer (when editorAvailable()) {
                     <coolms-editor
                         [profile]="profileName()"
                         [content]="valueFor(activeLocale())"
                         (contentChange)="setValue(activeLocale(), $event)" />
-                } @else {
+                } @placeholder {
+                    <textarea
+                        class="form-control cms-input"
+                        rows="4"
+                        [placeholder]="item().placeholder ?? ''"
+                        [value]="valueFor(activeLocale())"
+                        (input)="setValue(activeLocale(), $any($event.target).value)"
+                    ></textarea>
+                } @error {
                     <textarea
                         class="form-control cms-input"
                         rows="4"
