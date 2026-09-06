@@ -13,7 +13,7 @@ import { MonthGridComponent } from './month-grid.component';
 import { formatLocalDate } from './prefs-format';
 
 /**
- * — Shared date-range overlay panel.
+ * -- Shared date-range overlay panel.
  *
  * Renders two consecutive months side-by-side, the click-start/click-end
  * state machine, hover preview, optional preset chips, and the
@@ -31,8 +31,8 @@ import { formatLocalDate } from './prefs-format';
  *   - User clicks Apply -> emits `apply({start, end})`.
  *   - User clicks Cancel / clicks outside -> emits `cancel()`.
  *
- * Inputs preserve the host picker's existing public contract — `min`,
- * `max`, `firstDay`, `value` — so the host just forwards them.
+ * Inputs preserve the host picker's existing public contract -- `min`,
+ * `max`, `firstDay`, `value` -- so the host just forwards them.
  */
 export interface DateRangeOverlayResult {
     readonly start: string;  // YYYY-MM-DD
@@ -214,7 +214,7 @@ export class DateRangeOverlayComponent {
 
     // -- Inputs ---------------------------------------------------------------
 
-    /** Seed value (`YYYY-MM-DD` pair) — overlay opens with these selected. */
+    /** Seed value (`YYYY-MM-DD` pair) -- overlay opens with these selected. */
     readonly value       = input<DateRangeOverlayResult | null>(null);
     readonly min         = input<string | null>(null);
     readonly max         = input<string | null>(null);

@@ -103,7 +103,7 @@ describe('CmsDropzoneDirective', () => {
 
     it('ignores drags without `Files` in dataTransfer.types (CdkDrag coexistence)', () => {
         const { host, hostEl, fixture } = setup({});
-        // CdkDrag in-app drag carries an empty or custom-mime types list — no `Files` entry.
+        // CdkDrag in-app drag carries an empty or custom-mime types list -- no `Files` entry.
         hostEl.dispatchEvent(makeDragEvent('dragenter', { types: [] }));
         fixture.detectChanges();
         expect(hostEl.classList.contains('cms-dropzone--active')).toBe(false);

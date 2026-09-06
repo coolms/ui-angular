@@ -21,8 +21,8 @@ interface TaxonomyNodeDto {
 
 /**
  * The `taxonomy` field widget (registered by the Taxonomy module via the
- * field-widget registry): a multi-select over a taxonomy tree's nodes — badge
- * chips + search (pick-only) plus an inline "create category" — storing an
+ * field-widget registry): a multi-select over a taxonomy tree's nodes -- badge
+ * chips + search (pick-only) plus an inline "create category" -- storing an
  * array of node UUIDs in the node's `extras.{field}`.
  *
  * Reuses the shared {@link TagInputComponent} in label/value mode (chips render
@@ -71,7 +71,7 @@ export class TaxonomyFieldWidgetComponent {
     private readonly http = inject(HttpClient);
     private readonly destroyRef = inject(DestroyRef);
 
-    /** Selected node UUIDs — the bound value coerced to a string[]. */
+    /** Selected node UUIDs -- the bound value coerced to a string[]. */
     readonly model = computed<string[]>(() => {
         const v = this.value();
         return Array.isArray(v) ? v.map(String) : [];

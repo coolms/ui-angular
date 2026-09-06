@@ -10,7 +10,7 @@ import type { ActiveFilter, DataGridConfig } from './datagrid.types';
  * matched nothing".
  *
  * The grid said "No data found" for both, which left a first-time user with no
- * orientation and — worse — gave no hint that a filter was the reason a
+ * orientation and -- worse -- gave no hint that a filter was the reason a
  * populated list had gone blank. The filter row stays on screen either way, so
  * the fix for the second case is one click away; the words just have to point
  * at it.
@@ -89,7 +89,7 @@ describe('DataGridComponent — empty state', () => {
     });
 
     /**
-     * A `loadingMode: lazy` grid does not fetch — it emits `(loadMore)` and waits
+     * A `loadingMode: lazy` grid does not fetch -- it emits `(loadMore)` and waits
      * for the parent to feed `externalData` back. Its own `loading()` signal is
      * false for that whole window, so with no rows yet the body fell through to
      * the empty state: every lazy page asserted "No <things> yet" for a beat
@@ -111,7 +111,7 @@ describe('DataGridComponent — empty state', () => {
             component['loadingMore'].set(false);
 
             expect(component.awaitingRows()).toBe(false);
-            // A genuinely empty result must still reach its empty state — the
+            // A genuinely empty result must still reach its empty state -- the
             // suppression is a "not yet", never a "never".
             expect(component.showSkeleton()).toBe(false);
             expect(component.emptyStateTitle()).toBe('No contacts yet');

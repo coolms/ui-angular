@@ -21,11 +21,11 @@ export type CronPresetKey =
 
 export interface CronFormState {
     preset:     CronPresetKey;
-    /** HH:MM — for daily / weekly / monthly. */
+    /** HH:MM -- for daily / weekly / monthly. */
     time:       string;
-    /** ISO weekday (1=Mon … 7=Sun). Stored as the wire form (`0` = Sun, `1-6` = Mon-Sat) when emitting. */
+    /** ISO weekday (1=Mon ... 7=Sun). Stored as the wire form (`0` = Sun, `1-6` = Mon-Sat) when emitting. */
     weekday:    number;
-    /** 1-31 — for monthly. */
+    /** 1-31 -- for monthly. */
     dayOfMonth: number;
     /** Raw 5-field expression for custom mode. */
     expression: string;
@@ -40,7 +40,7 @@ const WEEKDAY_NAMES = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
 ];
 
-/** Static dropdown options — labels reflect the active form values. */
+/** Static dropdown options -- labels reflect the active form values. */
 export function buildPresetOptions(s: CronFormState): CronPresetOption[] {
     return [
         { key: 'every_minute', label: 'Every minute' },

@@ -11,7 +11,7 @@ import { NativeDialogService } from './native-dialog.service';
  * `{ value, choice }`, and `input()` has to keep resolving a bare string or
  * every existing caller silently starts naming things `[object Object]`.
  *
- * Driven through the overlay DOM rather than a mocked `Dialog` — a mock would
+ * Driven through the overlay DOM rather than a mocked `Dialog` -- a mock would
  * prove the service calls `open()`, which was never the risk. It also proves
  * `choices` actually reaches the component, which a spy on `open()` could
  * only assert about its own argument.
@@ -29,7 +29,7 @@ describe('NativeDialogService', () => {
     /**
      * Render the attached overlay. Without a `ComponentFixture` there is
      * nothing else driving change detection, and the confirm button stays
-     * `[disabled]` — a click on a disabled button is a silent no-op, which
+     * `[disabled]` -- a click on a disabled button is a silent no-op, which
      * would look exactly like a broken promise.
      */
     function render(): void {

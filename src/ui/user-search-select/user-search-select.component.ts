@@ -11,7 +11,7 @@ import { LazySelectComponent } from '../lazy-select/lazy-select.component';
  * the search to the Identity `identifier` field with the historical
  * label-fallback chain `name -> fullName -> email -> identifier`.
  *
- * **New code should prefer `<app-lazy-select>` directly** — this
+ * **New code should prefer `<app-lazy-select>` directly** -- this
  * adapter exists so the half-dozen existing call sites (Sections
  * members, Media permissions, VFS chown, etc.) keep working without
  * touching template/output names.
@@ -39,7 +39,7 @@ import { LazySelectComponent } from '../lazy-select/lazy-select.component';
     styles: [`:host { display: block; }`],
 })
 export class UserSearchSelectComponent {
-    /** URL for the list/search API — e.g. /api/v1/auth/users (from the boot manifest's `identity.usersUrl`). */
+    /** URL for the list/search API -- e.g. /api/v1/auth/users (from the boot manifest's `identity.usersUrl`). */
     apiUrl      = input.required<string>();
     /** Currently selected ID */
     value       = input<string>('');
@@ -47,7 +47,7 @@ export class UserSearchSelectComponent {
     entityLabel = input<string>('user');
     placeholder = input<string>('— Select —');
     /**
-     * Optional always-on RQL filter clause forwarded to the engine — e.g.
+     * Optional always-on RQL filter clause forwarded to the engine -- e.g.
      * `'isSystem eq false'` to keep platform system users out of the picker.
      * See {@link LazySelectComponent.extraFilter}.
      */

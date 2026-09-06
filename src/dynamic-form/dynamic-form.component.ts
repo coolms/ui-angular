@@ -81,18 +81,18 @@ export class DynamicFormComponent implements OnInit {
     submitLabel     = input<string>('Save');
     /** When true, the submit button is disabled regardless of form validity. */
     submitDisabled  = input<boolean>(false);
-    /** Extra fields merged into submitted value — not rendered in the form. */
+    /** Extra fields merged into submitted value -- not rendered in the form. */
     extraPayload    = input<Record<string, unknown>>({});
     /**
      * Aliases to render read-only on top of whatever the definition says.
      *
      * For a field the DEFINITION cannot know is fixed, because the reason is
-     * runtime state rather than form design — a module setting this deployment
+     * runtime state rather than form design -- a module setting this deployment
      * pins in its environment, say. The definition's own `readonly` still
      * applies; this only ever adds.
      *
      *  Read-only here means the control is DISABLED, and Angular still reports
-     * a disabled control in `getRawValue()` — which {@link submit} uses, so the
+     * a disabled control in `getRawValue()` -- which {@link submit} uses, so the
      * value is still submitted. A host that must not send these has to drop them
      * itself; changing `getRawValue()` to `value` would silently stop submitting
      * every definition-level readonly field across the app, several of which are
@@ -106,8 +106,8 @@ export class DynamicFormComponent implements OnInit {
     /**
      * Render no footer at all, because the host owns one.
      *
-     * For a dialog whose action bar carries more than Cancel/Save — a Reset, the
-     * record's id — where a second row of buttons inside the body would read as
+     * For a dialog whose action bar carries more than Cancel/Save -- a Reset, the
+     * record's id -- where a second row of buttons inside the body would read as
      * two competing footers. Such a host drives {@link submit} itself and reads
      * {@link saving} for its own button state. Defaults to true: every existing
      * consumer keeps its footer.
@@ -117,7 +117,7 @@ export class DynamicFormComponent implements OnInit {
     // -- Outputs ---------------------------------------------------------------
     submitted    = output<Record<string, unknown>>();
     cancelled    = output<void>();
-    /** Emitted on every form value change — useful for dirty-state tracking. */
+    /** Emitted on every form value change -- useful for dirty-state tracking. */
     formChanged  = output<void>();
 
     // -- State -----------------------------------------------------------------
@@ -215,14 +215,14 @@ export class DynamicFormComponent implements OnInit {
      *
      *  **Angular's `NumberValueAccessor` never applies here, and that is not
      * obvious.** Its selector is `input[type=number]`, matched at COMPILE time
-     * against the static template — and this form binds `[type]="item().type"`,
+     * against the static template -- and this form binds `[type]="item().type"`,
      * so the selector cannot match and the default string accessor is used
      * instead. Every "number" field this form has ever rendered therefore
      * submitted a STRING.
      *
      * That was invisible for as long as nothing checked: a settings row storing
      * `"300"` where the module reads `is_int()` would save, read back, and be
-     * silently discarded — the exact "saves and does nothing" failure the
+     * silently discarded -- the exact "saves and does nothing" failure the
      * settings tier exists to prevent. It only surfaced when a write validation
      * started refusing the mismatch out loud.
      *

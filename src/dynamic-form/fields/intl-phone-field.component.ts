@@ -20,7 +20,7 @@ interface PhoneCountry {
  * browser's Intl.DisplayNames + dial codes/example masks fetched from
  * /api/v1/phone/countries) plus a masked number input. The two sub-controls
  * compose a SINGLE E.164 string (`+{dial}{nationalDigits}`) that flows into the
- * form control at `item.alias` — the same shape a plain text field produces, so
+ * form control at `item.alias` -- the same shape a plain text field produces, so
  * the backend's IntlPhoneType / PhoneNumber constraint validates it unchanged.
  */
 @Component({

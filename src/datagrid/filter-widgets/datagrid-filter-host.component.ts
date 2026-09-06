@@ -8,7 +8,7 @@ import {
 } from './datagrid-filter-widget-registry';
 
 /**
- * Renders the filter widget registered for a `kind` — the single seam the
+ * Renders the filter widget registered for a `kind` -- the single seam the
  * DataGrid filter row goes through to turn a column's `filterWidget.kind` +
  * current filters into a live, operator-aware filter input.
  *
@@ -19,7 +19,7 @@ import {
  * {@link ActiveFilter} entries via a normal output binding (and always knows the
  * column, even when the widget emits an empty "cleared" set).
  *
- * When no widget is registered for the kind it renders nothing — but the grid
+ * When no widget is registered for the kind it renders nothing -- but the grid
  * gates on registry resolution before choosing this branch, so in practice the
  * host only renders when a component resolves.
  */
@@ -56,7 +56,7 @@ export class DataGridFilterHostComponent {
     readonly resolved = computed(() => this.component() !== null);
 
     /**
-     * Stable callback handed to the inner widget — re-emits as the host's
+     * Stable callback handed to the inner widget -- re-emits as the host's
      * output. Defined once (not in the computed) so the inner widget's `value`
      * input identity stays stable across change-detection runs.
      */

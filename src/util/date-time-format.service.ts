@@ -6,20 +6,20 @@ import { formatLocalDate, formatLocalTime } from '../ui/range-picker/prefs-forma
 /**
  * Platform-wide, preference-aware date/time formatter.
  *
- * The single seam every surface (Messages, Dynamic Chat, Designer, Editor, …)
+ * The single seam every surface (Messages, Dynamic Chat, Designer, Editor, ...)
  * should use to render an instant, so a user's **Profile -> Calendar** choices
- * (12h/24h time, date format, timezone) are honoured EVERYWHERE — not just in
+ * (12h/24h time, date format, timezone) are honoured EVERYWHERE -- not just in
  * the Calendar. Before this, each surface hand-rolled `toLocaleTimeString([])`,
  * which defers to the BROWSER locale (-> 12h regardless of the saved pref) and
  * ignored the timezone.
  *
  * It reuses the existing infrastructure rather than reinventing it:
- *  - {@link UserCalendarPreferencesService} (root singleton) — the resolved
+ *  - {@link UserCalendarPreferencesService} (root singleton) -- the resolved
  *    `tz` / `dateFormat` / `timeFormat` signals, loaded from `/auth/me/settings`
  *    (cascading over the deployment's platform defaults). Despite its
  *    `features/calendars/` home it IS the platform's user date/time pref source.
  *  - {@link formatLocalDate} / {@link formatLocalTime} (the range-picker
- *    helpers) — the same canonical -> display routines the pickers use, so a
+ *    helpers) -- the same canonical -> display routines the pickers use, so a
  *    date renders identically in a filter input and a chat bubble.
  *
  * An ISO instant is first projected into the user's timezone (via `Intl` with
@@ -76,7 +76,7 @@ export class DateTimeFormatService {
     }
 
     /**
-     * The calendar-day key of an instant in the user's tz — canonical
+     * The calendar-day key of an instant in the user's tz -- canonical
      * `YYYY-MM-DD`. Stable bucket key for grouping a message thread into
      * per-day sections (see {@link groupByDay}); '' for an unparseable input.
      */
@@ -107,7 +107,7 @@ export class DateTimeFormatService {
 
     /**
      * Shift a canonical `YYYY-MM-DD` by whole days using pure calendar
-     * arithmetic (UTC, no tz/DST involvement — the input is already a tz-local
+     * arithmetic (UTC, no tz/DST involvement -- the input is already a tz-local
      * day key), returning another canonical `YYYY-MM-DD`.
      */
     private shiftYmd(ymd: string, deltaDays: number): string {
@@ -146,7 +146,7 @@ export class DateTimeFormatService {
             timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false,
         }).formatToParts(d);
         const get = (t: string): string => parts.find(p => p.type === t)?.value ?? '';
-        // Some engines emit "24" for hour-0 under hour12:false — normalise.
+        // Some engines emit "24" for hour-0 under hour12:false -- normalise.
         const hh = get('hour') === '24' ? '00' : get('hour');
         return `${hh}:${get('minute')}`;
     }

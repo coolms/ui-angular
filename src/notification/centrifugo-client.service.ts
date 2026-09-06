@@ -133,8 +133,8 @@ export class CentrifugoClientService implements OnDestroy {
                     // ROLE_CALL). Throwing the SDK's `UnauthorizedError` moves the
                     // subscription to `unsubscribed` instead of re-issuing
                     // `POST /centrifugo/subscription-token` forever in a backoff loop
-                    // (the 403 storm). Any other failure — network / 5xx, or a 401 the
-                    // auth interceptor already tried to refresh — rethrows so the SDK's
+                    // (the 403 storm). Any other failure -- network / 5xx, or a 401 the
+                    // auth interceptor already tried to refresh -- rethrows so the SDK's
                     // normal transient resubscribe still applies.
                     if (err instanceof HttpErrorResponse && err.status === 403) {
                         // `sdk` is non-null here: getOrCreateSubscription

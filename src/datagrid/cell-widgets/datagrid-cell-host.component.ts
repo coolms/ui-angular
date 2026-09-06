@@ -7,14 +7,14 @@ import {
 } from './datagrid-cell-widget-registry';
 
 /**
- * Renders the cell widget registered for a `kind` — the single seam the DataGrid
+ * Renders the cell widget registered for a `kind` -- the single seam the DataGrid
  * cell goes through to turn a column's `cellWidget.kind` + a row into custom cell
  * content. The display-side twin of `DataGridFilterHostComponent`.
  *
  * Resolves `kind` to a component via {@link DataGridCellWidgetRegistry} and binds
  * it with the {@link DataGridCellWidgetInputs} contract through
  * `NgComponentOutlet`. When no widget is registered for the kind it renders
- * nothing — but the grid gates on registry resolution before choosing this
+ * nothing -- but the grid gates on registry resolution before choosing this
  * branch, so in practice the host only renders when a component resolves.
  */
 @Component({

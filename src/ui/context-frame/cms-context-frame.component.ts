@@ -9,14 +9,14 @@ import {
     input,
 } from '@angular/core';
 
-/** A stylesheet or script the site itself loads — the `{url}` records SSR uses. */
+/** A stylesheet or script the site itself loads -- the `{url}` records SSR uses. */
 export interface ContextAsset {
     readonly url: string;
 }
 
 /**
  * Renders HTML inside an ISOLATED frame carrying the site's own stylesheets
- * — the shared "render in the real context" surface.
+ * -- the shared "render in the real context" surface.
  *
  * ## Why an iframe and not shadow DOM or scoped CSS
  *
@@ -33,7 +33,7 @@ export interface ContextAsset {
  * The frame is sandboxed WITHOUT `allow-scripts` by default: this exists to
  * show what content LOOKS like, and running a theme's JS inside the admin is a
  * capability nobody asked for. Note that `allow-same-origin` plus
- * `allow-scripts` on same-origin content effectively disables the sandbox — so
+ * `allow-scripts` on same-origin content effectively disables the sandbox -- so
  * `runScripts` is an explicit, documented opt-in rather than a default anyone
  * inherits by accident.
  *
@@ -41,7 +41,7 @@ export interface ContextAsset {
  *
  * The document is written via `srcdoc`, so the frame inherits the parent's
  * base URL and a theme's `/themes/<slug>/assets/app-HASH.css` resolves against
- * the same origin the public site serves it from — the browser fetches the
+ * the same origin the public site serves it from -- the browser fetches the
  * exact bytes the site does, rather than a copy we shipped into the admin.
  */
 @Component({
@@ -50,7 +50,7 @@ export interface ContextAsset {
     changeDetection: ChangeDetectionStrategy.OnPush,
     // No BINDINGS on the iframe. Angular treats an iframe's security-sensitive
     // attributes (`sandbox`, `src`, `srcdoc`) as unsafe to bind and throws
-    // NG0910 rather than rendering — so sandbox/title/srcdoc are all applied
+    // NG0910 rather than rendering -- so sandbox/title/srcdoc are all applied
     // imperatively below, which is also the only way to guarantee the sandbox
     // is in place before any document is written into the frame.
     template: `
@@ -74,7 +74,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
     /** Stylesheets to load, in cascade order (parent theme first). */
     readonly css = input<readonly ContextAsset[]>([]);
 
-    /** Scripts — only loaded when {@link runScripts} is true. */
+    /** Scripts -- only loaded when {@link runScripts} is true. */
     readonly js = input<readonly ContextAsset[]>([]);
 
     /**
@@ -84,7 +84,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
      */
     readonly maxWidth = input<string | null>(null);
 
-    /** See the class docblock — off by default, deliberately. */
+    /** See the class docblock -- off by default, deliberately. */
     readonly runScripts = input<boolean>(false);
 
     readonly title = input<string>('Preview');
@@ -122,7 +122,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
     }
 
     /**
-     * Sandbox FIRST, then the document — setting `srcdoc` on a frame whose
+     * Sandbox FIRST, then the document -- setting `srcdoc` on a frame whose
      * sandbox has not been applied yet would load that document unsandboxed.
      */
     private write(srcdoc: string): void {
@@ -143,7 +143,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
         runScripts: boolean,
     ): string {
         // `a?.url` and the filter: an asset list arriving in an unexpected
-        // shape must not take the whole editor down with it — a preview that
+        // shape must not take the whole editor down with it -- a preview that
         // renders unstyled beats a dialog that throws.
         const links = (css ?? [])
             .filter(a => !!a?.url)
@@ -163,7 +163,7 @@ export class CmsContextFrameComponent implements AfterViewInit, OnDestroy {
         // property, so `contentMaxWidth` arrives as `undefined` rather than
         // null and a strict null test let it through to `attr()`, which
         // crashed on `undefined.replace`. Absent and null mean the same thing
-        // here — no constraint.
+        // here -- no constraint.
         const wrapperStyle = maxWidth
             ? ` style="max-width:${this.attr(maxWidth)};margin-inline:auto;"`
             : '';

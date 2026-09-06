@@ -15,21 +15,21 @@ import { FieldItem, AppConfigState } from '@coolms/core-angular';
 import { LocaleFieldComponent } from '../../ui/locale-selector.component';
 
 /**
- * Capability-aware localized rich-text field: one value per locale (EN / UK / …)
+ * Capability-aware localized rich-text field: one value per locale (EN / UK / ...)
  * with a per-locale editor that **progressively enhances**. When the Editor
  * module is installed (its profile is advertised in `manifest.editor.profiles`)
  * the active locale renders a `<coolms-editor>`; otherwise it degrades to a
- * plain textarea — same field, same `{ locale: string }` value, no hard
+ * plain textarea -- same field, same `{ locale: string }` value, no hard
  * dependency on the Editor backend at runtime.
  *
  * The value is a FLAT `{ locale: string }` map (HTML when the editor is mounted,
- * plain text when degraded) — identical in shape to {@link LocalizedTextFieldComponent},
- * so a consuming form can swap textarea ↔ rich without touching its data wiring.
+ * plain text when degraded) -- identical in shape to {@link LocalizedTextFieldComponent},
+ * so a consuming form can swap textarea <-> rich without touching its data wiring.
  *
  * Profile comes from `item.dataSource.widgetOptions.profile` (default `comment`,
  * a lightweight inline profile). If the Editor module is present but that profile
  * is unknown, the field degrades to a textarea rather than rendering an
- * UNKNOWN_PROFILE error — the safe direction.
+ * UNKNOWN_PROFILE error -- the safe direction.
  */
 @Component({
     selector: 'app-localized-rich-field',
@@ -88,7 +88,7 @@ export class LocalizedRichFieldComponent {
 
     private readonly store = inject(Store);
 
-    /** Editor profiles advertised by the manifest — empty when the Editor module is absent. */
+    /** Editor profiles advertised by the manifest -- empty when the Editor module is absent. */
     private readonly editorProfiles =
         this.store.selectSnapshot(AppConfigState.manifest)?.editor?.profiles ?? {};
 

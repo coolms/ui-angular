@@ -21,7 +21,7 @@ export class ContextMenuService {
     } | null>(null);
 
     /**
-     * Open with pre-built items — used by DataGrid for row-action menus.
+     * Open with pre-built items -- used by DataGrid for row-action menus.
      * Caller is responsible for building the ContextMenuItem[] list.
      */
     open(
@@ -41,7 +41,7 @@ export class ContextMenuService {
     }
 
     /**
-     * Open from NaviGraph nodes — evaluates visibility against the given record
+     * Open from NaviGraph nodes -- evaluates visibility against the given record
      * and builds the item list automatically.
      *
      * Nodes shown in context menus:

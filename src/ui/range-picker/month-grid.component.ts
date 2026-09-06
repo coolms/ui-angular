@@ -7,14 +7,14 @@ import {
 } from '@angular/core';
 
 /**
- * — Shared month-grid primitive used by the range-picker overlay.
+ * -- Shared month-grid primitive used by the range-picker overlay.
  *
  * Renders one month as a 7-column grid with a weekday header row and 6
  * week rows (always 6 to keep the overlay height stable across months).
  * Days from neighbouring months are rendered greyed-out so the grid
  * always starts on the user's preferred `firstDay` and stays rectangular.
  *
- * Pure presentational — owns no selection state. The parent overlay
+ * Pure presentational -- owns no selection state. The parent overlay
  * passes `rangeStart`, `rangeEnd`, and `hoverEnd` as `YYYY-MM-DD` strings
  * (or null) and this component decorates day cells accordingly. Day
  * clicks bubble up via `dayClick`; hover updates bubble via `dayHover`
@@ -118,7 +118,7 @@ export class MonthGridComponent {
     /** Selected end as `YYYY-MM-DD`, null when only start picked. */
     readonly rangeEnd   = input<string | null>(null);
     /**
-     * Hover preview end — when the user has clicked start and is moving
+     * Hover preview end -- when the user has clicked start and is moving
      * the mouse over candidate end dates, the parent feeds this signal
      * so we can render the in-range preview. Null when no hover (overlay
      * closed, or no start clicked yet, or end already committed).
@@ -142,7 +142,7 @@ export class MonthGridComponent {
     );
 
     /**
-     * 42 cells (6 weeks × 7 days) for the grid. Each cell carries its
+     * 42 cells (6 weeks x 7 days) for the grid. Each cell carries its
      * `YYYY-MM-DD` iso key, the day-of-month number for display, and the
      * decoration flags the template applies as CSS classes.
      */

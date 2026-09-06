@@ -24,17 +24,17 @@ const MONTH_NAMES = [
  * Single-value, preference-aware date+time field.
  *
  * The range pickers (`app-datetime-range-picker` etc.) cover start->end
- * windows, but a lot of fields are a *single* optional instant — e.g. a
+ * windows, but a lot of fields are a *single* optional instant -- e.g. a
  * content variant's "publish at" / "unpublish at" (each independently
  * blankable). The native `<input type="datetime-local">` can't honour the
  * user's `dateFormat` / `timeFormat` prefs (its display is locked to the
  * browser locale), so this composes the same pref-aware primitives the
- * range pickers use — `cms-month-grid` + `cms-time-of-day-picker` +
- * `formatLocalDate` / `formatLocalTime` — into one inline-expanding field.
+ * range pickers use -- `cms-month-grid` + `cms-time-of-day-picker` +
+ * `formatLocalDate` / `formatLocalTime` -- into one inline-expanding field.
  *
  * Value contract: `YYYY-MM-DDTHH:mm` (local, the same shape a
- * `datetime-local` input emits) or `''` when unset — so it's a drop-in for
- * existing local-datetime-string bindings; callers keep their ISO ↔ local
+ * `datetime-local` input emits) or `''` when unset -- so it's a drop-in for
+ * existing local-datetime-string bindings; callers keep their ISO <-> local
  * boundary conversion unchanged.
  *
  * Inline (not a floating popover) on purpose: it lives inside scrollable

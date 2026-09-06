@@ -23,8 +23,8 @@ import { type NaviGraphNode } from '@coolms/core-angular';
  *
  * Usage:
  *   <cms-right-panel [node]="state.panelNode()" (closed)="state.closePanel()">
- *       <button extra-actions title="Permissions" (click)="…">…</button>
- *       <module-body [item]="…" />
+ *       <button extra-actions title="Permissions" (click)="...">...</button>
+ *       <module-body [item]="..." />
  *   </cms-right-panel>
  */
 @Component({

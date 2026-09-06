@@ -23,7 +23,7 @@ export interface InputDialogChoice {
 
 /**
  * What the dialog closes with. `choice` is null whenever the dialog was
- * opened without a select — {@link NativeDialogService.input} unwraps to
+ * opened without a select -- {@link NativeDialogService.input} unwraps to
  * the bare string so its callers never see this shape.
  */
 export interface InputDialogResult {
@@ -47,7 +47,7 @@ export interface InputDialogContentData {
     validator:    ((val: string) => string | null) | null;
     /**
      * Options for the select rendered ABOVE the text field. Empty means no
-     * select at all, which is the `input()` case — the dialog then behaves
+     * select at all, which is the `input()` case -- the dialog then behaves
      * exactly as it did before the select existed.
      */
     choices:      InputDialogChoice[];
@@ -59,14 +59,14 @@ export interface InputDialogContentData {
 }
 
 /**
- * A3 dialog convergence — the input dialog now renders the platform
+ * A3 dialog convergence -- the input dialog now renders the platform
  * `<app-modal>` chrome (CDK overlay, `cms-dialog` shape), a sibling of every
  * form dialog instead of the old bespoke native `<dialog>`.
  *
  * Opened by {@link NativeDialogService} through CDK `Dialog.open()`.
  * The X / backdrop / Esc close with `undefined`, which the service maps to
- * `null` (cancel). `NativeDialogService.input`'s public contract — resolves
- * the trimmed value or `null` — is unchanged.
+ * `null` (cancel). `NativeDialogService.input`'s public contract -- resolves
+ * the trimmed value or `null` -- is unchanged.
  *
  * A caller may also pass `choices`, which adds a select above the text field
  * and makes the dialog answer "name it AND classify it" in one step. That is
@@ -157,7 +157,7 @@ export class InputDialogComponent implements AfterViewInit {
     readonly data = inject<InputDialogContentData>(DIALOG_DATA);
     private readonly dialogRef = inject<DialogRef<InputDialogResult | null>>(DialogRef);
 
-    /** Either field — both support `focus()` and `select()`, which is all this needs. */
+    /** Either field -- both support `focus()` and `select()`, which is all this needs. */
     @ViewChild('inputEl') private readonly inputEl?: ElementRef<HTMLInputElement | HTMLTextAreaElement>;
 
     value = this.data.initialValue;

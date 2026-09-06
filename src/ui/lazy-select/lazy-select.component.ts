@@ -24,7 +24,7 @@ import { AuthState } from '@coolms/core-angular';
 /**
  * One option row rendered in the dropdown.
  *
- * `extras` is opaque — callers may stash the original row there if they
+ * `extras` is opaque -- callers may stash the original row there if they
  * need it back later (e.g. on select, to look up secondary properties).
  */
 export interface LazySelectOption {
@@ -43,7 +43,7 @@ export interface LazySelectOption {
 /**
  * Async loader contract used by the server-search mode. Implementations
  * should return the next page of options for the given query (empty
- * string means "no query — give me the head of the list").
+ * string means "no query -- give me the head of the list").
  */
 export type LazySelectLoader = (query: string, limit: number) => Observable<{
     items: readonly LazySelectOption[];
@@ -59,16 +59,16 @@ export type LazySelectSearchStyle = 'rql' | 'q';
  *
  * Two operating modes:
  *
- *  1. **Server-search** — provide either `apiUrl` (the component builds
+ *  1. **Server-search** -- provide either `apiUrl` (the component builds
  *     its own loader using `searchStyle` + `searchField`) or a fully
  *     custom `loader` function. The dropdown debounces typing 300ms,
  *     then fires the loader. The currently-selected `value` is fetched
  *     individually via `GET {apiUrl}/{id}` so the trigger always shows
  *     the correct label even when the selected row isn't on the first
- *     page (only applies when `apiUrl` is set — for custom loaders,
+ *     page (only applies when `apiUrl` is set -- for custom loaders,
  *     pass the option in `preloadedSelection` instead).
  *
- *  2. **Client-side** — pass a static `options` array. The search box
+ *  2. **Client-side** -- pass a static `options` array. The search box
  *     filters the list in-memory (case-insensitive substring on
  *     `label`). No network at all. Useful when the caller already has
  *     the full list (e.g. a parent component prefetched it) or for
@@ -76,7 +76,7 @@ export type LazySelectSearchStyle = 'rql' | 'q';
  *
  * Both modes share the same trigger UI: a button-styled wrapper that,
  * when clicked, opens a `position: fixed` dropdown anchored to the
- * trigger (so it escapes any `overflow: hidden` ancestor — same trick
+ * trigger (so it escapes any `overflow: hidden` ancestor -- same trick
  * as the original `UserSearchSelectComponent`).
  *
  * Styling notes:
@@ -273,7 +273,7 @@ export class LazySelectComponent implements OnInit {
     /** Placeholder for the trigger when nothing is selected. */
     placeholder = input<string>('— Select —');
 
-    /** Human label used in the search box placeholder ("Search calendar…"). */
+    /** Human label used in the search box placeholder ("Search calendar..."). */
     entityLabel = input<string>('option');
 
     /** Render an "x" inside the trigger that resets the selection. */
@@ -348,7 +348,7 @@ export class LazySelectComponent implements OnInit {
     options = input<readonly LazySelectOption[]>([]);
 
     /**
-     * Optional preloaded selection — guarantees the trigger label is
+     * Optional preloaded selection -- guarantees the trigger label is
      * known even before the dropdown is opened. Useful in custom
      * loader mode where the component can't fetch by id.
      */
@@ -379,7 +379,7 @@ export class LazySelectComponent implements OnInit {
     readonly totalCount      = signal(0);
     readonly searchQuery     = signal('');
 
-    // Fixed-position coords for the dropdown — recalculated on open
+    // Fixed-position coords for the dropdown -- recalculated on open
     readonly dropTop   = signal(0);
     readonly dropLeft  = signal(0);
     readonly dropWidth = signal(200);
@@ -413,7 +413,7 @@ export class LazySelectComponent implements OnInit {
     /**
      * Visible rows bucketed by group for grouped rendering. When no
      * option carries a non-null `group`, the entire list collapses
-     * into a single `{name: null, rows: …}` bucket and the template
+     * into a single `{name: null, rows: ...}` bucket and the template
      * renders without any sticky header. Bucket order follows the
      * first-encountered order of each group name; row order within a
      * bucket matches the upstream sequence.

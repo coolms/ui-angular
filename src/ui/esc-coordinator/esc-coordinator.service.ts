@@ -9,14 +9,14 @@ import { DestroyRef, inject, Injectable, NgZone } from '@angular/core';
 export type EscHandler = () => boolean;
 
 /**
- * Shared ESC coordinator ( §3). Replaces 3 modal-scope
+ * Shared ESC coordinator ( section 3). Replaces 3 modal-scope
  * `@HostListener('document:keydown.escape')` bindings that compete on
- * the same global keystroke. LIFO stack — last registered fires
- * first — matches visual z-index stacking so the topmost overlay
+ * the same global keystroke. LIFO stack -- last registered fires
+ * first -- matches visual z-index stacking so the topmost overlay
  * closes before any underneath.
  *
  * Inline-scope `(keydown.escape)` bindings on inputs (rename fields,
- * search dropdowns) are NOT consumers — they fire only when their
+ * search dropdowns) are NOT consumers -- they fire only when their
  * input has focus and don't compete on the global keystroke.
  */
 @Injectable({ providedIn: 'root' })
@@ -53,7 +53,7 @@ export class EscCoordinatorService {
 
     /**
      * Push `handler` onto the LIFO stack. Returns an unregister
-     * callback — the consumer MUST call it when its overlay closes
+     * callback -- the consumer MUST call it when its overlay closes
      * (e.g. in `ngOnDestroy`), or the handler stays dead-weight on
      * the stack and ESC iteration cost grows.
      *

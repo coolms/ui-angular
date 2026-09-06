@@ -230,7 +230,7 @@ export class SelectFieldComponent implements OnInit {
      *
      * A signal fed from `valueChanges`, NOT a computed over `control().value`: a
      * FormControl's value is not reactive, so a computed reading it would be
-     * calculated once and never again — the picker would take a selection, emit
+     * calculated once and never again -- the picker would take a selection, emit
      * it, and redraw itself empty. Subscribing is what makes the round trip
      * close, and it also picks up the form's initial patch.
      */
@@ -244,7 +244,7 @@ export class SelectFieldComponent implements OnInit {
 
     filteredOptions = computed(() => {
         const ds = this.item().dataSource;
-        // Lazy mode: server already filtered — return all loaded options as-is
+        // Lazy mode: server already filtered -- return all loaded options as-is
         if (ds?.loading === 'lazy') return this.allOptions();
         // Eager mode: client-side filter
         const query = (this.searchSignal() ?? '').toLowerCase().trim();
@@ -360,7 +360,7 @@ export class SelectFieldComponent implements OnInit {
         onResults: (opts: DataSourceOption[]) => void,
         onLoading: (v: boolean) => void,
     ): void {
-        // Initial load — empty filter
+        // Initial load -- empty filter
         this.loadLazy('', ds, onResults, onLoading);
 
         // Debounced search on input changes

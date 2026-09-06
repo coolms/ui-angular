@@ -6,8 +6,8 @@ import { FieldItem } from '@coolms/core-angular';
  * Colour input: a native swatch picker beside the hex it produces.
  *
  * Two controls over ONE form value, because neither alone is enough. The
- * picker cannot express "no value" — `<input type="color">` has no empty
- * state and reports #000000 when unset — and a bare text box makes choosing a
+ * picker cannot express "no value" -- `<input type="color">` has no empty
+ * state and reports #000000 when unset -- and a bare text box makes choosing a
  * colour a typing exercise. So the swatch writes into the same control the
  * text field edits, and Clear is what actually empties it.
  *
@@ -72,7 +72,7 @@ import { FieldItem } from '@coolms/core-angular';
     `],
 })
 export class ColorFieldComponent {
-    /** What the swatch shows when the field is empty — it cannot show nothing. */
+    /** What the swatch shows when the field is empty -- it cannot show nothing. */
     private static readonly FALLBACK = '#f5a623';
 
     readonly item = input.required<FieldItem>();
@@ -83,7 +83,7 @@ export class ColorFieldComponent {
     /**
      * The picker only accepts a full `#rrggbb`. Feeding it a half-typed value
      * makes it silently snap to black, which then looks like the user's choice
-     * the moment they touch the swatch — so anything invalid shows the fallback
+     * the moment they touch the swatch -- so anything invalid shows the fallback
      * instead, and the text control keeps whatever they are typing.
      */
     readonly swatchValue = computed(() => {

@@ -19,7 +19,7 @@ import { TagInputComponent, TagOption } from '../tag-input.component';
  * a `string[]` of tag *slugs* stored in the node's `extras.{field}`.
  *
  * Chips and suggestions display each tag's human **label**, while the model
- * round-trips its **slug** — so existing `extras.tags` slug arrays stay correct
+ * round-trips its **slug** -- so existing `extras.tags` slug arrays stay correct
  * and backend tag-sync (which keys on slug) is unaffected. Free-add of a new
  * tag slugifies the typed label client-side (mirroring the backend
  * `AsciiSlugger`), since `extras.tags` is persisted verbatim with no
@@ -53,7 +53,7 @@ export class TagFieldWidgetComponent {
     private readonly http = inject(HttpClient);
     private readonly destroyRef = inject(DestroyRef);
 
-    /** Current chips — the bound value coerced to a string[]. */
+    /** Current chips -- the bound value coerced to a string[]. */
     readonly model = computed<string[]>(() => {
         const v = this.value();
         return Array.isArray(v) ? v.map(String) : [];

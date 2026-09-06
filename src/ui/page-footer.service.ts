@@ -17,7 +17,7 @@ export interface FooterState {
  * Scoped service that lets content components push footer status data to the
  * parent layout (ExplorerLayoutComponent or ListLayoutComponent).
  *
- * No `providedIn` — must be provided by the page or layout component.
+ * No `providedIn` -- must be provided by the page or layout component.
  *
  * Pagination:
  *  - Content components call `update({ pagination: { page, totalPages } })`.

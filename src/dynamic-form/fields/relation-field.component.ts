@@ -9,7 +9,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FieldItem, DataSourceDefinition, DataSourceOption, DataSourceWidget } from '@coolms/core-angular';
-// NOTE: inline-create-modal is deliberately NOT imported here — it is loaded
+// NOTE: inline-create-modal is deliberately NOT imported here -- it is loaded
 // on demand inside openInlineCreate(). See the comment there.
 import { SelectTreeComponent } from './select-tree.component';
 import { SelectSearchComponent } from './select-search.component';
@@ -178,7 +178,7 @@ export class RelationFieldComponent implements OnInit {
     });
 
     /**
-     * Whether an `<option>` should render selected. cardinality:one only —
+     * Whether an `<option>` should render selected. cardinality:one only --
      * for many the picker is a queue whose picks become tags, so it stays on
      * its placeholder.
      *
@@ -188,9 +188,9 @@ export class RelationFieldComponent implements OnInit {
      * the same change-detection pass, so the first write lands on a select
      * holding nothing but the placeholder and resolves to ''. The binding
      * having recorded the value it MEANT to write, it is then never
-     * re-applied once the options do exist. Every edit-mode load — and every
+     * re-applied once the options do exist. Every edit-mode load -- and every
      * `dataSource.type: 'api'` field, whose options arrive a round trip after
-     * the first pass — therefore rendered "— Select —" over a populated
+     * the first pass -- therefore rendered "-- Select --" over a populated
      * control, which is the very symptom the value binding was added to fix.
      * A per-option binding is immune: each option's binding first runs when
      * its own view is created, whenever that happens to be.
@@ -208,7 +208,7 @@ export class RelationFieldComponent implements OnInit {
     isLazy = computed(() => this.item().relation?.dataSource?.loading === 'lazy');
 
     /**
-     * Widget type from relation.dataSource.widget — drives which picker is rendered.
+     * Widget type from relation.dataSource.widget -- drives which picker is rendered.
      * select-tree -> SelectTreeComponent (self-contained, handles own fetch + tree)
      * select-search -> (future) integrated search dropdown
      * select (default) -> native <select> with optional stacked search input
@@ -250,7 +250,7 @@ export class RelationFieldComponent implements OnInit {
     filteredOptions = computed(() => {
         const ds = this.item().relation?.dataSource;
 
-        // Lazy mode: server already filtered — return all loaded options as-is
+        // Lazy mode: server already filtered -- return all loaded options as-is
         if (ds?.loading === 'lazy') {
             return this.allOptions();
         }
@@ -338,7 +338,7 @@ export class RelationFieldComponent implements OnInit {
         onResults: (opts: DataSourceOption[]) => void,
         onLoading: (v: boolean) => void,
     ): void {
-        // Initial load — empty filter
+        // Initial load -- empty filter
         this.loadLazy('', ds, onResults, onLoading);
 
         // Debounced search on input changes
@@ -390,14 +390,14 @@ export class RelationFieldComponent implements OnInit {
                 c.setValue([...current, iri]);
                 c.markAsDirty();
             }
-            // cardinality:many — reset the visible select so the
+            // cardinality:many -- reset the visible select so the
             // operator can pick another value; the chosen one is now
             // a tag above the select.
             select.value = '';
         } else {
             c.setValue(iri);
             c.markAsDirty();
-            // cardinality:one — DO NOT reset. The picked option must
+            // cardinality:one -- DO NOT reset. The picked option must
             // remain visible inside the <select>; resetting it would
             // make the field look empty even though the control holds
             // the value, which is the bug operators have been hitting
@@ -423,12 +423,12 @@ export class RelationFieldComponent implements OnInit {
     /**
      * The modal is loaded on click rather than imported at the top of this
      * file, and that is load-bearing rather than a bundle-size tweak. The
-     * static import closed a cycle —
+     * static import closed a cycle --
      *
      *   relation-field -> inline-create-modal -> dynamic-form
      *                  -> dynamic-layout -> dynamic-field -> relation-field
      *
-     * — and in a cycle, whichever module the bundler happens to evaluate FIRST
+     * -- and in a cycle, whichever module the bundler happens to evaluate FIRST
      * is the one still mid-initialisation when the last edge points back at
      * it, so some `imports:` array captures `undefined` for a real component.
      * Which array loses depends on the entry point, i.e. on nothing anyone
@@ -436,7 +436,7 @@ export class RelationFieldComponent implements OnInit {
      * spec that renders a form) the loser is inline-create-modal's own
      * `DynamicFormComponent`; entered at relation-field (a spec that mounts
      * just this field) it is dynamic-field's `RelationFieldComponent`, which
-     * takes down every TestBed that configures a dynamic form —
+     * takes down every TestBed that configures a dynamic form --
      * "Cannot read properties of undefined (reading 'ɵcmp')".
      *
      * `dialog.open()` needs the class as a runtime value, never as a template

@@ -25,7 +25,7 @@ import { PageFooterService } from '../ui/page-footer.service';
  * actions) followed by a vertical stack of body sections, each carrying
  * its own slot graph. Used by debug / audit / inspection pages where
  * the body is "show me the result of running this query/inspection
- * one row at a time" — Routing Inspector is the canonical adopter.
+ * one row at a time" -- Routing Inspector is the canonical adopter.
  *
  * ## How it composes
  *
@@ -40,17 +40,17 @@ import { PageFooterService } from '../ui/page-footer.service';
  *    scope so slot components can register dynamic header actions and
  *    footer counts (same pattern as `cms-list-layout`).
  *
- * ## Inputs the layout YAML exposes ( §"The contract")
+ * ## Inputs the layout YAML exposes ( section "The contract")
  *
- *  - title       (required)  — page title rendered in cms-page-header
- *  - subtitle    (optional)  — one-line description under the title
- *  - icon        (optional)  — bi-* icon name shown next to the title
- *  - headerActions[]         — buttons in the action bar; clicks routed
+ *  - title       (required)  -- page title rendered in cms-page-header
+ *  - subtitle    (optional)  -- one-line description under the title
+ *  - icon        (optional)  -- bi-* icon name shown next to the title
+ *  - headerActions[]         -- buttons in the action bar; clicks routed
  *                              through PageActionsService.dispatch()
- *  - sections{}              — ordered map of body sections; each
+ *  - sections{}              -- ordered map of body sections; each
  *                              section can have its own title + slot
  *                              graph
- *  - permissions[]           — hint; real gating lives on the data
+ *  - permissions[]           -- hint; real gating lives on the data
  *                              APIs the slots call (layout endpoint
  *                              is public by design)
  *
@@ -59,7 +59,7 @@ import { PageFooterService } from '../ui/page-footer.service';
  * Unlike cms-list-layout (which expects the route wrapper to provide
  * the services), this layout provides them itself. Slot components
  * mounted via app-slot inherit the injector chain via ngComponentOutlet
- * and pick up the same instance — no wrapper component required.
+ * and pick up the same instance -- no wrapper component required.
  */
 @Component({
     selector: 'cms-inspector-layout',

@@ -12,7 +12,7 @@ import {
 /**
  * The view-mode buttons every explorer shows.
  *
- * One control, one set of icons, one order — driven by the modes the layout
+ * One control, one set of icons, one order -- driven by the modes the layout
  * YAML declares. It replaces three per-module implementations that had drifted
  * apart in vocabulary, iconography and even in which end of the toolbar they
  * sat.

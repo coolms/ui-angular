@@ -343,7 +343,7 @@ export class ExplorerLayoutComponent implements OnInit {
         this.headerTitle.set((cfg.title as string) ?? null);
         this.headerIcon.set((cfg.icon  as string) ?? null);
 
- // — which view modes this explorer offers, declared in YAML.
+ // -- which view modes this explorer offers, declared in YAML.
         // Unknown tokens are DROPPED rather than defaulted: a typo should cost
         // that one button, not silently add a mode the host cannot render.
         // An empty/absent list means "this explorer has no switcher", which is

@@ -6,7 +6,7 @@ import {
 } from './prefs-format';
 
 /**
- * Task — locale-respect helpers for the range pickers.
+ * Task -- locale-respect helpers for the range pickers.
  *
  * Coverage:
  *   - formatLocalDate respects all five Profile-Calendar-tab patterns.
@@ -114,9 +114,9 @@ describe('range-picker prefs-format helpers', () => {
     });
 
     it('tolerates the opposite format (paste-from-clipboard)', () => {
-        // User pref is 12h but they pasted "14:30" — still works.
+        // User pref is 12h but they pasted "14:30" -- still works.
         expect(parseLocalTime('14:30', '12h')).toBe('14:30');
-        // User pref is 24h but they pasted "2:30 PM" — still works.
+        // User pref is 24h but they pasted "2:30 PM" -- still works.
         expect(parseLocalTime('2:30 PM', '24h')).toBe('14:30');
     });
 

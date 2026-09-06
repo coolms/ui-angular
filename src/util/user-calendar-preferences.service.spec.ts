@@ -12,12 +12,12 @@ import { UserCalendarPreferencesService } from './user-calendar-preferences.serv
  *
  * Both halves of that are worth pinning. `merge()` rebuilds the VO field by
  * field from a whitelist, so the bag could never put `undefined` into
- * FullCalendar's `timeZone` or `firstDay` — that guard is why the bug was
+ * FullCalendar's `timeZone` or `firstDay` -- that guard is why the bug was
  * silent instead of loud, and it should stay. The price of the silence is the
  * second spec: an update that carries none of the known fields leaves the
  * cache exactly as it was, so a save the user watched succeed changed nothing
- * on screen. The service cannot do better — the values are in the bag, but
- * their names are gone — which is why the fix had to be the request header.
+ * on screen. The service cannot do better -- the values are in the bag, but
+ * their names are gone -- which is why the fix had to be the request header.
  */
 describe('UserCalendarPreferencesService.update()', () => {
     const PLATFORM_DEFAULTS = {
@@ -77,12 +77,12 @@ describe('UserCalendarPreferencesService.update()', () => {
         const hydra = { member: Object.values(STORED), totalItems: 5 };
         svc.update(hydra as unknown as Partial<typeof STORED>);
 
-        // Nothing from the bag reached the VO — not as a stray property, and
+        // Nothing from the bag reached the VO -- not as a stray property, and
         // not as an `undefined` where a widget expects a string.
         expect(Object.keys(svc.prefs()).sort()).toEqual(
             ['dateFormat', 'defaultCalendarSlug', 'timeFormat', 'tz', 'weekStart'],
         );
-        // …and nothing changed, which is the part the user saw: the save
+        // ...and nothing changed, which is the part the user saw: the save
         // succeeded server-side and the calendar kept its previous settings
         // until something re-fetched /auth/me/settings.
         expect(svc.tz()).toBe('Europe/Berlin');

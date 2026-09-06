@@ -17,7 +17,7 @@ export interface ConfirmDialogContentData {
 }
 
 /**
- * A2/A3 dialog convergence — the confirm dialog now renders the platform
+ * A2/A3 dialog convergence -- the confirm dialog now renders the platform
  * `<app-modal>` chrome (CDK overlay, `cms-dialog` shape) so it looks like a
  * sibling of every form dialog instead of the old bespoke native `<dialog>`.
  *
@@ -25,7 +25,7 @@ export interface ConfirmDialogContentData {
  * provides `DialogRef` + `DIALOG_DATA`. The `<app-modal>` close (X) /
  * backdrop / Esc all resolve to `false` (CDK closes with `undefined`);
  * the explicit buttons resolve `true`/`false`. `ConfirmDialogService`'s
- * public API is unchanged — callers are untouched.
+ * public API is unchanged -- callers are untouched.
  */
 @Component({
     selector: 'app-confirm-dialog',

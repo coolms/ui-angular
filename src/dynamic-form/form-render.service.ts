@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { AppConfigState, FormRenderDefinition } from '@coolms/core-angular';
-/** WZ-C — result of `POST /forms/{id}/validate-step`. */
+/** WZ-C -- result of `POST /forms/{id}/validate-step`. */
 export interface FormStepValidationResult {
     valid: boolean;
     /** field alias => server-side violation messages */
@@ -22,7 +22,7 @@ export class FormRenderService {
     }
 
     /**
-     * WZ-C — server-authoritative per-step validation. The wizard calls this on
+     * WZ-C -- server-authoritative per-step validation. The wizard calls this on
      * "Next" (after its instant client-side check) to gate advancement on the
      * step's real server constraints. The server validates only the requested
      * step's fields and returns `{ valid, violations }`.

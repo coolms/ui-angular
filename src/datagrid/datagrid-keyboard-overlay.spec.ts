@@ -6,7 +6,7 @@ import { DataGridComponent } from './datagrid.component';
 import type { DataGridConfig, DataGridRowAction } from './datagrid.types';
 
 /**
- * Regression spec — the grid's `document:keydown` listener must not fire
+ * Regression spec -- the grid's `document:keydown` listener must not fire
  * destructive row actions while a modal surface is open above it.
  *
  * The reported bug: with the BPMN designer open in a CDK dialog over the
@@ -15,7 +15,7 @@ import type { DataGridConfig, DataGridRowAction } from './datagrid.types';
  * selected behind the dialog. The designer canvas is an `<svg>`, so the
  * pre-existing INPUT/TEXTAREA/SELECT/contenteditable guard let it
  * through, and `document:keydown` fires regardless of where in the page
- * the event originated — a CDK overlay renders outside the grid's own
+ * the event originated -- a CDK overlay renders outside the grid's own
  * DOM subtree entirely. Only the backend's delete guard (409 on a
  * deployed definition) stopped real data loss.
  *
@@ -101,14 +101,14 @@ describe('DataGridComponent — keyboard vs. overlays', () => {
         const { fired, defaultPrevented } = pressDeleteFrom(canvas as unknown as HTMLElement);
 
         expect(fired).toBeFalse();
-        // Must not swallow the key either — the designer's own Delete
+        // Must not swallow the key either -- the designer's own Delete
         // binding needs it to reach the canvas controller.
         expect(defaultPrevented).toBeFalse();
     });
 
     it('ignores Delete while a modal backdrop is up, wherever it originated', () => {
         // A backdrop-less overlay is covered above; this covers the
-        // converse — a modal owns the page even if the event target is
+        // converse -- a modal owns the page even if the event target is
         // outside the overlay container (e.g. focus still on <body>).
         const backdrop = document.createElement('div');
         backdrop.className = 'cdk-overlay-backdrop';

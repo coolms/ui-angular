@@ -13,11 +13,11 @@ import { DialogRef } from '@angular/cdk/dialog';
  * so all modals look like siblings of the design-system reference
  * dialog (Runtime Type). Width is fluid between 360-540px by default;
  * a consumer can widen with `[width]` (in px) when its content genuinely
- * needs more horizontal room — but the contract is: when in doubt,
+ * needs more horizontal room -- but the contract is: when in doubt,
  * leave it at the default and lay the body out as a vertical stack.
  *
  * The footer slot is optional. When absent, the footer separator and
- * padding don't render — so existing consumers that put their actions
+ * padding don't render -- so existing consumers that put their actions
  * inside the body still work unchanged.
  */
 @Component({

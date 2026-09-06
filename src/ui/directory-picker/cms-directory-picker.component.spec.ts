@@ -6,7 +6,7 @@ import { VfsTreeService } from './vfs-tree.service';
 import type { VfsNodeDto } from '../../vfs/vfs.types';
 
 /**
- *-1 — behaviour spec for the generic directory picker.
+ *-1 -- behaviour spec for the generic directory picker.
  *
  * Coverage:
  *   1. Mount fires an initial `listChildren` for the root.
@@ -14,7 +14,7 @@ import type { VfsNodeDto } from '../../vfs/vfs.types';
  *   3. Selecting a writable directory emits `valueChange` AND
  *      `nodeChange`.
  *   4. System (`_`-prefix) and hidden (`.`-prefix) directories are
- *      never selectable — the predicate is a hard rule the
+ *      never selectable -- the predicate is a hard rule the
  *      caller-supplied `selectableWhen` cannot override.
  *   5. Toggling "Show hidden" invalidates the cache and refetches
  *      with `showHidden=true`.
@@ -33,7 +33,7 @@ describe('CmsDirectoryPickerComponent', () => {
         return {
             id:             overrides.path.replace(/\W+/g, '-') || 'root',
             // Required on VfsNodeDto (display label; callers fall back to
-            // `name` when null). Must be present in the base literal —
+            // `name` when null). Must be present in the base literal --
             // supplying it only via `Partial` overrides types it as
             // `string | null | undefined` and fails assignment.
             title:          null,
@@ -102,7 +102,7 @@ describe('CmsDirectoryPickerComponent', () => {
     });
 
     it('refuses to select a system directory regardless of selectableWhen', () => {
-        // Caller relaxes the predicate to "always true" — must still
+        // Caller relaxes the predicate to "always true" -- must still
         // be ignored for `_`-prefix / system nodes.
         fixture.componentRef.setInput('selectableWhen', () => true);
         fixture.detectChanges();
@@ -174,7 +174,7 @@ describe('CmsDirectoryPickerComponent', () => {
             (r) => r.url === '/api/v1/vfs/files' && r.params.get('path') === '/docs/batches',
         );
         req.flush(makeNode({ name: 'batches', path: '/docs/batches' }));
-        // Additional list calls for ancestors may be queued — flush
+        // Additional list calls for ancestors may be queued -- flush
         // them too so the spec's `httpMock.verify()` passes.
         try { answerListChildren('/docs', []); } catch { /* no-op when no fetch was queued */ }
     });

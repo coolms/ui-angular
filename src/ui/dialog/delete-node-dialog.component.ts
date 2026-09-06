@@ -30,7 +30,7 @@ export interface DeleteNodeDialogResult {
  * "delete recursively" checkbox when showRecursive is true.
  *
  * A3 dialog convergence: renders the platform `<app-modal>` chrome
- * (`cms-dialog` shape) — a sibling of every other dialog — instead of
+ * (`cms-dialog` shape) -- a sibling of every other dialog -- instead of
  * hand-rolled `cms-dialog-*` divs. Already opened via CDK `Dialog.open()`,
  * so this is a template-only swap; consumers (data in, result out) are
  * unchanged. The Delete button uses the global `.cms-btn-danger` so it

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * UI-polish A2 — shared "nothing here yet" empty state. Replaces the
+ * UI-polish A2 -- shared "nothing here yet" empty state. Replaces the
  * one-off `<p>No results</p>` notes (and silent blank grids) each page
  * rolled on its own. Projects optional content (e.g. a "Create" button)
  * via <ng-content> below the hint.

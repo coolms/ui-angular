@@ -120,7 +120,7 @@ export class TokenInputComponent implements ControlValueAccessor {
     private onChange: (v: string) => void = () => {};
     private onTouched: () => void         = () => {};
 
-    // Preview — replaces {const:token} with example values
+    // Preview -- replaces {const:token} with example values
     previewValue = signal('');
     preview      = computed(() => {
         const val = this.previewValue();
@@ -153,7 +153,7 @@ export class TokenInputComponent implements ControlValueAccessor {
     }
 
     onKeydown(event: KeyboardEvent): void {
-        // Backspace on chip — remove entire chip
+        // Backspace on chip -- remove entire chip
         if (event.key === 'Backspace') {
             const sel = window.getSelection();
             if (sel?.anchorNode?.parentElement?.classList.contains('token-chip')) {
@@ -170,7 +170,7 @@ export class TokenInputComponent implements ControlValueAccessor {
 
     onPaste(event: ClipboardEvent): void {
         event.preventDefault();
-        // Only allow plain text paste — strip any HTML
+        // Only allow plain text paste -- strip any HTML
         const text = event.clipboardData?.getData('text/plain') ?? '';
         document.execCommand('insertText', false, text);
     }

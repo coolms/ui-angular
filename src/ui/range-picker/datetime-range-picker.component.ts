@@ -18,7 +18,7 @@ import { TimeOfDayPickerComponent } from './time-of-day-picker.component';
 import { formatLocalDate, formatLocalTime } from './prefs-format';
 
 /**
- * — Proper datetime range picker.
+ * -- Proper datetime range picker.
  *
  * Single-trigger field showing the datetime span as one string (e.g.
  * `2026-05-01 09:00 -> 2026-05-31 17:30`). Click opens a fixed-position
@@ -412,10 +412,10 @@ export class DateTimeRangePickerComponent implements OnDestroy {
     readonly required         = input<boolean>(true);
     readonly disabled         = input<boolean>(false);
     readonly showAllDayToggle = input<boolean>(true);
-    /** Trigger sizing — 'sm' matches DataGrid filter-row inputs. */
+    /** Trigger sizing -- 'sm' matches DataGrid filter-row inputs. */
     readonly size             = input<'sm' | 'md'>('md');
     /**
-     * Show an inline ×-clear button on the trigger when a value is set.
+     * Show an inline x-clear button on the trigger when a value is set.
      * Set to `false` for required fields so the user can't drop the value
      * to null with a single click.
      */
@@ -438,7 +438,7 @@ export class DateTimeRangePickerComponent implements OnDestroy {
     readonly overlayTop  = signal(0);
     readonly overlayLeft = signal(0);
 
-    // Pending parts inside the overlay — committed on Apply.
+    // Pending parts inside the overlay -- committed on Apply.
     readonly pendingStartDate = signal<string | null>(null);
     readonly pendingStartTime = signal<string>('09:00');
     readonly pendingEndDate   = signal<string | null>(null);

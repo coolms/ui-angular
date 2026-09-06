@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 /**
- * Reusable pane splitter — a thin vertical drag bar dropped BETWEEN two flex
+ * Reusable pane splitter -- a thin vertical drag bar dropped BETWEEN two flex
  * children of a horizontal flex row. Dragging it resizes the pane immediately
  * before it (its `previousElementSibling`); the pane after it absorbs the change
  * (so give the trailing pane `flex: 1`).
@@ -23,9 +23,9 @@ import {
  * with a comfortable ~7px hit area.
  *
  * ```html
- * <aside class="rail">…</aside>
+ * <aside class="rail">...</aside>
  * <cms-pane-splitter [minWidth]="180" [maxWidth]="360" storageKey="email.rail" />
- * <section class="list" style="flex:1">…</section>
+ * <section class="list" style="flex:1">...</section>
  * ```
  *
  * The chosen width persists to `localStorage` under {@link storageKey} (omit to
@@ -58,7 +58,7 @@ export class CmsPaneSplitterComponent {
     /**
      * Which sibling this splitter resizes. `'start'` (default) resizes the pane
      * BEFORE it (a leading rail; give the trailing pane `flex:1`). `'end'` resizes
-     * the pane AFTER it (a trailing rail; give the leading pane `flex:1`) — the
+     * the pane AFTER it (a trailing rail; give the leading pane `flex:1`) -- the
      * drag inverts so pulling the bar toward the rail shrinks it, as expected.
      */
     readonly side = input<'start' | 'end'>('start');
@@ -119,7 +119,7 @@ export class CmsPaneSplitterComponent {
             try {
                 localStorage.removeItem(key);
             } catch {
-                /* storage denied — nothing to clear */
+                /* storage denied -- nothing to clear */
             }
         }
     }
@@ -197,7 +197,7 @@ export class CmsPaneSplitterComponent {
         try {
             localStorage.setItem(key, String(Math.round(w)));
         } catch {
-            /* storage full/denied — persistence is best-effort */
+            /* storage full/denied -- persistence is best-effort */
         }
     }
 

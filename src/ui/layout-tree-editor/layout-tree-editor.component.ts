@@ -26,14 +26,14 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
  * Edits the container tree (tabs -> tab -> group -> grid -> column) + places field
  * aliases into containers. Self-recurses via an `<ng-template>` outlet (a
  * standalone component can't list itself in `imports`, so template recursion is
- * the clean approach) — ONE component owns all mutation logic operating on a
+ * the clean approach) -- ONE component owns all mutation logic operating on a
  * locally-cloned `model`, emitting the whole tree on every edit.
  *
  * `availableFields` (the UNPLACED fields = all fields minus those already
  * referenced as a leaf anywhere in the tree) is computed by the HOST and passed
  * down to every level, so the "+ field" picker only offers unplaced fields and
  * the tray shows what's left. Reorder/placement is button-driven (drag-drop is a
- * deferred polish — recursive CDK connected drop-lists are notoriously fiddly).
+ * deferred polish -- recursive CDK connected drop-lists are notoriously fiddly).
  */
 @Component({
     selector: 'app-layout-tree-editor',
@@ -216,7 +216,7 @@ export class LayoutTreeEditorComponent {
 
     /** All field aliases (for the showWhen field picker). */
     @Input() allFields: string[] = [];
-    /** Unplaced field aliases (for the "+ field" picker + tray) — computed by the host. */
+    /** Unplaced field aliases (for the "+ field" picker + tray) -- computed by the host. */
     @Input() availableFields: string[] = [];
 
     @Input()

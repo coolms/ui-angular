@@ -12,7 +12,7 @@ import { DataSourceDefinition, FieldItem } from '@coolms/core-angular';
  *
  * **A null control must still LOOK like a dropdown.** Angular resolves a value
  * with no matching option to the literal string "null", so a fresh form's select
- * had selectedIndex -1 — which Chrome paints as an empty box: no placeholder, no
+ * had selectedIndex -1 -- which Chrome paints as an empty box: no placeholder, no
  * chevron, no hint that it opens. The options were all there and the field was
  * fully usable; it just read as a broken text input. Every native select in the
  * dynamic form was affected, which is why the assertion here is on
@@ -21,7 +21,7 @@ import { DataSourceDefinition, FieldItem } from '@coolms/core-angular';
  * **A multi-value picker has to scale past a handful.** A native list box is
  * fine for five options and unusable for two hundred and fifty, which is what a
  * phone-country allow-list is. The searchable picker is opt-in so existing
- * multi-selects keep their shape — and that opt-in is what these pin.
+ * multi-selects keep their shape -- and that opt-in is what these pin.
  */
 describe('SelectFieldComponent', () => {
     function item(ds: Partial<DataSourceDefinition> = {}, over: Partial<FieldItem> = {}): FieldItem {
@@ -162,7 +162,7 @@ describe('SelectFieldComponent', () => {
     it('shows the picker the selection it just made, and the one it was given', () => {
         // A FormControl's value is not reactive. Read through a computed, this
         // is calculated once and never again: the picker takes a click, emits
-        // it, and redraws itself EMPTY — the selection is in the form and
+        // it, and redraws itself EMPTY -- the selection is in the form and
         // invisible on screen, which reads as "the click did nothing".
         const field = item({ multiple: true, widget: 'select-search' });
         render(field, ['BY']);

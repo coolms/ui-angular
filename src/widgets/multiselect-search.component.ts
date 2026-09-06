@@ -21,7 +21,7 @@ export interface MultiselectOption {
  * CDK Overlay panel containing a search input and the filtered option list.
  * Clicking an option toggles selection and keeps the panel open for batch
  * picking. Selected items render as chips above the trigger and can be
- * removed via the chip's ✕ button.
+ * removed via the chip's [x] button.
  *
  * Stateless: receives `options` and `value` as inputs, emits new arrays via
  * `valueChange`. The parent owns the source of truth (typically a FormControl).

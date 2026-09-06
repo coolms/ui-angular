@@ -13,7 +13,7 @@ import { LocaleFieldComponent } from '../../ui/locale-selector.component';
 
 /**
  * Reusable localized-text widget for the dynamic form: a single text/textarea
- * input with a per-locale (EN / UK / …) tab switcher. The form control's value
+ * input with a per-locale (EN / UK / ...) tab switcher. The form control's value
  * is a FLAT `{ [locale]: string }` map, mirroring the backend `LocalizedTextType`.
  *
  * Locales come from the API manifest (via {@link LocaleFieldComponent}); the
@@ -22,8 +22,8 @@ import { LocaleFieldComponent } from '../../ui/locale-selector.component';
  * plain input.
  *
  * This is the FE half of the "localized text" form type. It is
- * persistence-agnostic — the `{en,uk}` map is just the control value; where it
- * lands (entity `extras`, a catalogue, …) is the consuming form's concern.
+ * persistence-agnostic -- the `{en,uk}` map is just the control value; where it
+ * lands (entity `extras`, a catalogue, ...) is the consuming form's concern.
  */
 @Component({
     selector: 'app-localized-text-field',

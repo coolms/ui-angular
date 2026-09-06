@@ -26,10 +26,10 @@ import { AuthState } from '@coolms/core-angular';
  * One row in the multi-select dropdown.
  *
  * Mirrors the backend's Option value object from the
- * OptionSource ship — `value` is the stable wire token used in RQL
+ * OptionSource ship -- `value` is the stable wire token used in RQL
  * filter expressions, `label` is the human-readable display name, and
  * `group` (optional) populates the dropdown's section headers (e.g.
- * timezone region: "Europe", "America", …).
+ * timezone region: "Europe", "America", ...).
  */
 export interface MultiOptionRow {
     readonly value: string;
@@ -39,7 +39,7 @@ export interface MultiOptionRow {
 }
 
 /**
- * Group bucket consumed by the template — produced by
+ * Group bucket consumed by the template -- produced by
  * {@link MultiOptionSelectComponent.groupedOptions} from the flat
  * {@link MultiOptionRow} list. Ungrouped options accumulate under
  * `null` and render without a section header.
@@ -55,14 +55,14 @@ interface OptionGroup {
  *
  * Two operating modes (mutually exclusive, `apiUrl` wins when both
  * are set):
- *  1. **Static** — pass a frozen `options` array. Useful for small
+ *  1. **Static** -- pass a frozen `options` array. Useful for small
  *     enum-style lists where the backend already shipped every row
  *     inline via the YAML's `options.enumOptions` block (e.g. the
  *     Calendar `currentUserAccess` access categories).
- *  2. **Lazy** — pass `apiUrl` pointing at an `/api/v1/options/{key}`
+ *  2. **Lazy** -- pass `apiUrl` pointing at an `/api/v1/options/{key}`
  *     endpoint exposed by the OptionSource platform. The component
- *     pulls every page on open (most catalogues are short — TZ list
- *     ~400 rows — so a single fetch is fine) and renders grouped.
+ *     pulls every page on open (most catalogues are short -- TZ list
+ *     ~400 rows -- so a single fetch is fine) and renders grouped.
  *
  * The component's contract is intentionally narrow: it owns its own
  * open/close state and renders a chip-styled trigger button that
@@ -70,7 +70,7 @@ interface OptionGroup {
  * the parent gives it enough horizontal space.
  *
  * Built for the DataGrid `in`-op filter row (OptionSource ship),
- * but standalone — any caller wanting a grouped multi-select can wire
+ * but standalone -- any caller wanting a grouped multi-select can wire
  * it the same way.
  */
 @Component({
@@ -301,13 +301,13 @@ export class MultiOptionSelectComponent implements OnInit {
     /** Trigger placeholder when nothing is selected. */
     readonly placeholder = input<string>('— Any —');
 
-    /** Search-box placeholder ("Search timezone…"). */
+    /** Search-box placeholder ("Search timezone..."). */
     readonly entityLabel = input<string>('option');
 
     /**
      * Lazy mode: tagged-source endpoint, e.g.
      * `/api/v1/options/calendar.timezones`. The component pulls the
-     * full catalogue on first open (most catalogues are short — TZ
+     * full catalogue on first open (most catalogues are short -- TZ
      * list ~400 rows). When unset, falls back to the static
      * {@link options} input.
      */
@@ -343,7 +343,7 @@ export class MultiOptionSelectComponent implements OnInit {
     readonly searchQuery   = signal('');
     readonly hasLoadedLazy = signal(false);
 
-    // Fixed-position dropdown coords — recalculated on open
+    // Fixed-position dropdown coords -- recalculated on open
     readonly dropTop   = signal(0);
     readonly dropLeft  = signal(0);
     readonly dropWidth = signal(260);
@@ -360,7 +360,7 @@ export class MultiOptionSelectComponent implements OnInit {
 
     /**
      * Search-filtered rows (case-insensitive substring on label OR
-     * group name — typing "Europe" shows the whole Europe block).
+     * group name -- typing "Europe" shows the whole Europe block).
      */
     private readonly filtered = computed<readonly MultiOptionRow[]>(() => {
         const q = this.searchQuery().trim().toLowerCase();
@@ -401,7 +401,7 @@ export class MultiOptionSelectComponent implements OnInit {
     /**
      * Project the bound value list back into rows. Falls back to a
      * minimal `{value, label: value}` synth when the pool hasn't
-     * loaded yet or the value isn't in it — so the trigger always
+     * loaded yet or the value isn't in it -- so the trigger always
      * renders something the user can recognise.
      */
     readonly selectedRows = computed<readonly MultiOptionRow[]>(() => {
@@ -416,7 +416,7 @@ export class MultiOptionSelectComponent implements OnInit {
     constructor() {
         // Reset lazy cache when the apiUrl changes (the catalogue
         // could be totally different now). Same-URL reopens reuse
-        // the cache — important because the timezone list is ~400
+        // the cache -- important because the timezone list is ~400
         // rows and we don't want to refetch on every dropdown open.
         effect(() => {
             const url = this.apiUrl() ?? '';
@@ -433,7 +433,7 @@ export class MultiOptionSelectComponent implements OnInit {
         //
         // `selectedRows` falls back to `{value, label: value}` for a value the
         // pool doesn't have, and in lazy mode the pool is empty until the user
-        // opens the dropdown — so a form loading saved values showed raw wire
+        // opens the dropdown -- so a form loading saved values showed raw wire
         // tokens ("rss", "webhook") where it had shown labels a moment earlier
         // when the same values were picked by hand. The fallback is still the
         // right behaviour for a value the catalogue genuinely lacks; what was
@@ -524,8 +524,8 @@ export class MultiOptionSelectComponent implements OnInit {
      * One-shot full-catalogue fetch from the OptionSource endpoint.
      * Hydra envelope with `member` array; each member projects to a
      * {@link MultiOptionRow}. Pagination is intentionally NOT followed
-     * — the OptionSource endpoint is designed for short catalogues
-     * (timezones, currencies, languages, …) where one fetch is fine
+     * -- the OptionSource endpoint is designed for short catalogues
+     * (timezones, currencies, languages, ...) where one fetch is fine
      * and the in-dropdown search box covers the user's narrowing need.
      */
     private fetchLazy(): void {
@@ -546,7 +546,7 @@ export class MultiOptionSelectComponent implements OnInit {
                 ReadonlyArray<Record<string, unknown>>;
             const rows: MultiOptionRow[] = [];
             for (const m of members) {
-                // An option source may legitimately offer an EMPTY value — the
+                // An option source may legitimately offer an EMPTY value -- the
                 // newsletter's default list is stored as `''`, and dropping it
                 // would make the one list every install has unfilterable. So the
                 // guard tests for a missing/null field (a malformed row) rather

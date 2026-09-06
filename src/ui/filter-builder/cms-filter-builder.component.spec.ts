@@ -6,7 +6,7 @@ import { CmsFilterBuilderComponent } from './cms-filter-builder.component';
 import type { EntityFieldsResponse } from './cms-filter-builder.types';
 
 /**
- *-2.6a — behaviour spec for CmsFilterBuilder.
+ *-2.6a -- behaviour spec for CmsFilterBuilder.
  *
  * Mirrors the X-2.5 endpoint shape.
  *
@@ -155,13 +155,13 @@ describe('CmsFilterBuilderComponent', () => {
 
     /**
      * The regression. Two criteria used to join with a literal
-     * ' and ', which the RQL DSL has no notion of — the whole tail became
+     * ' and ', which the RQL DSL has no notion of -- the whole tail became
      * the FIRST criterion's value. Depending on field order that was a 500
      * ("Unable to compute count.") or, worse, a confident "No users match
      * this filter." Top-level filters are an implicit AND expressed as
      * repeated params, so each criterion gets its own `filter[]=`.
      *
-     * The single-criterion cases above passed throughout — nothing pinned
+     * The single-criterion cases above passed throughout -- nothing pinned
      * what happens with two, which is exactly how this shipped.
      */
     it('emits one filter[] param per criterion, never an infix conjunction', fakeAsync(() => {

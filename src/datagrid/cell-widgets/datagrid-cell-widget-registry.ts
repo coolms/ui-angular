@@ -5,7 +5,7 @@ import { InjectionToken, Injectable, Type, inject } from '@angular/core';
  * `DataGridFilterWidgetConfig`: `column`/`label` identify the column and
  * `options` is the column's `options` bag merged with the backend
  * `cellWidget.options`. Unlike a field/filter widget there is no operator or
- * change channel — cells are read-only.
+ * change channel -- cells are read-only.
  */
 export interface DataGridCellWidgetConfig {
     readonly column:  string;
@@ -18,7 +18,7 @@ export interface DataGridCellWidgetConfig {
  * `ngComponentOutletInputs`). Parallel to `DataGridFilterWidgetInputs`, but
  * display-only: `value` is the cell value (`row[column]`), `row` is the full row
  * (so a composite cell can read sibling fields), and `config` is the merged
- * descriptor. No `valueChange` — a cell never writes back (row actions and the
+ * descriptor. No `valueChange` -- a cell never writes back (row actions and the
  * writable-boolean toggle remain the mutation paths).
  */
 export interface DataGridCellWidgetInputs extends Record<string, unknown> {
@@ -36,16 +36,16 @@ interface DataGridCellWidgetEntry {
 export const DATAGRID_CELL_WIDGET = new InjectionToken<readonly DataGridCellWidgetEntry[]>('DATAGRID_CELL_WIDGET');
 
 /**
- * Front-end side of the DataGrid cell-widget registry — the display-side sibling
+ * Front-end side of the DataGrid cell-widget registry -- the display-side sibling
  * of `FieldWidgetRegistry` / `DataGridFilterWidgetRegistry`. Maps a widget `kind`
  * (carried by a column's `cellWidget.kind` from `GET /api/v1/datagrids/{id}`) to
  * the Angular component that renders the column's cells.
  *
- * A module registers its widget once (e.g. `provideDataGridCellWidget('sparkline', …)`
+ * A module registers its widget once (e.g. `provideDataGridCellWidget('sparkline', ...)`
  * in `app.config`); the grid then resolves the component by kind, so a column
  * declaring a custom cell needs no edit to the cell-render cascade. When no
  * widget is registered for a column's kind, the grid falls back to its
- * type-driven cell — the registry is additive, never a dead end.
+ * type-driven cell -- the registry is additive, never a dead end.
  */
 @Injectable({ providedIn: 'root' })
 export class DataGridCellWidgetRegistry {

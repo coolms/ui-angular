@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
 /**
- * Phase 2 generic entity picker — drop-in replacement for
+ * Phase 2 generic entity picker -- drop-in replacement for
  * a scalar text input when a template's contextSchema declares a
  * variable's `entityType`.
  *
@@ -37,9 +37,9 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
  *
  * Known Phase 2b limitation: a pre-existing `value` (passed by the
  * form on edit / re-open) is acknowledged via the chip state, but
- * the *label* isn't fetched — we don't have a "fetch by id" round
+ * the *label* isn't fetched -- we don't have a "fetch by id" round
  * trip yet. The chip shows `"id: <uuid>"` placeholder; clicking the
- * × clears the value. Future work: add a bulk-by-id endpoint to
+ * x clears the value. Future work: add a bulk-by-id endpoint to
  * EntitySearchService and pre-fetch labels on first load.
  */
 @Component({
@@ -274,7 +274,7 @@ export class CmsEntityPickerComponent {
         // Reflect external `value` resets (e.g. parent clears the
         // form). On the *first* assignment we synthesize a stub
         // chip per id so the user sees the prior selection is
-        // present — the label fetch isn't implemented in Phase 2b
+        // present -- the label fetch isn't implemented in Phase 2b
         // (documented limitation), so the stub shows the id itself.
         // Subsequent valueChange emissions originate here and the
         // selectedItems we hold are authoritative.
@@ -283,7 +283,7 @@ export class CmsEntityPickerComponent {
         // fires the effect on every `set()`. `untracked()` reads the
         // current value without registering a dependency, so the
         // effect only re-runs when the *external* `value()` input
-        // changes — which is the intended trigger.
+        // changes -- which is the intended trigger.
         effect(() => {
             const val = this.value();
             if (val === null || (Array.isArray(val) && val.length === 0)) {
@@ -332,7 +332,7 @@ export class CmsEntityPickerComponent {
         const target = event.target as Node | null;
         const host = (event.currentTarget as Document).activeElement?.closest('cms-entity-picker');
         // If the event happened inside our host, the input/result
-        // handlers will manage state — leave them be.
+        // handlers will manage state -- leave them be.
         if (host !== null && host?.contains(target)) {
             return;
         }

@@ -23,11 +23,11 @@ export const FIELD_WIDGET = new InjectionToken<readonly FieldWidgetEntry[]>('FIE
 
 /**
  * Front-end side of the field-widget registry (the backend half is
- * the server's field-widget registry). Maps a widget `kind` — as
+ * the server's field-widget registry). Maps a widget `kind` -- as
  * carried by a field descriptor's `widget.kind` from `GET /content/field-panels`
- * — to the Angular component that renders it.
+ * -- to the Angular component that renders it.
  *
- * A module registers its widget once (e.g. `provideFieldWidget('tags', …)` in
+ * A module registers its widget once (e.g. `provideFieldWidget('tags', ...)` in
  * `app.config`); any field-rendering surface then resolves the component by
  * kind, so adding a widget needs no edit to the surfaces that render fields.
  */

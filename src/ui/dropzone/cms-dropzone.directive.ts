@@ -1,7 +1,7 @@
 import { Directive, HostBinding, HostListener, input, output } from '@angular/core';
 
 /**
- * Per §1 — config inputs accepted on the directive selector.
+ * Per section 1 -- config inputs accepted on the directive selector.
  * `accept` is a list of MIME patterns; `'<type>/*'` wildcards match
  * any subtype, exact strings match exactly, empty/undefined accepts
  * all files.
@@ -20,7 +20,7 @@ export interface CmsDropzoneConfig {
  * the highlight state with their own scoped CSS.
  *
  * Gates on `event.dataTransfer.types.includes('Files')` so in-app
- * CdkDrag operations don't trigger the dropzone — only drags
+ * CdkDrag operations don't trigger the dropzone -- only drags
  * originating from the OS shell (with the `Files` payload type)
  * activate it.
  *
