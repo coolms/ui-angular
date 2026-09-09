@@ -97,7 +97,7 @@ export class UserCalendarPreferencesService {
     /**
      * Trigger a one-shot load of `/auth/me/settings`. Subsequent calls
      * return the same cached observable. Callers may call this eagerly
-     * (e.g., at app-init) or rely on the signals lazily — both work.
+     * (e.g., at app-init) or rely on the signals lazily -- both work.
      */
     ensureLoaded(): Observable<CalendarPrefs> {
         if (this.loadOnce$) return this.loadOnce$;
@@ -152,7 +152,7 @@ export class UserCalendarPreferencesService {
         return this.ensureLoaded();
     }
 
-    /** Reset to defaults — used by AuthState when the user logs out. */
+    /** Reset to defaults -- used by AuthState when the user logs out. */
     reset(): void {
         this._prefs.set(this.platformDefaults());
         this.loadOnce$ = undefined;

@@ -25,20 +25,20 @@ export interface TagOption {
 }
 
 /**
- * Reusable tag / multi-value input — badge chips with remove, free-add on
+ * Reusable tag / multi-value input -- badge chips with remove, free-add on
  * Enter/comma, and an optional searchable suggestions dropdown. A `ControlValueAccessor`
  * over `string[]`, so it drops into any reactive form.
  *
  * The richer sibling of {@link ChipInputComponent}: pass a `suggestions` list and
  * typing filters it into an autocomplete dropdown (selecting adds a chip);
  * free-add still works for values not in the list. With no `suggestions` it
- * behaves like a plain chip input. Not tag-specific — usable anywhere a
+ * behaves like a plain chip input. Not tag-specific -- usable anywhere a
  * "search + badges" multi-select is wanted (the suggestions can be any string
  * vocabulary the caller feeds, static or async-populated).
  *
  * Two vocabulary modes, both round-tripping a `string[]` model:
  *   - **string** (`suggestions`): value === label, the simplest case.
- *   - **label/value** (`options`): supply `{value, label}` pairs — chips and the
+ *   - **label/value** (`options`): supply `{value, label}` pairs -- chips and the
  *     dropdown render `label` while the model holds `value`. Free-add of a value
  *     not in the list is converted via {@link createOption} (default: identity),
  *     so a caller with a derived value (e.g. a slug) can map typed text to it.
@@ -154,7 +154,7 @@ export class TagInputComponent implements ControlValueAccessor {
     );
 
     /**
-     * Emits the live typed text as the user types — lets a parent drive an ASYNC
+     * Emits the live typed text as the user types -- lets a parent drive an ASYNC
      * suggestions source (debounce -> fetch -> feed the result back via `options`).
      * With only a static `suggestions`/`options` vocabulary this can be ignored.
      */
@@ -217,7 +217,7 @@ export class TagInputComponent implements ControlValueAccessor {
         this.queryChange.emit(this.query());
         // Open unconditionally: with an async source the matching options may not
         // have arrived yet, so gating on the CURRENT vocabulary would hide the menu
-        // for the response. `filtered()` empty ⇒ the menu still renders nothing.
+        // for the response. `filtered()` empty => the menu still renders nothing.
         this.open.set(true);
     }
 
@@ -246,7 +246,7 @@ export class TagInputComponent implements ControlValueAccessor {
 
     onBlur(event: FocusEvent): void {
         // Suggestion clicks preventDefault on mousedown so they don't blur the
-        // input first — so a blur here means the user clicked away: commit any
+        // input first -- so a blur here means the user clicked away: commit any
         // free-typed value (matching ChipInput's behaviour).
         const inputEl = event.target as HTMLInputElement;
         const value = inputEl.value.trim();

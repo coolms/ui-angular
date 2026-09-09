@@ -15,7 +15,7 @@ import { UserPreferencesService } from '@coolms/core-angular';
 import { SpaceDto } from './space-dto';
 
 /**
- * Generic accordion shell for library "spaces" (Media, Document, …).
+ * Generic accordion shell for library "spaces" (Media, Document, ...).
  *
  * Renders each {@link SpaceDto} as a collapsible section. One section
  * is "active" at a time; clicking a section header emits
@@ -28,7 +28,7 @@ import { SpaceDto } from './space-dto';
  * existing CollectionsTree).
  *
  * Multi-expand is allowed (each section toggles independently) so
- * sibling subtrees can be open simultaneously — matches the file-manager
+ * sibling subtrees can be open simultaneously -- matches the file-manager
  * accordion pattern.
  */
 @Component({
@@ -126,7 +126,7 @@ export class ExplorerAccordionComponent implements OnInit {
 
     /**
      * Right-click on a space header. The accordion is shared by
-     * Documents / Articles / Media, and each has its own action vocabulary —
+     * Documents / Articles / Media, and each has its own action vocabulary --
      * so it only reports the gesture and the space, and the consumer decides
      * what the menu contains. Consumers that ignore it keep the browser's
      * native menu, which is why the handler does NOT preventDefault here.
@@ -183,12 +183,12 @@ export class ExplorerAccordionComponent implements OnInit {
     }
 
     /**
-     * Whether this section actually renders its body — and therefore what
+     * Whether this section actually renders its body -- and therefore what
      * the caret must show.
      *
      * There is a single `<ng-content>`, so only the ACTIVE section can ever
      * project anything. A section that is in the expanded set but not active
-     * shows nothing, and drawing `▾` on it was the caret claiming content
+     * shows nothing, and drawing `v` on it was the caret claiming content
      * that cannot exist. Deriving both the caret and the body from one
      * predicate makes them incapable of disagreeing.
      */

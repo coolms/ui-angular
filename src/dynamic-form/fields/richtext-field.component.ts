@@ -14,7 +14,7 @@ import { FieldItem } from '@coolms/core-angular';
  * dynamic-field components use.
  *
  * Storage: plain HTML by default. Surfaces (page editor) that need a
- * different storage form pass their own ContentAdapter — but the
+ * different storage form pass their own ContentAdapter -- but the
  * dynamic-form pipeline doesn't expose that lever today, so all richtext
  * fields driven by FormConfig speak HTML in/out for now. Backend
  * RichTextProfileValidator validates the stored HTML against the same

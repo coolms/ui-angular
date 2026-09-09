@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { DateTimeFieldComponent } from '../../range-picker';
 
 /**
- * Built-in `date` field widget — a date input (no time) over the field-widget
+ * Built-in `date` field widget -- a date input (no time) over the field-widget
  * registry's {@link import('../field-widget-registry').FieldWidgetInputs}
  * callback contract. Wraps the shared {@link DateTimeFieldComponent} (which
  * respects the user's date-format preference), so the registry path renders the

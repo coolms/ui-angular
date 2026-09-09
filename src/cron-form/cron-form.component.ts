@@ -24,13 +24,13 @@ import {
 import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.component';
 
 /**
- * `<app-cron-form>` — structured cron expression builder.
+ * `<app-cron-form>` -- structured cron expression builder.
  *
  * Mirrors `<app-recurrence-form>`'s preset-dropdown pattern. Six presets
  * cover the common cases (Every minute / Every hour / Daily / Weekly /
- * Monthly / Custom). "Custom expression…" reveals a raw text field plus
+ * Monthly / Custom). "Custom expression..." reveals a raw text field plus
  * an inline explainer with field positions, syntax, and worked examples
- * — so users who don't read cron natively still have a fighting chance.
+ * -- so users who don't read cron natively still have a fighting chance.
  *
  * The component emits the serialised 5-field expression on every change
  * via `(valueChange)`.
@@ -304,7 +304,7 @@ export class CronFormComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['value'] && !changes['value'].firstChange) {
             // Only adopt external value changes when they differ from what we'd
-            // emit — prevents the cycle: emit -> parent stores -> input updates ->
+            // emit -- prevents the cycle: emit -> parent stores -> input updates ->
             // parse -> emit (which would also be lossy on custom expressions).
             const current = serialiseCron(this.state());
             const incoming = (this.value ?? '').trim();

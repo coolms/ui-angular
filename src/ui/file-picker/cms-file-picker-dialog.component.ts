@@ -18,7 +18,7 @@ export interface FilePickerDialogData {
     value?:          readonly string[] | string | null;
     multiple?:       boolean;
     selectableWhen?: FileSelectablePredicate;
-    /** Verb on the primary button — "Attach", "Insert", "Choose". */
+    /** Verb on the primary button -- "Attach", "Insert", "Choose". */
     confirmLabel?:   string;
 }
 
@@ -26,7 +26,7 @@ export interface FilePickerDialogData {
  * `<cms-file-picker>` in its own modal.
  *
  * The picker was designed to embed, and the newsletter Compose dialog did embed
- * it — which put a scrolling VFS tree inside an already-tall form. The dialog
+ * it -- which put a scrolling VFS tree inside an already-tall form. The dialog
  * grew past the viewport, and every folder expansion resized it, so the whole
  * modal jumped while the operator was reading it. Browsing a file system is its
  * own task with its own scroll region; it does not belong inside a form the
@@ -35,7 +35,7 @@ export interface FilePickerDialogData {
  * Modelled on how the Media picker already works, so "pick a thing" is one
  * interaction shape across the admin rather than a per-page invention.
  *
- * Resolves with the selected path(s), or `undefined` when dismissed — a caller
+ * Resolves with the selected path(s), or `undefined` when dismissed -- a caller
  * MUST treat dismissal as "leave the selection alone", not as "clear it".
  */
 @Component({
@@ -102,7 +102,7 @@ export class CmsFilePickerDialogComponent {
     }
 
     cancel(): void {
-        // `undefined`, not `[]` — the caller cannot otherwise tell "I chose
+        // `undefined`, not `[]` -- the caller cannot otherwise tell "I chose
         // nothing" from "I changed my mind", and clearing someone's existing
         // attachments because they pressed Escape is the wrong default.
         this.dialogRef.close(undefined);

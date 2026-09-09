@@ -20,7 +20,7 @@ export type { VfsDirectoryPage };
  *   3. Stat a path (used to validate user-typed paths in the picker's
  *      path input before the tree navigates).
  *
- * No state — the picker component owns the in-memory tree cache and
+ * No state -- the picker component owns the in-memory tree cache and
  * decides when to fetch. All methods return cold observables;
  * `resolvePath` swallows 404 / 422 into `null` so the path-input UX
  * can show an inline "not found" hint without a try/catch tangle in

@@ -1,40 +1,40 @@
-// Typed contract — mirrors DataGridRenderDefinition / DataGridResult PHP VOs exactly.
+// Typed contract -- mirrors DataGridRenderDefinition / DataGridResult PHP VOs exactly.
 // No `any` anywhere.
 
 /**
  * Column kinds supported by the DataGrid renderer / filter row.
  *
- * - `text` (default) — string content; debounced text filter.
- * - `boolean`        — Yes/No badge or writable toggle; "All / Yes / No" filter.
- * - `number`         — numeric cell; range filter (ge/le pair).
- * - `filesize`       — a byte count rendered as B/KB/MB/GB. Sorts and filters as
+ * - `text` (default) -- string content; debounced text filter.
+ * - `boolean`        -- Yes/No badge or writable toggle; "All / Yes / No" filter.
+ * - `number`         -- numeric cell; range filter (ge/le pair).
+ * - `filesize`       -- a byte count rendered as B/KB/MB/GB. Sorts and filters as
  *                      the NUMBER it is: formatting to a string column instead
  *                      would order "886 B" above "328.4 KB", alphabetically.
- * - `date`           — calendar date (YYYY-MM-DD); date-range picker filter
+ * - `date`           -- calendar date (YYYY-MM-DD); date-range picker filter
  *                      (consumes `<app-date-range-picker>`, emits ge/le pair).
- * - `datetime`       — ISO-8601 timestamp; cell rendered in the user's TZ via
+ * - `datetime`       -- ISO-8601 timestamp; cell rendered in the user's TZ via
  *                      `UserCalendarPreferencesService.tz()`; filter uses
  *                      `<app-datetime-range-picker>` (also TZ-aware).
- * - `time`           — wall-clock time (HH:MM[:SS]); filter uses
+ * - `time`           -- wall-clock time (HH:MM[:SS]); filter uses
  *                      `<app-time-range-picker>` emitting an HH:MM ge/le pair.
- * - `badge`          — value rendered as a coloured pill. `options.badgeMap`
+ * - `badge`          -- value rendered as a coloured pill. `options.badgeMap`
  *                      ({value: variant}) picks the colour, `options.badgeLabels`
  *                      / `options.enumOptions` relabel the text.
- * - `enum`           — backed-enum value rendered as a badge; filter is a
+ * - `enum`           -- backed-enum value rendered as a badge; filter is a
  *                      `<select>` populated from `options.enumOptions`.
- * - `link`           — value rendered as an `<a>`. `options.hrefPrefix`
+ * - `link`           -- value rendered as an `<a>`. `options.hrefPrefix`
  *                      (e.g. `mailto:`/`tel:`) prepends the value; `options.hrefField`
  *                      / `options.textField` source URL/text from other fields;
  *                      `options.external: true` opens a new tab.
- * - `avatar`         — initials (or `options.imageField` image) avatar beside the
+ * - `avatar`         -- initials (or `options.imageField` image) avatar beside the
  *                      value; `options.subtitleField` adds a muted second line.
- * - `snippet`        — multi-line clamped text; `options.lines` sets the clamp.
+ * - `snippet`        -- multi-line clamped text; `options.lines` sets the clamp.
  *
  * `datetime` + `time` added by DataGrid Ship C; `link`/`avatar`/`snippet` (and the
  * real `badge` renderer) by the rich-cell ship; all other tokens are the
  * historical set inherited from Tree DataGrid Ship A.
  *
- * Anything richer than a built-in is a registered cell widget — see
+ * Anything richer than a built-in is a registered cell widget -- see
  * {@link CellWidgetConfigDto} and `provideDataGridCellWidget`.
  */
 export type DataGridColumnType =
@@ -49,7 +49,7 @@ export type DataGridColumnType =
     | 'enum'
     | 'link'
     | 'avatar'
-    // A glyph beside the value — file-type icons and the like.
+    // A glyph beside the value -- file-type icons and the like.
     // Distinct from `avatar`, whose fallback is INITIALS: a Word document has
     // no initials, and "WE" beside "welcome-letter" is noise where a document
     // icon is information. Reads `options.iconField` (a Bootstrap-icon class)
@@ -65,7 +65,7 @@ export interface EnumOption {
 }
 
 /**
- * Declares a custom filter-row input for a column — mirrors the PHP
+ * Declares a custom filter-row input for a column -- mirrors the PHP
  * server's filter-widget config value object.
  *
  * `kind` is resolved to an Angular component via the
@@ -80,14 +80,14 @@ export interface FilterWidgetConfigDto {
 }
 
 /**
- * Declares a custom cell renderer for a column — the display-side twin of
+ * Declares a custom cell renderer for a column -- the display-side twin of
  * {@link FilterWidgetConfigDto}, mirroring the server's `
  * CellWidgetConfig` VO.
  *
  * `kind` is resolved to an Angular component via the `DataGridCellWidgetRegistry`;
  * `options` is an opaque per-widget config bag. When present (and the kind is
  * registered) the column's cells render this widget instead of the `type`-driven
- * renderer. Cells are display-only — the widget receives the value, the row, and
+ * renderer. Cells are display-only -- the widget receives the value, the row, and
  * the merged config, but no change callback.
  */
 export interface CellWidgetConfigDto {
@@ -133,14 +133,14 @@ export interface DataGridColumnDef {
     /**
      * Optional custom filter-row input (mirrors PHP `ColumnConfig::$filterWidget`).
      * When set and the `kind` is registered, the filter row renders the
-     * registered widget instead of the type-driven input. Absent ⇒ historical
+     * registered widget instead of the type-driven input. Absent => historical
      * type-driven behaviour (fully backward compatible).
      */
     readonly filterWidget?:   FilterWidgetConfigDto;
     /**
      * Optional custom cell renderer (mirrors PHP `ColumnConfig::$cellWidget`).
      * When set and the `kind` is registered, the column's cells render the
-     * registered widget instead of the `type`-driven renderer. Absent ⇒
+     * registered widget instead of the `type`-driven renderer. Absent =>
      * built-in `type`-driven rendering (fully backward compatible).
      */
     readonly cellWidget?:     CellWidgetConfigDto;
@@ -178,7 +178,7 @@ export interface DataGridRowAction {
      * toolbar's `showWhen`: `{field, op, value}` with optional
      * `and`/`or` nesting). When set, the DataGrid evaluates the
      * predicate against the row when assembling the right-click
-     * context menu — actions that fail are hidden. Mirror of the
+     * context menu -- actions that fail are hidden. Mirror of the
      * toolbar gating so Delete on a default-personal calendar (etc.)
      * stays consistent across both surfaces.
      */
@@ -219,7 +219,7 @@ export interface DataGridConfig {
     readonly id:          string;
     readonly label:       string;
     /**
-     * Plural noun for the empty state — "contacts", "backup bundles" — so an
+     * Plural noun for the empty state -- "contacts", "backup bundles" -- so an
      * unfiltered empty grid reads "No contacts yet" instead of the generic
      * "Nothing here yet". Optional; the grid falls back when absent.
      *
@@ -233,8 +233,8 @@ export interface DataGridConfig {
     readonly reorderRoute?: string | null;
     readonly perPage:     number;
     /**
-     * 'eager'  — load all data upfront, show pagination controls (default).
-     * 'lazy'   — infinite scroll: DataGrid emits (loadMore) when the sentinel
+     * 'eager'  -- load all data upfront, show pagination controls (default).
+     * 'lazy'   -- infinite scroll: DataGrid emits (loadMore) when the sentinel
      *            row enters the viewport; the parent appends data incrementally.
      */
     readonly loadingMode?: 'eager' | 'lazy';

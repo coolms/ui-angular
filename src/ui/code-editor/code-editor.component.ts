@@ -16,7 +16,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { Store } from '@ngxs/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 /**
- * ── Why CodeMirror is loaded, not imported ───────────────────────────────
+ * -- Why CodeMirror is loaded, not imported -------------------------------
  *
  * All nine of these are declared OPTIONAL peers, and a static import made
  * that a lie. ng-packagr emits ONE fesm bundle with no code splitting, so a

@@ -6,7 +6,7 @@ import { Store } from '@ngxs/store';
 import { AppConfigState } from '@coolms/core-angular';
 import type { ContextAsset } from './cms-context-frame.component';
 
-/** `GET /content/authoring-context` — what a surface must load to look like the site. */
+/** `GET /content/authoring-context` -- what a surface must load to look like the site. */
 export interface AuthoringContextDto {
     readonly themeSlug: string | null;
     readonly css: readonly ContextAsset[];
@@ -23,7 +23,7 @@ export interface AuthoringContextDto {
  * every keystroke would be asking a question whose answer it already has.
  *
  * Never errors outward. A failed lookup yields an EMPTY context so the editor
- * opens unstyled rather than not at all — the same rule the backend provider
+ * opens unstyled rather than not at all -- the same rule the backend provider
  * follows, for the same reason: an author blocked from writing because a theme
  * is misconfigured is the worse outcome.
  */
@@ -60,7 +60,7 @@ export class AuthoringContextService {
                 // NORMALISE at the boundary. API-Platform omits null
                 // properties, so `contentMaxWidth` arrives absent rather than
                 // null and every downstream `null ===` check silently misses
-                // it — which is exactly how the frame crashed on
+                // it -- which is exactly how the frame crashed on
                 // `undefined.replace`. One place converts absent to null.
                 map((dto): AuthoringContextDto => ({
                     themeSlug: dto.themeSlug ?? null,

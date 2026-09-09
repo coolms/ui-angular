@@ -296,9 +296,9 @@ export class DynamicLayoutComponent {
     }
 
     /**
-     * WZ-B + WZ-C — gate leaving the current wizard step: the instant client check
-     * first (so we never round-trip on an obviously-invalid step), then — when a
-     * formId is available — the server-authoritative WZ-C check. A server/network
+     * WZ-B + WZ-C -- gate leaving the current wizard step: the instant client check
+     * first (so we never round-trip on an obviously-invalid step), then -- when a
+     * formId is available -- the server-authoritative WZ-C check. A server/network
      * error does NOT block (degrades to the client gate; the final submit re-validates).
      */
     private async canLeaveCurrentStep(node: LayoutNode): Promise<boolean> {

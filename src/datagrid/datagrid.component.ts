@@ -107,17 +107,17 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
  * and `/api/v1/datagrids/{id}/data` (paginated rows).
  *
  * Inputs (API-backed mode):
- *   gridId        — datagrid config ID (e.g. 'navi_nodes')
- *   configBaseUrl — manifest.dataGrid.configBase
- *   routeParams   — extra route params merged into source (e.g. { slug: 'main' })
+ *   gridId        -- datagrid config ID (e.g. 'navi_nodes')
+ *   configBaseUrl -- manifest.dataGrid.configBase
+ *   routeParams   -- extra route params merged into source (e.g. { slug: 'main' })
  *
- * Inputs (external / inline mode — for use without a dedicated backend endpoint):
- *   externalConfig — DataGridConfig built by the parent; skips the config API call.
- *   externalData   — DataGridData provided by the parent; skips the data API call and
+ * Inputs (external / inline mode -- for use without a dedicated backend endpoint):
+ *   externalConfig -- DataGridConfig built by the parent; skips the config API call.
+ *   externalData   -- DataGridData provided by the parent; skips the data API call and
  *                    hides DataGrid's own pagination (parent manages paging externally).
  *
  * Outputs:
- *   rowActionTriggered — emitted for every row action click. When externalConfig is
+ *   rowActionTriggered -- emitted for every row action click. When externalConfig is
  *                        set (and rowActions have no `route`), the parent must handle
  *                        all actions here. When using API config with `route`, internal
  *                        HTTP delete still fires AND this output is emitted.
@@ -131,7 +131,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         style: 'display:flex; flex-direction:column; flex:1; min-height:0',
         // The grid is a SELECTABLE SURFACE. `ExplorerLayout` treats any
         // click in the main area that is not inside `[data-selectable]` as a
-        // background click and tells the host page to clear its selection — a
+        // background click and tells the host page to clear its selection -- a
         // convention the tile views declare per item and the grid never did.
         // Inside an explorer that meant every row click set the host's
         // selection and then immediately cleared it, so the grid could not be
@@ -182,7 +182,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         'td.data-cell.no-truncate { white-space: normal; overflow: visible; text-overflow: clip; max-width: none; }',
         // The writable-boolean cell's toggle USED to be defined here. It moved to
  // the kit (`styles.scss`) because a shared control declared in a
-        // component's SCOPED styles is shared with nobody — Angular scopes them by
+        // component's SCOPED styles is shared with nobody -- Angular scopes them by
         // default, which is why `cms-toggle` was the only toggle in the admin
         // despite being perfectly reusable. Keeping a copy here would just be two
         // definitions free to drift, which is the same fault the badge modifiers
@@ -191,7 +191,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         '.datagrid-drag-preview { background: var(--cms-surface); border: 1px solid var(--cms-border); border-radius: var(--cms-radius); box-shadow: var(--cms-shadow-md); }',
         '.datagrid-drag-handle-glyph { color: var(--cms-text-muted); }',
         '.datagrid-drag-placeholder { height: 37px; background: var(--cms-accent-light); border: 2px dashed var(--cms-accent); opacity: .6; }',
-        // Phase 2 DataGrid live -- 2s fade flash on a row whose
+        // DataGrid live updates -- 2s fade flash on a row whose
         // entity received a live change event from Centrifugo. Uses
         // the existing `--cms-accent-light` warm-cream tone so the
         // attention-getting state matches other admin SPA accents
@@ -207,15 +207,15 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         // label, never to the indent/connector/chevron at the start.
         '.cms-tree-lead { display: inline-block; vertical-align: middle; white-space: nowrap; }',
         '.cms-tree-indent { display: inline-block; vertical-align: middle; }',
-        // ONE fixed-width slot per row holds the chevron, the `└` leaf-connector, or
-        // nothing — so every first-column label lines up per depth and a child sits
+        // ONE fixed-width slot per row holds the chevron, the `+` leaf-connector, or
+        // nothing -- so every first-column label lines up per depth and a child sits
         // exactly one step in. The label follows the slot directly (no extra gap).
         '.cms-tree-toggle { display: inline-block; width: 1.25rem; text-align: center; vertical-align: middle; }',
         // Bare chevron button (no Bootstrap .btn box, which added stray width/padding).
         '.cms-tree-chevron { padding: 0; border: 0; background: none; cursor: pointer; color: var(--cms-text-muted); line-height: 1; vertical-align: middle; }',
         '.cms-tree-chevron:hover { color: var(--cms-accent); }',
         '.cms-tree-connector { color: var(--cms-text-muted); opacity: .55; font-size: .85rem; vertical-align: middle; }',
-        // -- Loading skeleton — shimmer placeholder rows on initial load --
+        // -- Loading skeleton -- shimmer placeholder rows on initial load --
         '.cms-skeleton-row td { vertical-align: middle; }',
         '.cms-skeleton-bar { display: block; height: .75rem; border-radius: var(--cms-radius-sm, 4px); width: 70%; background: linear-gradient(90deg, var(--cms-border-light) 25%, var(--cms-border) 37%, var(--cms-border-light) 63%); background-size: 400% 100%; animation: cms-skeleton-shimmer 1.4s ease infinite; }',
         // Vary widths so the rows read as content, not a grid of identical bars.
@@ -239,7 +239,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         '.dg-avatar__name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
         '.dg-avatar__sub { font-size: .78rem; color: var(--cms-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }',
         // Icon cell: per-row glyph beside the value. The glyph does not
-        // shrink — a squashed file-type icon is worse than a truncated name —
+        // shrink -- a squashed file-type icon is worse than a truncated name --
         // so only the text takes the ellipsis.
         '.dg-icon-cell { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }',
         '.dg-icon-cell__glyph { flex: 0 0 auto; font-size: 1.05rem; line-height: 1; color: var(--cms-text-muted); }',
@@ -250,9 +250,9 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
     templateUrl: './datagrid.component.html',
 })
 export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
-    /** Datagrid config ID (e.g. 'navi_nodes') — required in API-backed mode. */
+    /** Datagrid config ID (e.g. 'navi_nodes') -- required in API-backed mode. */
     readonly gridId        = input('');
-    /** Base URL from manifest.dataGrid.configBase — required in API-backed mode. */
+    /** Base URL from manifest.dataGrid.configBase -- required in API-backed mode. */
     readonly configBaseUrl = input('');
     /** Extra route params merged into API data requests (e.g. { slug: 'main' }). */
     readonly routeParams   = input<Record<string, string>>({});
@@ -263,7 +263,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly externalData   = input<DataGridData | null>(null);
 
     /**
-     * Phase 2 DataGrid live -- when set, the component subscribes
+     * DataGrid live updates -- when set, the component subscribes
      * to `datagrid.{entityAlias}.list` via Centrifugo and emits
      * `liveEvent` per publication. The alias must match the
      * backend `#[ClassMeta(alias: ...)]` declaration (e.g.,
@@ -272,7 +272,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly entityAlias = input<string>('');
 
     /**
-     * When true the outer card border, box-shadow and grid label are suppressed —
+     * When true the outer card border, box-shadow and grid label are suppressed --
      * intended for use inside explorer panels and detail slots where the host
      * already provides the visual container.
      * Defaults to false so all existing standalone usages are unaffected.
@@ -280,7 +280,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly embedded = input<boolean>(false);
 
     /**
-     * Emitted when the gridId config fetch fails (e.g. 404 — type not found or no schema yet).
+     * Emitted when the gridId config fetch fails (e.g. 404 -- type not found or no schema yet).
      * Consumers can use this to show a fallback empty-state UI.
      */
     readonly configError = output<void>();
@@ -312,7 +312,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * Double-click on a row: "open this".
      *
      * The grid had no dblclick handling at all, so every consumer that wanted
-     * open-on-activate had to hang a row ACTION off the context menu — a
+     * open-on-activate had to hang a row ACTION off the context menu -- a
      * gesture nobody discovers. The tile views (`CmsItemInteractions`, Media,
      * Documents) have meant dblclick = activate; a table that
      * lists the same things should not answer the same gesture differently.
@@ -363,15 +363,15 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         reset:         boolean;
         columnFilters: ReadonlyArray<string>;
         /**
-         * The same filters as `columnFilters`, STRUCTURED — for endpoints
+         * The same filters as `columnFilters`, STRUCTURED -- for endpoints
          * that take named query params rather than RQL.
          *
          * Most list endpoints are RQL-native (relational, so the RQL
          * visitor builds their DQL) and want `columnFilters` verbatim. A
          * few aren't: the Definitions catalog merges rows across modules
-         * in memory, so it exposes `?modules=`/`?definitionKey=`/… and
+         * in memory, so it exposes `?modules=`/`?definitionKey=`/... and
          * has no RQL parser behind it. Those pages map these entries to
-         * their params — far better than regex-parsing the RQL strings
+         * their params -- far better than regex-parsing the RQL strings
          * back apart.
          */
         activeFilters: ReadonlyArray<ActiveFilter>;
@@ -404,7 +404,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }>();
 
     /**
-     * Phase 2 DataGrid live -- emitted once per Centrifugo
+     * DataGrid live updates -- emitted once per Centrifugo
      * publication on the channel `datagrid.{entityAlias}.list`.
      * The parent decides how to react: typically refetch a single
      * row on `row.updated` and remove the row on `row.deleted`.
@@ -434,7 +434,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     private readonly naviGraph   = inject(NaviGraphService);
     private readonly destroyRef  = inject(DestroyRef);
     /**
-     * DataGrid Ship C — TZ-aware rendering for `'datetime'` columns. The
+     * DataGrid Ship C -- TZ-aware rendering for `'datetime'` columns. The
      * Calendar prefs service is `providedIn: 'root'` so it always
      * resolves; we only consume `tz()`/`dateFormat()`/`timeFormat()`
      * when projecting `datetime` cells. Same dependency pattern as the
@@ -443,7 +443,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     private readonly userCalendarPrefs = inject(UserCalendarPreferencesService);
 
     /**
-     * Phase 2 DataGrid live -- ids of currently flashing rows.
+     * DataGrid live updates -- ids of currently flashing rows.
      * Each entry stays for ~2s while the row-flash CSS animation
      * runs; re-receiving a publication for the same id restarts
      * the timer by re-adding the id to a fresh Set instance.
@@ -480,7 +480,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     private readonly currentPage = signal(1);
     private readonly sortStateS  = signal<SortState | null>(null);
 
-    /** Applied column filters — each entry has column, op, and value. */
+    /** Applied column filters -- each entry has column, op, and value. */
     private readonly filtersS = signal<ReadonlyArray<ActiveFilter>>([]);
 
     /**
@@ -497,14 +497,14 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly rows      = computed<ReadonlyArray<Record<string, unknown>>>(() => {
         const items = this.data()?.items ?? [];
         // Server/lazy and self-fetching grids: data() is already filtered + sorted
-        // server-side — render verbatim.
+        // server-side -- render verbatim.
         if (this.isLazy() || this.externalData() === null) {
             return items;
         }
-        // Eager + externalData grids (loadingMode≠lazy, parent supplies the full
-        // set — e.g. Cockpit / Leads): there is no server refetch on filter/sort
+        // Eager + externalData grids (loadingMode!=lazy, parent supplies the full
+        // set -- e.g. Cockpit / Leads): there is no server refetch on filter/sort
         // change (toggleSort / afterFiltersChanged only re-emit for lazy grids),
-        // so apply BOTH the column filters and the active sort IN MEMORY —
+        // so apply BOTH the column filters and the active sort IN MEMORY --
         // otherwise the filter row and sort headers are cosmetic.
         let out = items;
         const filters = this.filtersS();
@@ -542,7 +542,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         return label ? `No ${label} yet` : 'Nothing here yet';
     });
 
-    /** Only the filtered case gets a hint — it is the one with an action attached. */
+    /** Only the filtered case gets a hint -- it is the one with an action attached. */
     readonly emptyStateHint = computed(() =>
         this.emptiedByFilter() ? 'Try clearing or widening the filters.' : '',
     );
@@ -564,7 +564,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /**
      * Parent-supplied filter matches (expand-to-match mode). When set, the
      * filter-expand pass highlights + expands THESE rows' ancestor chains
-     * rather than whatever is in the root feed — so the parent can keep the
+     * rather than whatever is in the root feed -- so the parent can keep the
      * real tree in `externalData` while still surfacing matches that live deep
      * in the tree. Null = no parent-driven matches (flatten fallback: highlight
      * whatever rows the feed carries).
@@ -616,7 +616,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * The rows that are currently selectable / keyboard-navigable: the
      * DFS-flattened visible rows (roots + expanded children) in tree mode, else
      * the flat root rows. Selection, range-select, reconcile and keyboard nav all
-     * operate over THIS — never raw `rows()` — so an expanded child row can be
+     * operate over THIS -- never raw `rows()` -- so an expanded child row can be
      * selected/edited without the parent having to merge children into
      * `externalData` (doing so would re-render them as duplicate root rows).
      */
@@ -652,8 +652,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     /**
-     * Leading indent before the fixed-width toggle slot. depth × step puts every
-     * row's toggle (chevron / `└` connector / empty) on a clean per-level column,
+     * Leading indent before the fixed-width toggle slot. depth x step puts every
+     * row's toggle (chevron / `+` connector / empty) on a clean per-level column,
      * so a child sits exactly one step in from its parent.
      */
     rowIndentPx(row: TreeRow): number {
@@ -707,14 +707,14 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     /**
-     * Double-click a parent row to toggle its expansion — a file-explorer
+     * Double-click a parent row to toggle its expansion -- a file-explorer
      * affordance so the whole row is a target, not just the small chevron.
      * No-op for leaf rows and non-tree grids; single-click selection is
      * unaffected (toggleExpand stops propagation so no spurious select fires).
      */
     onRowDblClick(row: Record<string, unknown>, event: MouseEvent): void {
         // In a TREE, dblclick has always meant "expand this branch", and that
-        // stays — the gesture is already spoken for on rows that have children.
+        // stays -- the gesture is already spoken for on rows that have children.
         if (this.isTree() && this.rowHasChildren(row)) {
             this.toggleExpand(row, event);
 
@@ -723,7 +723,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
         // Everywhere else it means "open this". The binding existed and
         // returned early for every non-tree grid, so a dblclick on an ordinary
-        // row did nothing at all — consumers wanting open-on-activate had to
+        // row did nothing at all -- consumers wanting open-on-activate had to
         // hide it in the context menu.
         this.rowActivated.emit(row);
     }
@@ -737,9 +737,9 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly skeletonRows: readonly number[] = [0, 1, 2, 3, 4, 5];
 
     /**
-     * True during the INITIAL load only — config has arrived (so columns are
+     * True during the INITIAL load only -- config has arrived (so columns are
      * known) but no rows have yet. Shows shimmer rows so the body doesn't flash
-     * blank. A refresh that already has rows keeps them + the "Refreshing…" note.
+     * blank. A refresh that already has rows keeps them + the "Refreshing..." note.
      *
      * `awaitingRows()` is what covers `externalData` grids: `loading()` tracks
      * the grid's OWN fetch, which a parent-fed lazy grid never makes.
@@ -752,8 +752,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * True while a `(loadMore)` request the PARENT owns is in flight.
      *
      * In `loadingMode: lazy` the grid does not fetch: it emits `loadMore` and
-     * waits for `externalData` to change. So `loading()` — which only tracks the
-     * grid's own HTTP call — is false for that whole window, and with no rows yet
+     * waits for `externalData` to change. So `loading()` -- which only tracks the
+     * grid's own HTTP call -- is false for that whole window, and with no rows yet
      * the body fell through to the empty state. Every lazy page therefore
      * asserted "No <things> yet" for a beat before its first page landed, which
      * since the empty state started naming the collection reads as a statement of
@@ -783,7 +783,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * grid highlights them and expands-to-match their ancestor chains while the
      * real root tree stays visible in `externalData`. Each match must carry an
      * `ancestorIds` array (RFC-4122 UUIDs of its ancestor Nodes). Pass `null` to
-     * clear — e.g. when falling back to a flat match feed, or when the filter is
+     * clear -- e.g. when falling back to a flat match feed, or when the filter is
      * cleared. The expand/highlight is (re)applied by the external-data effect
      * on the next `externalData` change, so set this BEFORE pushing the roots.
      */
@@ -810,7 +810,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * When the matches carry `ancestorIds` (expand-to-match mode, fed via
      * {@link setTreeFilterMatches}) the matches live deep in the tree, not in
      * the root feed, so we also lazily fetch the children of every force-expanded
-     * ancestor — materialising the chain from a visible root down to each match.
+     * ancestor -- materialising the chain from a visible root down to each match.
      * In the flatten fallback (matches fed as roots, no `ancestorIds`) `expand`
      * is empty, so the lazy-load pass is a no-op and behaviour is unchanged.
      */
@@ -841,7 +841,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * parent's `(loadChildren)` handler feeds the rows back via
      * {@link setTreeChildren}, and the DFS walk then reveals the path to each
      * match. Ancestor ids that don't correspond to a visible row (e.g. the
-     * synthetic VFS root) resolve to an off-tree cache entry — harmless, never
+     * synthetic VFS root) resolve to an off-tree cache entry -- harmless, never
      * rendered. Idempotent: an already-cached/loading ancestor is skipped, so
      * re-running on each filter keystroke doesn't double-fetch.
      */
@@ -889,14 +889,14 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             .filter((c): c is DataGridColumnDef => c !== undefined);
     });
 
-    // Resize state — not reactive, managed via DOM events
+    // Resize state -- not reactive, managed via DOM events
     private resizing: { field: string; startX: number; startWidth: number } | null = null;
 
     /** Set when restored widths still need the rest pinned after first render. */
     private pinAfterRender = false;
 
     /**
-     * Computed query-params snapshot — tracked by the effect so that ANY change
+     * Computed query-params snapshot -- tracked by the effect so that ANY change
      * to page, sort or filters triggers a re-fetch without inadvertently tracking
      * other signals read deeper inside doFetch().
      */
@@ -913,7 +913,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             .filter(f => f.value !== '')
             .map(f => {
                 const col = cfg?.columns.find(c => c.field === f.column);
-                // OptionSource ship — `in` op: value is a JSON array of
+                // OptionSource ship -- `in` op: value is a JSON array of
                 // tokens already (set by onMultiSelectFilterChange). Emit
                 // unquoted so the RQL parser sees `field in ["a","b"]`.
                 if (f.op === 'in') {
@@ -922,7 +922,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
                 // Boolean, numeric, or literal true/false values: no quotes
                 const isRaw = col?.type === 'boolean'
                     || col?.type === 'number'
-                    // A filesize IS a number — it only renders differently
+                    // A filesize IS a number -- it only renders differently
                     //, so quoting its bound would break the predicate.
                     || col?.type === 'filesize'
                     || f.value === 'true'
@@ -935,7 +935,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // -- Lifecycle --------------------------------------------------------------
 
     constructor() {
-        // Phase 2 DataGrid live -- when the entityAlias is provided,
+        // DataGrid live updates -- when the entityAlias is provided,
         // subscribe to `datagrid.{alias}.list` once. The input is
         // typically set at component creation and does not change
         // afterwards; the effect captures the first non-empty value
@@ -955,7 +955,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             });
         });
 
-        // Apply external config when provided — skips the API config fetch.
+        // Apply external config when provided -- skips the API config fetch.
         effect(() => {
             const ext = this.externalConfig();
             if (ext !== null) {
@@ -966,7 +966,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             }
         });
 
-        // Apply external data when provided — skips the API data fetch.
+        // Apply external data when provided -- skips the API data fetch.
         effect(() => {
             const ext = this.externalData();
             if (ext !== null) {
@@ -1004,11 +1004,11 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         // Re-fetch whenever page / sort / filters change (API-backed mode only).
         // rqlQuery() is READ here so the effect tracks all three underlying signals.
         // doFetch() is wrapped in untracked() so that any signal reads inside it
-        // (configBaseUrl, gridId, …) don't add spurious dependencies to this effect.
+        // (configBaseUrl, gridId, ...) don't add spurious dependencies to this effect.
         //
         // IMPORTANT: guard with `externalConfig() === null` so that when a parent
         // provides externalConfig but externalData is transiently null (loading state),
-        // we do NOT call doFetch() — that would build the URL as
+        // we do NOT call doFetch() -- that would build the URL as
         // `${configBaseUrl}/${gridId}/data` = `//data` (both inputs default to '').
         effect(() => {
             const params = this.rqlQuery(); // ← tracks currentPage, sortStateS, filtersS
@@ -1071,14 +1071,14 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /** Sets up the IntersectionObserver for lazy loading as soon as the sentinel is rendered. */
     ngAfterViewChecked(): void {
         // Restored widths need a rendered header row to measure the REST
-        // against. Runs once — pinning clears the flag, and
+        // against. Runs once -- pinning clears the flag, and
         // pinCurrentColumnWidths never overwrites a width already set.
         if (this.pinAfterRender && this.scrollContainerRef) {
             this.pinAfterRender = false;
             this.pinCurrentColumnWidths();
         }
         if (!this.io && this.sentinelRef && this.config()?.loadingMode === 'lazy') {
-            // root must be the overflow:auto scroll container, not the viewport —
+            // root must be the overflow:auto scroll container, not the viewport --
             // the sentinel lives inside the card and the viewport IO never fires
             // as the user scrolls within the container.
             this.io = new IntersectionObserver(
@@ -1130,7 +1130,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      */
     readonly showInlineActions = computed(() => this.config()?.showActionColumn !== false);
 
-    /** True when there are hideable columns — controls column-chooser visibility. */
+    /** True when there are hideable columns -- controls column-chooser visibility. */
     hasHideableColumns(cfg: DataGridConfig): boolean {
         return cfg.columns.some(c => c.hideable);
     }
@@ -1160,7 +1160,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
                 this.applyStoredPrefs(cfg);
                 // Only fetch data internally when no external data provider is present.
                 // When externalData is provided (lazy-load with parent-managed paging),
-                // emit the initial loadMore directly — the sentinel IntersectionObserver
+                // emit the initial loadMore directly -- the sentinel IntersectionObserver
                 // may not fire synchronously (e.g. inside overflow:auto containers), so
                 // we kick off the first page here. loadingMore guards against duplicates
                 // if the IO does also fire later.
@@ -1183,7 +1183,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.doFetch(this.buildQueryParams());
     }
 
-    /** Core HTTP dispatch — always called with a pre-built params snapshot. */
+    /** Core HTTP dispatch -- always called with a pre-built params snapshot. */
     private doFetch(params: Record<string, string>): void {
         this.loading.set(true);
         const url = `${this.configBaseUrl()}/${encodeURIComponent(this.gridId())}/data`;
@@ -1241,7 +1241,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * re-fetches the children of every currently-expanded parent, preserving the
      * `treeExpanded` set. Used after an in-place edit (e.g. the page editor's
      * Save) where the tree structure is unchanged but a row's projected fields
-     * (variant count, status) may have moved — a plain `reload()` would
+     * (variant count, status) may have moved -- a plain `reload()` would
      * `resetTreeState()` and collapse everything. Falls back to `reload()` when
      * tree mode is off.
      */
@@ -1253,7 +1253,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.currentPage.set(1);
         const expanded = [...this.treeExpanded()];
         // Spin the chevrons while children re-fetch. The children cache is
-        // retained (not cleared) so expanded rows don't flicker to empty —
+        // retained (not cleared) so expanded rows don't flicker to empty --
         // each loadChildren response overwrites its parent's entry as it lands.
         if (expanded.length > 0) {
             const loading = new Set(this.treeLoading());
@@ -1283,11 +1283,11 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         const stored = this.prefs.getGridPref(cfg.id);
         if (stored?.columns) {
             const required = cfg.columns.filter(c => c.required).map(c => c.field);
-            // Columns with hideable === false are always visible — they cannot be
+            // Columns with hideable === false are always visible -- they cannot be
             // toggled by the user via the column chooser and must appear regardless
             // of what stored prefs say.  This matters when a grid that previously
             // had hideable columns (prefs were saved) is later reconfigured so all
-            // columns are hideable:false — without this, the stored-prefs branch
+            // columns are hideable:false -- without this, the stored-prefs branch
             // would produce an empty visibleColumnFields and render no columns at all.
             const alwaysOn = cfg.columns
                 .filter(c => c.hideable === false && !required.includes(c.field))
@@ -1393,7 +1393,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
         this.currentPage.set(1);
         // In external-data + lazy mode: notify parent to reset and reload with new sort.
-        // Raise the guard first — same sentinel-double-fire prevention as reload().
+        // Raise the guard first -- same sentinel-double-fire prevention as reload().
         if (this.externalData() !== null && this.isLazy()) {
             this.loadingMore.set(true);
             this.loadMore.emit({
@@ -1435,7 +1435,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /**
      * Primary RQL operator for a column's filter input.
      * For arrays, returns the first element. Date columns always use separate
-     * 'ge'/'le' inputs — this method is not called for date columns.
+     * 'ge'/'le' inputs -- this method is not called for date columns.
      */
     getFilterOp(col: DataGridColumnDef): string {
         if (!col.filterOp) return 'eq';
@@ -1489,12 +1489,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     //
     // A column's `type` selects a built-in cell renderer (badge / link / avatar
     // / snippet, alongside the historical text / enum / number / date types) and
-    // `options` configures it — no per-column FE code. The first branch of the
+    // `options` configures it -- no per-column FE code. The first branch of the
     // cell cascade is the cell-widget registry (`cellWidget.kind`), the additive
     // escape hatch for anything the built-ins don't express; the helpers below
     // back the type-driven branches.
 
-    /** Bootstrap-badge variants the `badge` cell understands (others ⇒ convention map). */
+    /** Bootstrap-badge variants the `badge` cell understands (others => convention map). */
     private static readonly BADGE_VARIANTS = new Set(['success', 'danger', 'warning', 'info', 'muted']);
 
     /**
@@ -1526,7 +1526,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         return this.getEnumLabel(col, value);
     }
 
-    /** href for a `link`-type cell — `options.hrefPrefix` + (`options.hrefField`|value). */
+    /** href for a `link`-type cell -- `options.hrefPrefix` + (`options.hrefField`|value). */
     linkHref(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const o = col.options ?? {};
         const field = typeof o['hrefField'] === 'string' ? o['hrefField'] : col.field;
@@ -1536,7 +1536,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         return prefix + raw;
     }
 
-    /** Visible text for a `link`-type cell — `options.textField` or the cell value. */
+    /** Visible text for a `link`-type cell -- `options.textField` or the cell value. */
     linkText(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const o = col.options ?? {};
         const field = typeof o['textField'] === 'string' ? o['textField'] : col.field;
@@ -1548,38 +1548,38 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         return col.options?.['external'] === true;
     }
 
-    /** Primary name for an `avatar`-type cell — `options.nameField` or the cell value. */
+    /** Primary name for an `avatar`-type cell -- `options.nameField` or the cell value. */
     avatarName(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const field = col.options?.['nameField'];
         const key = typeof field === 'string' ? field : col.field;
         return String(row[key] ?? '');
     }
 
-    /** Muted subtitle for an `avatar`-type cell — `options.subtitleField` or ''. */
+    /** Muted subtitle for an `avatar`-type cell -- `options.subtitleField` or ''. */
     avatarSubtitle(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const field = col.options?.['subtitleField'];
         return typeof field === 'string' ? String(row[field] ?? '') : '';
     }
 
-    /** Image URL for an `avatar`-type cell — `options.imageField` or '' (⇒ initials). */
+    /** Image URL for an `avatar`-type cell -- `options.imageField` or '' (=> initials). */
     avatarImage(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const field = col.options?.['imageField'];
         return typeof field === 'string' ? String(row[field] ?? '') : '';
     }
 
     /**
-     * Shape of an `avatar` cell's image box — `options.shape`.
+     * Shape of an `avatar` cell's image box -- `options.shape`.
      *
      * A circle is an IDENTITY signal: it says "this is a person", which is why
      * it is the default and why Leads, Contacts and Comments keep it. It is the
-     * wrong frame for a picture OF something — an og:image is a 1200x630
+     * wrong frame for a picture OF something -- an og:image is a 1200x630
      * landscape, and centre-cropping it into a 28px disc discards most of the
      * composition and still reads as a face slot.
      *
-     *   circle (default) — 28x28 disc, people
-     *   square           — 28x28, slightly rounded; icons, logos, 1:1 art
-     *   wide             — 48x28 (~16:9), rounded; share images, covers,
-     *                      screenshots — anything whose SHAPE is part of it
+     *   circle (default) -- 28x28 disc, people
+     *   square           -- 28x28, slightly rounded; icons, logos, 1:1 art
+     *   wide             -- 48x28 (~16:9), rounded; share images, covers,
+     *                      screenshots -- anything whose SHAPE is part of it
      */
     avatarShape(col: DataGridColumnDef): string {
         const shape = col.options?.['shape'];
@@ -1588,7 +1588,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     /**
-     * Bootstrap-icon class for an `icon` cell — `options.iconField` off the ROW.
+     * Bootstrap-icon class for an `icon` cell -- `options.iconField` off the ROW.
      *
      * Per-row rather than per-column because the whole point is that the glyph
      * varies with the value: a folder listing mixes formats, and a column-wide
@@ -1601,7 +1601,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         return typeof field === 'string' ? String(row[field] ?? '') : '';
     }
 
-    /** Optional per-row colour for an `icon` cell — `options.colorField`. */
+    /** Optional per-row colour for an `icon` cell -- `options.colorField`. */
     iconColor(col: DataGridColumnDef, row: Record<string, unknown>): string {
         const field = col.options?.['colorField'];
 
@@ -1624,7 +1624,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     /**
      * True when the column declares a cell widget whose kind is registered.
-     * Gates the first branch of the cell cascade; false ⇒ the cell falls through
+     * Gates the first branch of the cell cascade; false => the cell falls through
      * to the type-driven renderers (so an unknown/unregistered kind never yields
      * an empty cell). Mirrors {@link hasFilterWidget}.
      */
@@ -1650,7 +1650,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      *
      * The explicit-true case is new and it was a real gap: an avatar
      * column was unconditionally opted out, so `.no-truncate` cleared the
-     * `max-width: 0` that makes a cell stop expanding — and under
+     * `max-width: 0` that makes a cell stop expanding -- and under
      * `table-layout: auto` the column's declared `width` is only advisory
      * against content that refuses to shrink. Media's File column, with an
      * 80-character scanner filename in it, took 779px of a 1210px table and
@@ -1677,10 +1677,10 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // The first branch of the filter-row cascade: a column declaring a
     // `filterWidget` whose `kind` is registered renders that widget instead
     // of the type-driven input. The widget owns its column's operators (from
-    // `filterOp`) and emits one-or-more ActiveFilter entries — so a range
+    // `filterOp`) and emits one-or-more ActiveFilter entries -- so a range
     // widget cleanly emits a ge/le pair, a single-op widget emits one. When
     // no widget is declared (or its kind isn't registered) the row falls
-    // through to the historical type-driven inputs below — fully additive.
+    // through to the historical type-driven inputs below -- fully additive.
 
     /** Full list of RQL operators a column accepts (handed to its filter widget). */
     filterOpsFor(col: DataGridColumnDef): readonly string[] {
@@ -1690,7 +1690,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     /**
      * True when the column declares a filter widget whose kind is registered.
-     * Gates the first branch of the filter-row cascade; false ⇒ the row falls
+     * Gates the first branch of the filter-row cascade; false => the row falls
      * through to the type-driven inputs (so an unknown/unregistered kind never
      * yields an empty filter cell).
      */
@@ -1710,7 +1710,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         };
     }
 
-    /** Current active filters for a column — the value handed to its filter widget. */
+    /** Current active filters for a column -- the value handed to its filter widget. */
     getColumnFilters(col: DataGridColumnDef): readonly ActiveFilter[] {
         return this.filtersS().filter(f => f.column === col.field);
     }
@@ -1744,18 +1744,18 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     /**
      * Immediate filter for boolean selects, date inputs, and relation selects.
-     * No debounce — applies and reloads synchronously.
+     * No debounce -- applies and reloads synchronously.
      */
     setFilterImmediate(column: string, op: string, value: string): void {
         this.applyFilter(column, op, value);
     }
 
-    // --- DataGrid Ship C — Range-picker filter bridges -----------------
+    // --- DataGrid Ship C -- Range-picker filter bridges -----------------
     //
  // The three range pickers emit a `{start, end}` payload (or
     // `null`). The DataGrid's filter state stores two `ActiveFilter`
     // entries (op='ge' for the lower bound + op='le' for the upper) so
-    // the wire-format with RQL stays exactly the same as before — the
+    // the wire-format with RQL stays exactly the same as before -- the
     // pickers are a UI swap only, no contract change.
 
     /**
@@ -1800,7 +1800,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /**
      * Reconstruct a {@link DateTimeRangeValue} from the column's
      * current ge/le entries. Datetime filters never carry an All-day
-     * flag in the filter row — the column type is fixed, so the
+     * flag in the filter row -- the column type is fixed, so the
      * `allDay` slot is always `false` here.
      */
     getDateTimeRangeValue(column: string): DateTimeRangeValue | null {
@@ -1812,7 +1812,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     /**
      * Bridge `<app-datetime-range-picker>`'s `(valueChange)`. The
-     * `allDay` flag from the picker is ignored — datetime columns are
+     * `allDay` flag from the picker is ignored -- datetime columns are
      * datetime regardless of picker state (the filter row never shows
      * the All-day toggle, see template).
      */
@@ -1842,13 +1842,13 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.setFilterImmediate(column, 'le', end);
     }
 
-    // --- OptionSource ship — Multi-select filter cell ------------------
+    // --- OptionSource ship -- Multi-select filter cell ------------------
     //
     // Columns whose `filterOp` includes `in` and that declare either an
     // inline `options.enumOptions` list OR a tagged `options.source`
     // key render a grouped multi-select instead of a text input. The
     // selected values OR together at the backend RQL level (the column
-    // value matches ANY of the picked tokens) — see `columnFilterRql`
+    // value matches ANY of the picked tokens) -- see `columnFilterRql`
     // for the `field in [...]` emission shape.
 
     /** True when the column should render the multi-option picker filter. */
@@ -1936,7 +1936,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.setFilterImmediate(column, 'in', serialised);
     }
 
-    // --- DataGrid Ship C — TZ-aware datetime cell rendering -------------
+    // --- DataGrid Ship C -- TZ-aware datetime cell rendering -------------
 
     /**
      * Project a raw cell value (ISO-8601 string, Date, or epoch number)
@@ -1951,7 +1951,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * Byte count -> B / KB / MB / GB.
      *
      * Binary units (1024), matching what every file manager in the product
-     * already shows — Media's tiles and the VFS browser both divide by 1024,
+     * already shows -- Media's tiles and the VFS browser both divide by 1024,
      * and a table disagreeing with the tiles beside it about the size of the
      * same file is worse than either convention.
      *
@@ -1990,7 +1990,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
                   : kind === 'time'     ? timeFmt
                   : /* datetime */        `${dateFmt} ${timeFmt}`;
         try {
-            // Angular's DatePipe is locale-aware — but at this layer we
+            // Angular's DatePipe is locale-aware -- but at this layer we
             // only need TZ + pattern. Use Intl.DateTimeFormat via a
             // light wrapper for stability across browsers.
             const d = value instanceof Date ? value : new Date(String(value));
@@ -2027,7 +2027,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         const monthShort = parts['month'] ?? '';
         const HH   = parts['hour']   ?? '';
         const mm   = parts['minute'] ?? '';
-        // 'MM' (numeric month) — derive from the short name via a lookup
+        // 'MM' (numeric month) -- derive from the short name via a lookup
         const monthIdx = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             .indexOf(monthShort);
         const MM = monthIdx >= 0 ? String(monthIdx + 1).padStart(2, '0') : '01';
@@ -2077,7 +2077,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * Client-side row matcher for eager + externalData grids (see {@link rows}).
      * Mirrors the RQL operators the filter row emits: `cn` (contains, case-
      * insensitive), `eq`/`ne`, `ge`/`le` (numeric when both sides parse as
-     * numbers, else lexicographic — covers ISO date/datetime range filters),
+     * numbers, else lexicographic -- covers ISO date/datetime range filters),
      * `in` (JSON array membership), and `nn`/`null` (presence). Unknown ops pass.
      */
     private matchesClientFilter(row: Record<string, unknown>, f: ActiveFilter): boolean {
@@ -2224,12 +2224,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * Not on by default: under fixed layout a column with NO width gets an
      * equal share of the table, so turning it on globally would re-flow every
      * grid in the product away from its content-sized defaults. It engages the
-     * moment widths are pinned — on the first drag, or on restore when a
+     * moment widths are pinned -- on the first drag, or on restore when a
      * previous session left some.
      */
     readonly widthsPinned = signal(false);
 
-    /** `table-layout` for the table element — see {@link widthsPinned}. */
+    /** `table-layout` for the table element -- see {@link widthsPinned}. */
     tableLayout(): 'fixed' | 'auto' {
         return this.widthsPinned() ? 'fixed' : 'auto';
     }
@@ -2239,13 +2239,13 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      *
      * Resizing used to fight `table-layout: auto`: the dragged column's width
      * is only advisory there, so the browser re-solved the whole row and every
-     * OTHER column moved too — measured on the users grid, a 150px drag grew
+     * OTHER column moved too -- measured on the users grid, a 150px drag grew
      * the target by 202px and shrank all four neighbours (-123, -17, -20,
      * -42). Freezing the others first is what makes the drag local: they stop
      * being content-derived and become fixed, so there is nothing left to
      * redistribute.
      *
-     * Only fills in columns that have no width yet — a width the operator set
+     * Only fills in columns that have no width yet -- a width the operator set
      * earlier is never overwritten with a measurement.
      */
     private pinCurrentColumnWidths(): void {
@@ -2257,7 +2257,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             if (next[col.field] !== undefined) continue;
             // BY FIELD, never by position: the header row carries a leading
             // drag cell and a trailing chooser cell, so index arithmetic
-            // silently pins each column to a NEIGHBOUR's width — which looked
+            // silently pins each column to a NEIGHBOUR's width -- which looked
             // exactly like the redistribution bug it was meant to fix.
             const th = host.querySelector<HTMLElement>(
                 `thead tr:first-child th[data-field="${CSS.escape(col.field)}"]`,
@@ -2308,7 +2308,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // -- Row actions ------------------------------------------------------------
 
     onRowAction(event: { action: DataGridRowAction; row: Record<string, unknown> }): void {
-        // Always notify the parent — allows external handling of any action.
+        // Always notify the parent -- allows external handling of any action.
         this.rowActionTriggered.emit({ action: event.action.id, row: event.row });
 
         // Built-in HTTP delete: only when a `route` is configured (API-backed mode).
@@ -2536,11 +2536,11 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
         /**
          *  This listener is on `document`, so it fires for keystrokes
-         * anywhere on the page — INCLUDING inside a CDK overlay, which
+         * anywhere on the page -- INCLUDING inside a CDK overlay, which
          * renders outside this component's DOM subtree entirely.
          *
          * That is how pressing Delete on the BPMN designer canvas (an
-         * SVG — not an input, so the guard above lets it through) fired
+         * SVG -- not an input, so the guard above lets it through) fired
          * the Definitions grid's `delete` row action on whatever row was
          * selected behind the dialog. A destructive action on an object
          * the user could not even see. It only became reachable when the
@@ -2668,7 +2668,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     /**
-     * Phase 2 DataGrid live -- routes a typed event to the parent
+     * DataGrid live updates -- routes a typed event to the parent
      * (via `liveEvent` output) and flashes any matching loaded row.
      * `row.created` and `grid.refresh_required` are deferred to
      * Sub-phase D; emitting the output still lets a parent opt in
@@ -2689,8 +2689,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             // flashes since the rows themselves are about to be
             // replaced by the consumer's reload. `row.created` is
             // also emitted to consumers but DataGrid takes no
-            // visual action for it in Phase 2: new rows appear
-            // when the user scrolls to them via lazy load. Future
+            // visual action for it today: new rows appear when
+            // the user scrolls to them via lazy load. Future
             // refinement may prepend if sort matches and top is
             // loaded.
             this.flashingRowIds.set(new Set());

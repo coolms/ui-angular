@@ -8,17 +8,17 @@ import { RelationFieldComponent } from './relation-field.component';
 import { provideFieldWidget } from '../../ui/field-widgets/field-widget-registry';
 
 /**
- * F5.d follow-up — relation field cardinality semantics, RUN.
+ * Relation field cardinality semantics.
  *
  * History: every cardinality:one + widget:select form (Navi tree
  * siteSectionId, Calendar Settings parent calendar, Holiday Rule baseRule,
- * F5.d translation domain/locale, …) had a UX bug where picking an option
+ * translation domain/locale, ...) had a UX bug where picking an option
  * silently set the FormControl but visually reset the <select> back to its
  * placeholder. Operators reported "the dropdown doesn't work" because the
  * field appeared empty even though the underlying control held the value.
  * Root cause: `onSelectChange` ran `select.value = ''` unconditionally. That
- * reset is right for cardinality:many — picked options become tags above the
- * select, so the picker clears to allow another pick — and wrong for
+ * reset is right for cardinality:many -- picked options become tags above the
+ * select, so the picker clears to allow another pick -- and wrong for
  * cardinality:one, where the picker IS the value display. The fix conditions
  * the reset on `isMany()` and binds `<select [value]>` to `singleValue()` so
  * edit-mode loads render the stored option pre-selected.
@@ -38,7 +38,7 @@ import { provideFieldWidget } from '../../ui/field-widgets/field-widget-registry
  * Every assertion below drives the real `onSelectChange` through a real
  * `<select>` `change` event over a real `FormControl`.
  */
-describe('RelationFieldComponent — select cardinality semantics (F5.d)', () => {
+describe('RelationFieldComponent — select cardinality semantics', () => {
     const ALPHA = '/api/v1/tags/alpha';
     const BETA  = '/api/v1/tags/beta';
     const GAMMA = '/api/v1/tags/gamma';
@@ -156,7 +156,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
     // the field is round-tripping options the backend already inlined.
     afterEach(() => http.verify());
 
-    // -- cardinality: one — the picker IS the display -------------------------
+    // -- cardinality: one -- the picker IS the display -------------------------
 
     it('writes the picked value into the FormControl and dirties it', () => {
         mount('one');
@@ -170,7 +170,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         expect(control.dirty).toBeTrue();
     });
 
-    it('does NOT reset the select after a pick — the original F5.d bug', () => {
+    it('does NOT reset the select after a pick — the original bug', () => {
         mount('one');
 
         pick(ALPHA);
@@ -178,12 +178,12 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         // Read BEFORE change detection, ON PURPOSE. `[value]="singleValue()"`
         // re-writes the element on the next pass with the value the handler
         // just stored, so a handler that cleared `select.value` here would be
-        // papered over by the very next `detectChanges()` and this guard —
-        // the whole reason the file exists — would go blind.
+        // papered over by the very next `detectChanges()` and this guard --
+        // the whole reason the file exists -- would go blind.
         expect(select.value).withContext('immediately after the handler ran').toBe(ALPHA);
         expect(displayedLabel()).toBe('Alpha');
 
-        // …and it survives the pass, i.e. the binding agrees with the handler
+        // ...and it survives the pass, i.e. the binding agrees with the handler
         // rather than fighting it.
         fixture.detectChanges();
         expect(select.value).toBe(ALPHA);
@@ -195,7 +195,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
 
         pick(BETA);
 
-        // cardinality:one appends nothing — a second pick is a correction.
+        // cardinality:one appends nothing -- a second pick is a correction.
         expect(control.value).toBe(BETA);
         expect(select.value).toBe(BETA);
     });
@@ -214,7 +214,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
     it('renders the stored value as the selected option on an edit-mode load', () => {
         // The other half of the fix: `singleValue()` drives which option renders
         // selected, so a form opened on an existing record shows what it holds
-        // instead of "— Select —" over a populated control.
+        // instead of "-- Select --" over a populated control.
         mount('one', BETA);
 
         expect(select.value).toBe(BETA);
@@ -226,7 +226,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         // The production shape of the test above, and the one that says WHY the
         // selection is bound per option: with `<select [value]="singleValue()">`
         // the write is evaluated before the `@for` has created any option, so it
-        // resolves to '' — and since the binding recorded the value it meant to
+        // resolves to '' -- and since the binding recorded the value it meant to
         // write, it is never re-applied once the options land. Most relation
         // fields are api-backed, so under that binding every one of them opened
         // on the placeholder no matter what the record held.
@@ -237,7 +237,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         fixture.componentRef.setInput('formGroup', new FormGroup({ tags: control }));
         fixture.detectChanges();
 
-        // Nothing to select yet — the field is on its loading branch.
+        // Nothing to select yet -- the field is on its loading branch.
         expect(fixture.nativeElement.querySelector('select')).toBeNull();
 
         http.expectOne(TAGS_URL).flush({
@@ -269,7 +269,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         expect(displayedLabel()).toBe('Gamma');
     });
 
-    // -- cardinality: many — the picker is a queue, tags are the display ------
+    // -- cardinality: many -- the picker is a queue, tags are the display ------
 
     it('appends the first pick and DOES reset the select', () => {
         mount('many');
@@ -307,9 +307,9 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         mount('many', [ALPHA]);
 
         // In the UI an already-picked option is rendered `[disabled]`, so this
-        // is the second lock: a value that reaches the handler twice — because
+        // is the second lock: a value that reaches the handler twice -- because
         // the option list was refetched, or because that disabled binding is
-        // ever loosened — must not land in the array twice.
+        // ever loosened -- must not land in the array twice.
         pick(ALPHA);
 
         expect(control.value).toEqual([ALPHA]);

@@ -52,7 +52,7 @@ describe('InputDialogComponent', () => {
      * Found by LABEL, never by index. Adding the select above the input
      * shifts nothing in the button row today, but `querySelectorAll('button')[n]`
      * has already turned a "click save" into a "click cancel" once in this
-     * codebase — position is not identity.
+     * codebase -- position is not identity.
      */
     function buttonLabelled(fixture: Fixture, label: string): HTMLButtonElement {
         const buttons: HTMLButtonElement[] = Array.from(
@@ -93,7 +93,7 @@ describe('InputDialogComponent', () => {
 
     /**
      * `ngModel` writes the select's DOM value in a MICROTASK, not during the
-     * `detectChanges()` that created it — so an assertion on `select.value`
+     * `detectChanges()` that created it -- so an assertion on `select.value`
      * taken straight after render reads `''` no matter what is bound. The
      * component's `choice` is already correct at that point; only the DOM
      * lags. Settle before looking at it.
@@ -161,7 +161,7 @@ describe('InputDialogComponent', () => {
 
     /**
      * An `<input>` is single-line by definition, so a caller asking for one
-     * item per line got a field that silently joined them — and whose own
+     * item per line got a field that silently joined them -- and whose own
      * "New\nOpen\nClosed" placeholder rendered as one run-on word. Found in a
      * browser; no spec had reason to look at which element it was.
      */

@@ -17,7 +17,7 @@ import { FieldWidgetRegistry } from '../../ui/field-widgets/field-widget-registr
  * Bridges a DynamicEntity form field to the shared **field-widget registry**.
  *
  * The dynamic form is a Reactive-Forms surface (`FormGroup`/`FormControl`) with
- * its own input components for the common types; this is its `@default` branch —
+ * its own input components for the common types; this is its `@default` branch --
  * for a type none of those handle, it renders the registry widget (e.g. a
  * module's `tags` / `taxonomy` picker) instead of "not supported", translating
  * between the registry's `{value, valueChange}` callback contract and the
@@ -25,7 +25,7 @@ import { FieldWidgetRegistry } from '../../ui/field-widgets/field-widget-registr
  * the original "not yet supported" notice, so the form never breaks.
  *
  * Note: DynamicEntity field schemas don't carry a widget `config` block (unlike
- * the content field-panels), so widgets are handed an empty config here — a
+ * the content field-panels), so widgets are handed an empty config here -- a
  * `tags` field still works (free-add), just without a backend suggestions URL.
  */
 @Component({

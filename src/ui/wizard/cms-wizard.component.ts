@@ -14,13 +14,13 @@ import { CmsWizardStepDirective } from './cms-wizard.directives';
 import type { WizardStepConfig } from './cms-wizard.types';
 
 /**
- *-2.6a — reusable wizard primitive.
+ *-2.6a -- reusable wizard primitive.
  *
  * Modal-agnostic, navigation-only: the host (e.g. document-
  * generation wizard) supplies the step list and the current step
  * id; the primitive renders the progress strip, the active step's
  * projected content, and the Back / Next / Submit / Cancel
- * actions. It does not own state — `stepChange` carries each
+ * actions. It does not own state -- `stepChange` carries each
  * navigation intent up to the host which moves the signal.
  *
  * Hidden steps are filtered out of both the progress strip and
@@ -274,11 +274,11 @@ export class CmsWizardComponent {
     });
 
     /** Resolved `TemplateRef` for the active step id, or null if
-     *  no directive declared it. Read on every render — the
+     *  no directive declared it. Read on every render -- the
      *  ContentChildren query updates as templates mount/unmount. */
     protected readonly activeTemplate = computed(() => {
         const id = this.currentStepId();
-        // ContentChildren is a QueryList — converting to array is the
+        // ContentChildren is a QueryList -- converting to array is the
         // change-detection-safe way to read inside a computed.
         const directives = this.stepDirectives?.toArray() ?? [];
         const match = directives.find((d) => d.cmsWizardStep() === id);
@@ -300,7 +300,7 @@ export class CmsWizardComponent {
     }
 
     /** A step is "done" when the active step is past it. Visual cue
-     *  only — does not influence navigability. */
+     *  only -- does not influence navigability. */
     protected isStepDone(index: number): boolean {
         return index < this.activeIndex();
     }

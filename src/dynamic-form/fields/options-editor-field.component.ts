@@ -20,7 +20,7 @@ interface OptionRow {
  * `Array<{ value, label }>`, matching the backend `selectOptions` shape
  * (`Definition::$selectOptions` -> `options['selectOptions']`).
  *
- * Source of truth is the FormControl itself — every edit writes the whole
+ * Source of truth is the FormControl itself -- every edit writes the whole
  * array back immutably and marks the control dirty, so the surrounding form's
  * dirty/submit machinery sees the change without any extra wiring. `rows()` is
  * a pure projection of the control value (tolerant of null / legacy scalars),
@@ -31,7 +31,7 @@ interface OptionRow {
  * (`Open` -> `open`), so authors usually only fill the label column. Once a
  * value is set (typed or derived) it is never overwritten by later label edits.
  *
- * This is the FE half of the select-options editor — persistence-agnostic; the
+ * This is the FE half of the select-options editor -- persistence-agnostic; the
  * consuming form decides where the array lands (here: the FieldDefinition API's
  * `selectOptions`).
  */
@@ -187,7 +187,7 @@ export class OptionsEditorFieldComponent {
         });
     });
 
-    /** Edit a row's value cell. Never auto-derives — explicit user intent. */
+    /** Edit a row's value cell. Never auto-derives -- explicit user intent. */
     setValue(i: number, value: string): void {
         const rows = this.rows();
         if (i < 0 || i >= rows.length) return;

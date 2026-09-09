@@ -27,7 +27,7 @@ import { tap } from 'rxjs/operators';
 import { ToastService } from '../toast.service';
 
 /** One opaque element in the ordered list. The builder never inspects its
- *  shape — the consumer renders the body and supplies `factory`/`labelOf`. */
+ *  shape -- the consumer renders the body and supplies `factory`/`labelOf`. */
 export type OrderedElement = Record<string, unknown>;
 
 /** A palette entry: click to append, or drag onto the list to place. `id` is
@@ -48,9 +48,9 @@ export type OrderedSaveFn = (elements: OrderedElement[]) => Observable<unknown>;
  *
  * A Builder edits an ordered list of typed elements through a palette +
  * per-element inspector + drag-drop + dirty/Save plumbing. This component owns
- * the *generic machinery only* — the palette (click-append + drag-to-place),
- * the CDK drag-drop list (reorder + insert-from-palette), move ↑/↓, remove,
- * dirty/saving state, and the Save flow — and is blind to what an "element" is.
+ * the *generic machinery only* -- the palette (click-append + drag-to-place),
+ * the CDK drag-drop list (reorder + insert-from-palette), move ^/v, remove,
+ * dirty/saving state, and the Save flow -- and is blind to what an "element" is.
  *
  * The consumer supplies the element *body* via a content-projected
  * `<ng-template let-element let-i="index">`, plus pure config: the `palette`,
@@ -324,13 +324,13 @@ export class OrderedBuilderComponent {
      * output; the host owns the toast, so one Save reports once.
      *
      * Nothing to save (no `saveFn`, pristine, or already in flight) yields an
-     * empty stream — safe to drop into a `concat` chain.
+     * empty stream -- safe to drop into a `concat` chain.
      */
     save$(): Observable<unknown> {
         const fn = this.saveFn();
         if (!fn || !this.dirty() || this.saving()) return EMPTY;
         // `defer` so the flag flips and the elements are read at SUBSCRIBE
-        // time — in a sequential chain this op starts long after it was built.
+        // time -- in a sequential chain this op starts long after it was built.
         return defer(() => {
             this.saving.set(true);
             return fn(this.elements());

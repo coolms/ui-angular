@@ -239,8 +239,8 @@ export class PageToolbarComponent {
      * Render the bar even when it carries no ACTIONS.
      *
      * The visibility test only ever counted actions, so a toolbar whose whole
-     * job is to host projected controls — a search box, a filter, the view
-     * switcher — disappeared along with the last action. Media hid its search
+     * job is to host projected controls -- a search box, a filter, the view
+     * switcher -- disappeared along with the last action. Media hid its search
      * and its view switcher the moment its four `view-*` NaviGraph nodes were
      * retired, because those nodes were the only thing keeping the bar alive.
      *
@@ -381,13 +381,13 @@ export class PageToolbarComponent {
             .map(n => this.nodeToAction(n, ctx));
     });
 
-    /** True when at least one right action is visible — drives the separator between filters and view buttons. */
+    /** True when at least one right action is visible -- drives the separator between filters and view buttons. */
     readonly hasRightActions = computed(() => this.resolvedRight().some(a => !a.hidden && !a.divider));
 
     /**
      * True when at least one left or right action is present.
      * Used to hide the toolbar entirely (removing its min-height) when nothing
-     * is visible — e.g. no row selected and no always-on actions.
+     * is visible -- e.g. no row selected and no always-on actions.
      * Falls back to legacy inputs so non-NaviGraph callers are unaffected.
      */
     readonly hasAnyAction = computed(() =>
@@ -398,11 +398,11 @@ export class PageToolbarComponent {
      * True when the toolbar should render as a full bar (with min-height + border-bottom).
      * NaviGraph mode: treeSlug set AND at least one action lands IN the bar.
      * Legacy mode: direct leftActions or rightActions inputs are provided.
-     * Or the host declared it always renders — see {@link alwaysShow}.
+     * Or the host declared it always renders -- see {@link alwaysShow}.
      *
      * Counting the bar's OWN actions rather than the tree's node count: a tree
-     * whose nodes are all `position: header` contributes nothing here — they are
-     * emitted to the page header instead — and counting nodes rendered an empty
+     * whose nodes are all `position: header` contributes nothing here -- they are
+     * emitted to the page header instead -- and counting nodes rendered an empty
      * bar with a min-height and a border for it. That is the difference between
      * a page that adopts a header-only tree and one that looks like it grew a
      * stray divider.

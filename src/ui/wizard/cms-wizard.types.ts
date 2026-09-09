@@ -1,5 +1,5 @@
 /**
- *-2.6a — Reusable wizard primitive.
+ *-2.6a -- Reusable wizard primitive.
  *
  * A `WizardStepConfig` is a step's declaration. The caller provides
  * the visual ordering and the gating predicate; the primitive owns
@@ -20,7 +20,7 @@ export interface WizardStepConfig {
      *  step set depends on earlier picks (e.g. Filter mode adds a
      *  filter-criteria step that Single mode skips). */
     readonly hidden?: boolean;
-    /** Marker only — has no behavioural effect today. Reserved so
+    /** Marker only -- has no behavioural effect today. Reserved so
      *  consumers can express "Skip" affordances in X-2.6b without a
      *  primitive API churn. */
     readonly optional?: boolean;

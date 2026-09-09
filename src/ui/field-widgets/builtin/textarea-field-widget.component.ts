@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FormsModule } from '@angular/forms';
 
 /**
- * Built-in `textarea` field widget — a multi-line text input over the
+ * Built-in `textarea` field widget -- a multi-line text input over the
  * field-widget registry's {@link import('../field-widget-registry').FieldWidgetInputs}
  * callback contract.
  */

@@ -124,7 +124,7 @@ export class ContextMenuComponent {
     constructor() {
         // Post-render edge-clamp: measure the actual menu rect and shift
         // it back inside the viewport if either edge overflows. Replaces
-        // the prior pre-render heuristic (180×38px guess) which under-
+        // the prior pre-render heuristic (180x38px guess) which under-
         // reported height for menus with many items.
         effect(() => {
             if (!this.svc.menu()) return;
@@ -144,7 +144,7 @@ export class ContextMenuComponent {
             });
         });
 
-        // Phase E3 ( §3): register the menu-close ESC handler
+        // Phase E3 ( section 3): register the menu-close ESC handler
         // only while a menu is actually open. Pushes onto the
         // EscCoordinator stack on open; pops on close. When the
         // Document Properties panel is also open, the menu's handler

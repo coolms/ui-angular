@@ -20,7 +20,7 @@ import {
 import { formatLocalDate } from './prefs-format';
 
 /**
- * — Proper date range picker.
+ * -- Proper date range picker.
  *
  * Renders a SINGLE trigger field showing the span as one string
  * (e.g. `2026-05-01 -> 2026-05-31`) in the user's `dateFormat`. Clicking
@@ -32,16 +32,16 @@ import { formatLocalDate } from './prefs-format';
  * (DataGrid filter row, CalendarEventEditor) don't need updates:
  *
  *   Inputs:
- *     value:      DateRangeValue | null  — seeded selection
- *     min, max:   string | null          — YYYY-MM-DD bounds
- *     startLabel, endLabel: string       — accessibility labels (unused by
+ *     value:      DateRangeValue | null  -- seeded selection
+ *     min, max:   string | null          -- YYYY-MM-DD bounds
+ *     startLabel, endLabel: string       -- accessibility labels (unused by
  *                                          the single-trigger UI but kept
  *                                          for back-compat)
- *     required:   boolean                — kept for back-compat
+ *     required:   boolean                -- kept for back-compat
  *     disabled:   boolean
  *
  *   Output:
- *     valueChange: DateRangeValue | null — `null` when Reset or
+ *     valueChange: DateRangeValue | null -- `null` when Reset or
  *                                          when both endpoints are blank
  *
  * Wire format on the output (`{ start: 'YYYY-MM-DD', end: 'YYYY-MM-DD' }`)
@@ -191,7 +191,7 @@ export class DateRangePickerComponent implements OnDestroy {
      */
     readonly size       = input<'sm' | 'md'>('md');
     /**
-     * Show an inline ×-clear button on the trigger when a value is set.
+     * Show an inline x-clear button on the trigger when a value is set.
      * Set to `false` for required fields so the user can't drop the value
      * to null with a single click.
      */

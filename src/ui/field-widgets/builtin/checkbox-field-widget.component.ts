@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FormsModule } from '@angular/forms';
 
 /**
- * Built-in `checkbox` field widget — a Bootstrap switch over the field-widget
+ * Built-in `checkbox` field widget -- a Bootstrap switch over the field-widget
  * registry's {@link import('../field-widget-registry').FieldWidgetInputs}
  * callback contract. A field declared `type: checkbox` (e.g. the SEO
  * `noindex` flag) resolves here; without it the registry has no boolean

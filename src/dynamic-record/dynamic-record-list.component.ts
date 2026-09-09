@@ -137,7 +137,7 @@ export class DynamicRecordListComponent implements OnInit {
     private readonly pageTitleSvc = inject(PageTitleService);
     private readonly destroyRef  = inject(DestroyRef);
 
-    /** Schema — loaded separately for form dialogs and title resolution. */
+    /** Schema -- loaded separately for form dialogs and title resolution. */
     readonly schema  = signal<EntityTypeSchema | null>(null);
 
     readonly records = signal<DynamicRecordDto[]>([]);
@@ -154,7 +154,7 @@ export class DynamicRecordListComponent implements OnInit {
     /** True when there are more pages to load (used by DataGrid lazy sentinel). */
     readonly hasMore = signal(false);
 
-    /** True when the gridId config endpoint returned an error (e.g. 404 — no fields yet). */
+    /** True when the gridId config endpoint returned an error (e.g. 404 -- no fields yet). */
     readonly configLoadFailed = signal(false);
 
     /** DataGrid config ID derived from the type alias. */
@@ -227,7 +227,7 @@ export class DynamicRecordListComponent implements OnInit {
                 .subscribe(() => this.nextPage());
         }
 
-        // Load schema separately — used for form dialogs and title/breadcrumb resolution.
+        // Load schema separately -- used for form dialogs and title/breadcrumb resolution.
         // Records are loaded via the DataGrid's (loadMore) event after its config resolves,
         // so there is no forkJoin dependency between schema and record loading.
         this.runtimeTypes.listRuntimeTypes().pipe(
@@ -284,7 +284,7 @@ export class DynamicRecordListComponent implements OnInit {
      *
      * NOTE: the DataGrid's onSentinelVisible() always emits reset:false, including
      * on the initial config-load kick-off. When offset === 0 the sentinel has no
-     * data yet, which is functionally equivalent to a reset — treat it identically
+     * data yet, which is functionally equivalent to a reset -- treat it identically
      * so we always start from page 1 instead of jumping to page 2.
      */
     onLoadMore(event: { offset: number; sort: string | null; reset: boolean; columnFilters: ReadonlyArray<string> }): void {
@@ -393,7 +393,7 @@ export class DynamicRecordListComponent implements OnInit {
                     // snapshot is seeded with `hasMore: true` (so the FIRST loadMore
                     // fires once the grid resolves its config), and leaving it there
                     // means the sentinel keeps re-requesting a request that just
-                    // failed — and keeps the grid's in-flight guard latched, so it
+                    // failed -- and keeps the grid's in-flight guard latched, so it
                     // shows the loading skeleton with no resting state.
                     this.hasMore.set(false);
                     this.gridData.update(d => ({ ...d, hasMore: false }));

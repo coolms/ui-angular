@@ -5,7 +5,7 @@ import { Injectable, signal, Type } from '@angular/core';
  *
  * Components opened here must accept their data as `@Input()` properties
  * (passed via NgComponentOutlet inputs) rather than via DIALOG_DATA.
- * The panel behaves like the VS Code terminal — slides up from the shell
+ * The panel behaves like the VS Code terminal -- slides up from the shell
  * bottom, can be resized by dragging the top edge, and is dismissed by
  * calling close() or by the editor's own close button.
  */

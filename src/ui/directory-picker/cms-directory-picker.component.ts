@@ -19,7 +19,7 @@ import type { VfsNodeDto } from '../../vfs/vfs.types';
 import { VfsTreeService } from './vfs-tree.service';
 
 /**
- * Predicate signature used by `selectableWhen` — given a directory
+ * Predicate signature used by `selectableWhen` -- given a directory
  * node, return `true` to allow selection. Default policy is "user
  * must have write permission" (a directory you can't create children
  * in is never a sensible save target).
@@ -54,7 +54,7 @@ type FlatRow =
  * Accessibility: the tree carries `role="tree"`; each row carries
  * `role="treeitem"` with `aria-expanded` / `aria-selected` / `aria-level`.
  * Keyboard navigation (arrow keys per WAI-ARIA tree pattern) is
- * deferred to a follow-up phase — the current keyboard surface is
+ * deferred to a follow-up phase -- the current keyboard surface is
  * Tab + Space/Enter on focused chevron / row, which suffices for the
  * Document Generation wizard's "occasional path tweak" use case.
  */
@@ -338,7 +338,7 @@ export class CmsDirectoryPickerComponent {
      * Per-node selectability predicate. Default policy: must have
      * write permission AND must not be a system / hidden directory.
      * System / hidden dirs are never selectable regardless of this
-     * predicate — the picker enforces that as a hard rule.
+     * predicate -- the picker enforces that as a hard rule.
      */
     readonly selectableWhen = input<DirectorySelectablePredicate>(
         (n: VfsNodeDto) => n.permissions.write,
@@ -391,7 +391,7 @@ export class CmsDirectoryPickerComponent {
     constructor() {
         // Initial seed from the inputs. Use `untracked` for the
         // signal writes so re-runs only happen when the inputs
-        // themselves change (mirrors the Phase 2 ext fix).
+        // themselves change (mirrors the entity-picker fix).
         effect(() => {
             const root = this.rootPath();
             const sel = this.value();
@@ -428,7 +428,7 @@ export class CmsDirectoryPickerComponent {
     }
 
     protected isSelectable(node: VfsNodeDto): boolean {
-        // System / hidden dirs are NEVER selectable — that's a hard
+        // System / hidden dirs are NEVER selectable -- that's a hard
         // rule the picker enforces independently of `selectableWhen`.
         if (node.isSystem || node.isHidden) return false;
         if (!node.isContainer) return false;
@@ -439,7 +439,7 @@ export class CmsDirectoryPickerComponent {
         const sel = this.value() ?? this.rootPath();
         const node = this.findNodeByPath(sel);
         if (node === null) {
-            // Selection points at the root before we've stat'd it —
+            // Selection points at the root before we've stat'd it --
             // assume create is allowed; the server returns 403 on
             // actual submit if we're wrong, which the inline error
             // path surfaces.

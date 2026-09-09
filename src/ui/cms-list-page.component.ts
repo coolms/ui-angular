@@ -10,16 +10,16 @@ import { CmsPageHeaderComponent } from './cms-page-header.component';
 import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.component';
 
 /**
- * `<cms-list-page>` — the single, blessed shell for admin list pages.
+ * `<cms-list-page>` -- the single, blessed shell for admin list pages.
  *
  * ## Why this exists
  * Three list-page shapes had drifted across the admin SPA:
- *   1. the mature pattern — `*-page.component.ts` -> `<cms-list-layout>` ->
+ *   1. the mature pattern -- `*-page.component.ts` -> `<cms-list-layout>` ->
  *      `*-list` with `<app-page-toolbar treeSlug>` + grid, wired through
  *      `PageActionsService` (consistent, but ~2 components + 2 YAMLs +
  *      a service bridge of boilerplate per page);
  *   2. hand-rolled self-contained `<cms-page-header>` + grid (no action
- *      bar — the newest pages, e.g. Forms/Cockpit, skipped the heavy
+ *      bar -- the newest pages, e.g. Forms/Cockpit, skipped the heavy
  *      machinery and looked different as a result);
  *   3. bespoke headers/tables.
  *
@@ -27,11 +27,11 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
  * a thin template with no `PageActionsService` dance, while keeping the
  * navi-driven action bar available. It owns the things that drifted: the
  * page-header (icon + title + subtitle + actions), the action bar, the
- * host flex layout, and the header↔grid gap. The page just declares its
+ * host flex layout, and the header<->grid gap. The page just declares its
  * header + drops its `<coolms-datagrid>` in as projected content, so each
  * page keeps its own grid wiring (tree / lazy / live / selection) intact.
  *
- * ## Usage — direct actions (simplest)
+ * ## Usage -- direct actions (simplest)
  * ```html
  * <cms-list-page title="Forms" icon="ui-checks-grid"
  *                [actions]="headerActions()" (actionClick)="onAction($event)">
@@ -41,7 +41,7 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
  * </cms-list-page>
  * ```
  *
- * ## Usage — navi-driven action bar (replaces the cms-list-layout pattern)
+ * ## Usage -- navi-driven action bar (replaces the cms-list-layout pattern)
  * ```html
  * <cms-list-page title="Calendars" icon="calendar"
  *                toolbarTreeSlug="navi.toolbar.calendar.calendars"
@@ -58,9 +58,9 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
  * handler.
  *
  * ## Projected slots
- *  - default — the grid (and anything else that is the page body).
- *  - `[header-meta]` — chips/badges next to the title (forwarded to the header).
- *  - `[toolbar-filters]` / `[toolbar-breadcrumb]` — forwarded into the
+ *  - default -- the grid (and anything else that is the page body).
+ *  - `[header-meta]` -- chips/badges next to the title (forwarded to the header).
+ *  - `[toolbar-filters]` / `[toolbar-breadcrumb]` -- forwarded into the
  *    action bar (only rendered when the action bar is shown).
  *
  * ## Host requirement (IMPORTANT)
@@ -71,7 +71,7 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
  * ```
  * styles: [':host { display: flex; flex-direction: column; flex: 1; min-height: 0; }']
  * ```
- * Omit it and the page collapses to content height — the footer floats up
+ * Omit it and the page collapses to content height -- the footer floats up
  * with empty space below instead of pinning to the bottom of the viewport.
  */
 @Component({
@@ -150,7 +150,7 @@ export class CmsListPageComponent {
 
     /**
      * Optional footer-bar text (e.g. "12 calendars"). When non-empty a thin
-     * bottom bar renders with this label — replaces the per-page
+     * bottom bar renders with this label -- replaces the per-page
      * `PageFooterService` count the mature `cms-list-layout` pages used. Leave
      * blank to omit the footer entirely (the self-contained pages had none).
      */

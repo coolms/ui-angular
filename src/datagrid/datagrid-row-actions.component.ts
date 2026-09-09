@@ -41,7 +41,7 @@ export class DataGridRowActionsComponent {
     readonly actionTriggered = output<{ action: DataGridRowAction; row: Record<string, unknown> }>();
 
     trigger(action: DataGridRowAction): void {
-        // Emit unconditionally — confirmation is the caller's responsibility.
+        // Emit unconditionally -- confirmation is the caller's responsibility.
         // DynamicRecordListComponent (and others) handle confirm via CDK dialog.
         this.actionTriggered.emit({ action, row: this.row() });
     }

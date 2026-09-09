@@ -20,7 +20,7 @@ import { VfsTreeService } from '../directory-picker/vfs-tree.service';
 export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
 
 /**
- * Generic VFS **file** picker — the sibling of `<cms-directory-picker>`, which
+ * Generic VFS **file** picker -- the sibling of `<cms-directory-picker>`, which
  * picks the container while this picks what is inside it.
  *
  * ## Why this is not the media picker
@@ -29,7 +29,7 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
  * points, natural dimensions, hover previews and an upload-to-library tab are
  * all real image concerns. But it is hardcoded to `/media` and built on
  * `MediaService`/`MediaAssetDto`, so "attach a PDF from /docs" cannot be
- * expressed in it — and copying it to make a document picker would duplicate
+ * expressed in it -- and copying it to make a document picker would duplicate
  * ~1700 lines that then drift.
  *
  * This is the other half of that split: **any file, anywhere the user can read**,
@@ -41,11 +41,11 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
  *
  * The listing endpoint is permission-filtered server-side (`canRead` on the
  * container plus traversable ancestors), so a user simply cannot browse into
- * something they may not read — the picker adds no second authority of its own.
+ * something they may not read -- the picker adds no second authority of its own.
  * `selectableWhen` narrows further for callers with an extra rule.
  *
  *  That filtering is a UX affordance, NOT the security boundary. Whatever
- * consumes the emitted path must re-check on its own terms — the newsletter
+ * consumes the emitted path must re-check on its own terms -- the newsletter
  * attachment path, for instance, is re-read under the sending user at delivery
  * time and dropped if unreadable, precisely because a path chosen at compose
  * time proves nothing about permissions minutes later on a worker.
@@ -190,7 +190,7 @@ export class CmsFilePickerComponent {
     readonly multiple = input<boolean>(false);
 
     /**
-     * Extra gate on top of the default read check — e.g. a caller that only
+     * Extra gate on top of the default read check -- e.g. a caller that only
      * wants PDFs. Returning false renders the row disabled rather than hiding
      * it, so a user looking for a file they can see but not pick gets an answer
      * instead of a mystery.
@@ -258,14 +258,14 @@ export class CmsFilePickerComponent {
 
     isDirectory(node: VfsNodeDto): boolean {
         // `package` is a directory-shaped container (a Content page); treat it
-        // as navigable rather than selectable — its VARIANTS are the real files.
+        // as navigable rather than selectable -- its VARIANTS are the real files.
         return node.type === 'directory' || node.type === 'package';
     }
 
     /**
      * A file is pickable only if the caller can actually READ it.
      *
-     *  Listing and reading are different permissions — correctly so, and this
+     *  Listing and reading are different permissions -- correctly so, and this
      * is the trap. Unix `ls` shows a directory's entries whether or not you can
      * open each one, and the VFS listing endpoint faithfully does the same: it
      * checks `r` on the CONTAINER, then returns every child with a per-node
@@ -273,7 +273,7 @@ export class CmsFilePickerComponent {
      * the list with `read: false`.
      *
      * Without this check the picker would happily let an admin choose that file,
-     * and the consumer would drop it later — for newsletter attachments, an
+     * and the consumer would drop it later -- for newsletter attachments, an
      * email that quietly goes out with nothing attached. Disabling the row says
      * so at the moment of choosing instead.
      */
@@ -343,7 +343,7 @@ export class CmsFilePickerComponent {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 next: page => {
-                    // Directories first, then files, each alphabetical — the
+                    // Directories first, then files, each alphabetical -- the
                     // order every file manager uses, and the backend returns
                     // name-ordered regardless of type.
                     this.rows.set([...page.member].sort((a, b) => {

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { FormsModule } from '@angular/forms';
 
 /**
- * Built-in `text` field widget — a single-line text input over the field-widget
+ * Built-in `text` field widget -- a single-line text input over the field-widget
  * registry's {@link import('../field-widget-registry').FieldWidgetInputs}
  * callback contract. The default widget: a field with no richer module widget
  * resolves here, so every field-panel input goes through the registry rather

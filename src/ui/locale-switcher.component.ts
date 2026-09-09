@@ -19,11 +19,11 @@ import { AppConfigState } from '@coolms/core-angular';
  * Properties panel, and any future node-property panel.
  *
  * Scales past a handful of locales: the first {@link maxInline} render as tabs,
- * the rest collapse into a "+N ▾" dropdown (the dropdown button highlights when
+ * the rest collapse into a "+N v" dropdown (the dropdown button highlights when
  * the active locale lives in the overflow). Self-hides when the deployment has a
  * single locale.
  *
- * Stateless about WHICH field is dirty — the parent owns reload/dirty logic and
+ * Stateless about WHICH field is dirty -- the parent owns reload/dirty logic and
  * passes the active locale in (`activeLocale`) + reacts to `localeChange`. The
  * switcher never mutates the active locale itself, so the parent can run a
  * dirty-guard before committing the switch.
@@ -117,10 +117,10 @@ export class LocaleSwitcherComponent {
     readonly activeLocale = input<string>('en');
     /** Show a dirty dot on the active tab. */
     readonly dirty = input(false);
-    /** Disable tabs + show a "loading…" hint while the parent reloads a locale. */
+    /** Disable tabs + show a "loading..." hint while the parent reloads a locale. */
     readonly loading = input(false);
     readonly label = input<string>('Locale');
-    /** How many locales render as inline tabs before the rest fold into "+N ▾". */
+    /** How many locales render as inline tabs before the rest fold into "+N v". */
     readonly maxInline = input(4);
 
     /** Emitted when the user picks a different locale (parent guards + commits). */

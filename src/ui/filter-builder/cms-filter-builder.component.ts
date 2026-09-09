@@ -36,7 +36,7 @@ type FilterField = FieldDescriptor & {
 };
 
 /**
- *-2.6a — generic, entity-agnostic filter builder.
+ *-2.6a -- generic, entity-agnostic filter builder.
  *
  * Reads the X-2.5 endpoint's field descriptors and renders an
  * AND-chained criterion editor on top. Each row has a field
@@ -44,13 +44,13 @@ type FilterField = FieldDescriptor & {
  * descriptor's `filterOperators`), and a type-aware value input.
  *
  * Emits the composed RQL `filter=` body on every change, debounced
- * 300ms. Empty / all-blank rows compose to the empty string — the
+ * 300ms. Empty / all-blank rows compose to the empty string -- the
  * host treats that as "no criteria" and disables the wizard's
  * "Preview audience" call.
  *
  * The builder owns the criterion list locally (signal) for
  * encapsulation; the host receives only the RQL string. Round-trip
- * editing of pre-existing RQL is out of scope for X-2.6a — wizards
+ * editing of pre-existing RQL is out of scope for X-2.6a -- wizards
  * start from a blank slate.
  */
 @Component({
@@ -254,7 +254,7 @@ export class CmsFilterBuilderComponent {
     /** Entity alias to load filters for. */
     readonly entityAlias = input.required<string>();
 
-    /** Emitted whenever the composed RQL `filter=…` body changes
+    /** Emitted whenever the composed RQL `filter=...` body changes
      *  (debounced 300ms). Empty list yields `''`. */
     readonly rqlChange = output<string>();
 
@@ -326,7 +326,7 @@ export class CmsFilterBuilderComponent {
                 this.loading.set(false);
                 this.allFields.set(response?.fields ?? []);
                 this.virtualFields.set(response?.virtualFields ?? []);
-                // Reset rows whenever the alias changes — stale criteria
+                // Reset rows whenever the alias changes -- stale criteria
                 // referencing a different entity's fields would emit
                 // invalid RQL.
                 this.rows.set([]);
@@ -452,7 +452,7 @@ export class CmsFilterBuilderComponent {
                 continue;
             }
             if (row.value === null || row.value === undefined || row.value === '') {
-                // Skip rows with no value — partial input shouldn't break
+                // Skip rows with no value -- partial input shouldn't break
                 // the RQL the host hands to the backend.
                 continue;
             }
@@ -464,7 +464,7 @@ export class CmsFilterBuilderComponent {
         // `filter[]=a&filter[]=b` first, repeated `filter=` second).
         //
         // This used to join with a literal ' and ', which produced a
-        // single filter whose VALUE swallowed the rest of the expression —
+        // single filter whose VALUE swallowed the rest of the expression --
         // and the damage depended on which criterion came first. Leading with
         // a real boolean column (`isActive eq true and fullName cn dzm`) made
         // Postgres reject `"true and fullName cn dzm"` as a boolean -> 500 ->
@@ -492,7 +492,7 @@ export class CmsFilterBuilderComponent {
         }
         const s = String(value);
         // Quote strings that contain whitespace or RQL reserved tokens to
-        // avoid parser ambiguity. Conservative — quoting an already-safe
+        // avoid parser ambiguity. Conservative -- quoting an already-safe
         // value is harmless.
         if (/[\s"'(),]/.test(s)) {
             return `"${s.replace(/"/g, '\\"')}"`;

@@ -6,9 +6,9 @@ import { VfsNodeDto } from '../vfs/vfs.types';
 export interface FileEditorDescriptor {
     component: Type<unknown>;
     /**
-     * 'dialog'  — opened as a CDK full-screen dialog (DIALOG_DATA injection).
+     * 'dialog'  -- opened as a CDK full-screen dialog (DIALOG_DATA injection).
      *             Use this for existing editors built around @angular/cdk/dialog.
-     * 'drawer'  — opened in the resizable bottom panel (NgComponentOutlet inputs).
+     * 'drawer'  -- opened in the resizable bottom panel (NgComponentOutlet inputs).
      *             Use this for new editors that accept @Input() properties.
      */
     mode?: 'dialog' | 'drawer';
@@ -60,8 +60,8 @@ export class FileEditorRegistry {
     /**
      * Whether an EDITOR is installed for `mime`, without needing a node.
      *
-     * Callers that hold a MIME but no `VfsNodeDto` — the Documents library
-     * decides between labelling its action "View" or "Edit" — would
+     * Callers that hold a MIME but no `VfsNodeDto` -- the Documents library
+     * decides between labelling its action "View" or "Edit" -- would
      * otherwise have to fabricate a node just to ask. Same resolution order
      * as `resolve()` minus the NodeType fallback, which needs a node.
      */

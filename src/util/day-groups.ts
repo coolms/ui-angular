@@ -7,13 +7,13 @@ import { DateTimeFormatService } from './date-time-format.service';
 export interface DayGroup<T> {
     /** Canonical `YYYY-MM-DD` day key (the {@link DateTimeFormatService.dayKey}). */
     key: string;
-    /** The separator label — `Today` / `Yesterday` / a formatted date. */
+    /** The separator label -- `Today` / `Yesterday` / a formatted date. */
     label: string;
     items: T[];
 }
 
 /**
- * Split a chronologically-ordered list into per-day groups — the WhatsApp-style
+ * Split a chronologically-ordered list into per-day groups -- the WhatsApp-style
  * "date chip between day runs" model for a chat thread. Each item's day
  * is resolved in the user's tz via {@link DateTimeFormatService}, so a single
  * date chip separates day runs and individual bubbles need only show the time.
@@ -21,7 +21,7 @@ export interface DayGroup<T> {
  * Assumes `items` is already sorted ascending by instant (a message thread is
  * sorted by seq, which is chronological); it walks once and starts a new group
  * whenever the day key changes. Items with no resolvable instant fall into a
- * group keyed `''` (rendered without a real date — fine for system lines).
+ * group keyed `''` (rendered without a real date -- fine for system lines).
  */
 export function groupByDay<T>(
     items: readonly T[],

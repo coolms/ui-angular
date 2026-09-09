@@ -10,7 +10,7 @@ import {
 import { UserCalendarPreferencesService } from '../../util/user-calendar-preferences.service';
 
 /**
- * — Small time-of-day picker primitive used inside the time-range
+ * -- Small time-of-day picker primitive used inside the time-range
  * and datetime-range overlays.
  *
  * Renders an hour `<select>` (00-23 or 1-12 + AM/PM) + a minute
@@ -94,7 +94,7 @@ export class TimeOfDayPickerComponent {
     readonly value     = input<string>('00:00');
     readonly disabled  = input<boolean>(false);
     /**
-     * Minute granularity. Default 15 gives `00, 15, 30, 45` — the
+     * Minute granularity. Default 15 gives `00, 15, 30, 45` -- the
      * common case for event scheduling. Callers can pass 1 / 5 / 30
      * for finer or coarser steps, or 60 for whole-hour only.
      */

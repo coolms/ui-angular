@@ -87,10 +87,10 @@ export interface FieldSchemaItem {
     hasOverride?:    FieldOverrideKind;
     /**
      * Backend-computed UI action for this field row.
-     * 'edit'     — runtime field (user owns it; full edit form)
-     * 'create'   — no existing override; the "Override Field" dialog creates one
-     * 'override' — existing DB or file override; the dialog edits it
-     * null       — locked field with no override path (read-only in Domain Explorer)
+     * 'edit'     -- runtime field (user owns it; full edit form)
+     * 'create'   -- no existing override; the "Override Field" dialog creates one
+     * 'override' -- existing DB or file override; the dialog edits it
+     * null       -- locked field with no override path (read-only in Domain Explorer)
      */
     overrideAction?: 'edit' | 'override' | 'create' | null;
     source:          'entity' | 'module' | 'runtime';
@@ -127,7 +127,7 @@ export interface EntityFieldMetadata {
     label:           string | null;
     source:          string;
     hasOverride?:    FieldOverrideKind;
-    /** Backend-computed UI action — mirrors FieldSchemaItem.overrideAction. */
+    /** Backend-computed UI action -- mirrors FieldSchemaItem.overrideAction. */
     overrideAction?: 'edit' | 'override' | 'create' | null;
     sortOrder?:      number | null;
     // Legacy fields kept for compatibility with older API responses

@@ -20,7 +20,7 @@ export interface DataGridFilterWidgetConfig {
  * The inputs every filter-widget component receives (passed via
  * `ngComponentOutletInputs`). Parallel to `FieldWidgetInputs`, but the
  * `valueChange` callback emits **one or more** {@link ActiveFilter} entries
- * rather than a single scalar — so a range widget cleanly emits its `ge`/`le`
+ * rather than a single scalar -- so a range widget cleanly emits its `ge`/`le`
  * pair and a single-op widget emits one. `value` is the column's current active
  * filters (the subset of the grid's `ActiveFilter[]` for this column), letting a
  * widget reconstruct what's applied. Emitting `[]` clears the column.
@@ -41,16 +41,16 @@ interface DataGridFilterWidgetEntry {
 export const DATAGRID_FILTER_WIDGET = new InjectionToken<readonly DataGridFilterWidgetEntry[]>('DATAGRID_FILTER_WIDGET');
 
 /**
- * Front-end side of the DataGrid filter-widget registry — the operator-aware
+ * Front-end side of the DataGrid filter-widget registry -- the operator-aware
  * sibling of `FieldWidgetRegistry`. Maps a widget `kind` (carried by a column's
  * `filterWidget.kind` from `GET /api/v1/datagrids/{id}`) to the Angular
  * component that renders it in the filter row.
  *
- * A module registers its widget once (e.g. `provideDataGridFilterWidget('option-source', …)`
+ * A module registers its widget once (e.g. `provideDataGridFilterWidget('option-source', ...)`
  * in `app.config`); the filter row then resolves the component by kind, so a
  * column declaring a custom filter input needs no edit to the filter-row cascade.
  * When no widget is registered for a column's kind, the filter row falls back to
- * its type-driven input — the registry is additive, never a dead end.
+ * its type-driven input -- the registry is additive, never a dead end.
  */
 @Injectable({ providedIn: 'root' })
 export class DataGridFilterWidgetRegistry {

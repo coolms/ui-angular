@@ -1,5 +1,5 @@
 /**
- * Range-picker locale-respect helpers — date + time format/parse
+ * Range-picker locale-respect helpers -- date + time format/parse
  * routines keyed off `UserCalendarPreferencesService`'s catalogue.
  *
  * The pickers store **canonical** values internally (`YYYY-MM-DD` +
@@ -45,7 +45,7 @@ export function formatLocalDate(canonical: string, format: string | null | undef
 
 /**
  * Parse the user's typed date in their preferred format back to the
- * canonical `YYYY-MM-DD`. Returns `null` on any mismatch — the picker
+ * canonical `YYYY-MM-DD`. Returns `null` on any mismatch -- the picker
  * keeps the prior canonical value rather than corrupting state.
  *
  * Tolerant of:
@@ -59,7 +59,7 @@ export function parseLocalDate(raw: string, format: string | null | undefined): 
     const fmt = (format || 'yyyy-MM-dd');
 
     // Build a regex from the format pattern by replacing tokens with
-    // capture groups. Order matters — longest token first so prefix
+    // capture groups. Order matters -- longest token first so prefix
     // collisions (`MMM` vs `MM` vs `M`) resolve correctly.
     const groups: Array<'yyyy' | 'MMM' | 'MM' | 'dd' | 'd'> = [];
     let regex = '^';
@@ -70,7 +70,7 @@ export function parseLocalDate(raw: string, format: string | null | undefined): 
         if (fmt.startsWith('MM',   i)) { groups.push('MM');   regex += '(\\d{1,2})';   i += 2; continue; }
         if (fmt.startsWith('dd',   i)) { groups.push('dd');   regex += '(\\d{1,2})';   i += 2; continue; }
         if (fmt[i] === 'd')            { groups.push('d');    regex += '(\\d{1,2})';   i += 1; continue; }
-        // Literal — escape regex specials.
+        // Literal -- escape regex specials.
         regex += fmt[i].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         i += 1;
     }
@@ -125,7 +125,7 @@ export function formatLocalTime(canonical: string, format: '12h' | '24h' | null 
  *   - Trailing whitespace.
  *   - Optional leading zero (`9:30` works the same as `09:30`).
  *   - Spaces around the AM/PM marker (`2:30PM`, `2:30 PM`, `2:30 pm`).
- *   - 12h input even when the user's pref is 24h (and vice-versa) —
+ *   - 12h input even when the user's pref is 24h (and vice-versa) --
  *     covers paste-from-clipboard scenarios.
  */
 export function parseLocalTime(raw: string, _format: '12h' | '24h' | null | undefined): string | null {

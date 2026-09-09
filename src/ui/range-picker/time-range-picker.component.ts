@@ -17,7 +17,7 @@ import { TimeOfDayPickerComponent } from './time-of-day-picker.component';
 import { formatLocalTime } from './prefs-format';
 
 /**
- * — Proper time range picker.
+ * -- Proper time range picker.
  *
  * Single-trigger field showing the time span as one string (e.g.
  * `09:00 -> 17:30` or `9:00 AM -> 5:30 PM`). Click opens a small popover
@@ -25,7 +25,7 @@ import { formatLocalTime } from './prefs-format';
  * buttons.
  *
  * Public API preserved. Wire format unchanged:
- * `{ start: 'HH:mm', end: 'HH:mm' }` — what the Working Hours editor
+ * `{ start: 'HH:mm', end: 'HH:mm' }` -- what the Working Hours editor
  * already uses for its per-weekday windows.
  */
 export interface TimeRangeValue {
@@ -211,10 +211,10 @@ export class TimeRangePickerComponent implements OnDestroy {
     readonly disabled   = input<boolean>(false);
     /** Minute granularity for the select dropdowns (default 15 -> 00/15/30/45). */
     readonly step       = input<number>(15);
-    /** Trigger sizing — 'sm' matches DataGrid filter-row inputs. */
+    /** Trigger sizing -- 'sm' matches DataGrid filter-row inputs. */
     readonly size       = input<'sm' | 'md'>('md');
     /**
-     * Show an inline ×-clear button on the trigger when a value is set.
+     * Show an inline x-clear button on the trigger when a value is set.
      * Set to `false` for required fields so the user can't drop the value
      * to null with a single click.
      */

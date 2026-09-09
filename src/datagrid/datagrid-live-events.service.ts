@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CentrifugoClientService } from '../notification/centrifugo-client.service';
 
 /**
- * Phase 2 DataGrid live -- typed wrapper over
+ * DataGrid live updates -- typed wrapper over
  * `CentrifugoClientService` for the `datagrid.{entityAlias}.list`
  * channel. The `CentrifugoNotificationStreamService` sibling emits
  * `void` for refetch-on-tick consumers; this stream carries the

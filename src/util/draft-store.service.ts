@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 /**
  * Generic per-browser draft store (localStorage), keyed by an opaque string the
  * caller composes (e.g. `email.<mailboxId>.compose`, `chat.<conversationId>`).
- * Values are JSON-serialised. Every operation is best-effort — a full/blocked
+ * Values are JSON-serialised. Every operation is best-effort -- a full/blocked
  * localStorage never throws into the caller. Sits beside the other per-browser UI
  * state the admin keeps in localStorage (pane widths, last-selected mailbox).
  *
@@ -19,7 +19,7 @@ export class DraftStoreService {
         try {
             localStorage.setItem(DraftStoreService.PREFIX + key, JSON.stringify(value));
         } catch {
-            /* localStorage full/blocked — drafts are best-effort */
+            /* localStorage full/blocked -- drafts are best-effort */
         }
     }
 

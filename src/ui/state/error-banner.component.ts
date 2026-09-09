@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 /**
- * UI-polish A2 — shared inline error banner. Surfaces a load/action
+ * UI-polish A2 -- shared inline error banner. Surfaces a load/action
  * failure in-place (instead of a blank panel + a transient toast that
  * scrolls away), with an optional Retry affordance.
  *

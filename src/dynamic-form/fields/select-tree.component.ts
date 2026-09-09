@@ -166,20 +166,20 @@ export class SelectTreeComponent implements OnInit {
     });
 
     /**
-     * Depth-annotated flat list in DFS pre-order (root -> children -> grandchildren…).
+     * Depth-annotated flat list in DFS pre-order (root -> children -> grandchildren...).
      * Used when there is no active search query.
      */
     treeNodes = computed<TreeOption[]>(() => this.buildFlatTree(this.allOptions()));
 
     /**
-     * Lazy mode: server already filtered — show flat list always.
+     * Lazy mode: server already filtered -- show flat list always.
      * Eager mode when searching: flat filtered list at depth=0 (cleaner UX).
      * Eager mode when not searching: full tree with indentation.
      */
     visibleNodes = computed<TreeOption[]>(() => {
         const query = (this.searchSignal() ?? '').toLowerCase().trim();
 
-        // Lazy: server filtered — display flat regardless of search
+        // Lazy: server filtered -- display flat regardless of search
         if (this.isLazy()) {
             return this.allOptions().map(o => ({
                 value:    o.value,
@@ -271,7 +271,7 @@ export class SelectTreeComponent implements OnInit {
         onResults: (opts: DataSourceOption[]) => void,
         onLoading: (v: boolean) => void,
     ): void {
-        // Initial load — empty filter
+        // Initial load -- empty filter
         this.loadLazy('', ds, onResults, onLoading);
 
         // Debounced search on input changes

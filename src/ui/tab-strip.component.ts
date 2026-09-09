@@ -11,10 +11,10 @@ export interface TabStripItem {
 }
 
 /**
- * UI-polish — shared underline tab strip for list pages that bucket their
+ * UI-polish -- shared underline tab strip for list pages that bucket their
  * rows (Inbox My/Claimable/Recent, Leads New/Handled/Spam, Newsletter
  * Confirmed/Pending/Unsubscribed). Replaces three near-identical hand-rolled
- * strips — including Inbox's inline-styled one — with one token-styled,
+ * strips -- including Inbox's inline-styled one -- with one token-styled,
  * ARIA-correct (`role="tablist"` / `role="tab"`) component.
  *
  * Bucket selection is owned by the host (it drives the grid + URL); this is a

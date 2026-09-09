@@ -6,11 +6,11 @@ import { ToolbarAction } from './page-toolbar.component';
  * page header rendered by their parent layout (e.g. ListLayoutComponent).
  *
  * Usage:
- *  - Page components (SectionsPageComponent, DynamicRecordPageComponent, …)
+ *  - Page components (SectionsPageComponent, DynamicRecordPageComponent, ...)
  *    provide it in `providers: [PageActionsService]`.
  *  - ListLayoutComponent injects it (without providing its own) and reads
  *    `pageActions.actions()` to populate `CmsPageHeaderComponent`.
- *  - Content components (SectionsListComponent, NaviTreesListComponent, …)
+ *  - Content components (SectionsListComponent, NaviTreesListComponent, ...)
  *    inject it with `{ optional: true }` and call `register()` in ngOnInit.
  *
  * Keeping `providedIn` absent ensures each layout gets its own instance.

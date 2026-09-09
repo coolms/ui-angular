@@ -44,7 +44,7 @@ export interface VfsNodeDto {
      * opening an authored DOCUMENT rather than a page fragment.
      *
      * Optional and loosely typed on purpose: every module stamps its own keys,
-     * so a reader must treat any given one as possibly absent — and a key added
+     * so a reader must treat any given one as possibly absent -- and a key added
      * before a node existed is absent on that node forever.
      */
     readonly extras?: Readonly<Record<string, unknown>> | null;
@@ -84,7 +84,7 @@ export interface VfsDirectoryPage {
 export interface VfsFileKind {
     readonly id:          string;
     readonly label:       string;
-    /** Menu grouping — kinds from one module belong together. */
+    /** Menu grouping -- kinds from one module belong together. */
     readonly group:       string;
     readonly icon:        string;
     readonly endpoint:    string;
@@ -92,6 +92,6 @@ export interface VfsFileKind {
     readonly nameField:   string;
     readonly folderField: string;
     readonly payload:     Record<string, unknown>;
-    /** A hint only — the server decides the real filename. */
+    /** A hint only -- the server decides the real filename. */
     readonly extension:   string | null;
 }

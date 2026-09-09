@@ -51,7 +51,7 @@ interface BreadcrumbResponseDto {
  * a monospace text input pre-filled with the current path. Enter
  * submits (emits `navigate`); Escape or any click outside cancels.
  *
- * Right-side controls (search, view-mode buttons, …) are
+ * Right-side controls (search, view-mode buttons, ...) are
  * content-projected via the default `<ng-content>` slot so the row
  * keeps the file-manager-row look across all three explorer pages.
  */
@@ -296,29 +296,29 @@ export class ExplorerToolbarRowComponent {
      * friendlier name than the directory carries on disk, keyed by the
      * segment's own name (its last path part).
      *
-     * Kept generic — the host supplies the vocabulary. Documents passes
+     * Kept generic -- the host supplies the vocabulary. Documents passes
      * `{'.templates': 'Templates'}` so its breadcrumb reads
      * `Root / Documents / Templates` while the path it navigates by
      * stays the real `<space>/.templates`. Renaming the
      * directory itself was not an option: `.templates` is a security
-     * gate, not a naming convention — `TemplateRootResolver` decides
+     * gate, not a naming convention -- `TemplateRootResolver` decides
      * "is this Node a template?" from that exact segment.
      *
      * Applied AFTER server resolution, so it also wins over a
-     * `Node.title` — the override is the host's explicit intent.
+     * `Node.title` -- the override is the host's explicit intent.
      */
     readonly labelOverrides = input<Readonly<Record<string, string>>>({});
 
     /**
      * Shallowest path the host is willing to navigate to. Segments
-     * ABOVE it still render — they are the real chain and the user
-     * should see where they are — but as plain text rather than links.
+     * ABOVE it still render -- they are the real chain and the user
+     * should see where they are -- but as plain text rather than links.
      *
      * Documents passes the current space root: `/`, `/home` and
      * `/home/{uuid}` are genuine ancestors of a personal docs folder,
      * yet the module has no view for any of them. Left clickable they
      * emitted a path outside every space, which the host then treated
-     * as a space — the breadcrumb read `Root / Templates` and the pane
+     * as a space -- the breadcrumb read `Root / Templates` and the pane
      * listed nothing.
      *
      * `null` (default) keeps the whole chain navigable.
@@ -365,7 +365,7 @@ export class ExplorerToolbarRowComponent {
     }
 
     /**
-     * The floor rule itself, by PATH — shared by the breadcrumb segments and
+     * The floor rule itself, by PATH -- shared by the breadcrumb segments and
      * the typed-path input so the two cannot disagree about what is
      * reachable. A rule the display enforces and the input does not is worse
      * than no rule: it looks like a guarantee.
@@ -390,7 +390,7 @@ export class ExplorerToolbarRowComponent {
     /**
      * What the template renders: resolved segments with the host's
      * display names applied. Kept separate from `segments` so the
-     * override never reaches the label cache or the edit-mode value —
+     * override never reaches the label cache or the edit-mode value --
      * the path the user types and navigates by is always the real one.
      */
     protected readonly displaySegments = computed<readonly BreadcrumbSegmentDto[]>(() => {
@@ -435,7 +435,7 @@ export class ExplorerToolbarRowComponent {
                 .get<BreadcrumbResponseDto>('/api/v1/vfs/breadcrumb', { params })
                 .pipe(
                     catchError((err: HttpErrorResponse) => {
-                        // 404 / 403 / 422 — fall back to the path-derived
+                        // 404 / 403 / 422 -- fall back to the path-derived
                         // synthetic chain so the row stays useful even when
                         // the user navigates into a directory the server
                         // refuses to enumerate.
@@ -463,7 +463,7 @@ export class ExplorerToolbarRowComponent {
         });
     }
 
-    /** Segment click — emit absolute path. */
+    /** Segment click -- emit absolute path. */
     protected onSegmentClick(target: string): void {
         // Don't emit if the user clicked the segment that's already current.
         if (target === this.normalizePath(this.path())) return;
@@ -490,13 +490,13 @@ export class ExplorerToolbarRowComponent {
      *
      * Honours `navigableFrom`. The breadcrumb has always disabled
      * segments above the floor, but the text input emitted whatever was typed
-     * — so an operator could leave the space root by hand and land in a tree
+     * -- so an operator could leave the space root by hand and land in a tree
      * the explorer around them does not describe. Typing `/` in Documents took
      * you above `/docs` while the space accordion still said Shared.
      *
      * An out-of-bounds path is REFUSED, not clamped to the floor: clamping
      * would navigate somewhere the operator did not ask for. Refusing matches
-     * the disabled breadcrumb segment exactly — the target is unreachable —
+     * the disabled breadcrumb segment exactly -- the target is unreachable --
      * and restoring the segment view shows the path never changed.
      */
     protected commitEdit(): void {
@@ -517,7 +517,7 @@ export class ExplorerToolbarRowComponent {
     }
 
     /**
-     * Blur handler — commit on focus loss so the user can click away
+     * Blur handler -- commit on focus loss so the user can click away
      * to navigate instead of having to press Enter. Pairs with the
      * keydown.escape handler which sets editing=false before blur,
      * so Esc never accidentally commits.
@@ -543,7 +543,7 @@ export class ExplorerToolbarRowComponent {
         if (!target) return;
         const inputEl = this.inputRef?.nativeElement;
         if (inputEl && (inputEl === target || inputEl.contains(target))) return;
-        // Click outside the input — let the blur handler commit.
+        // Click outside the input -- let the blur handler commit.
     }
 
     /**
@@ -557,13 +557,13 @@ export class ExplorerToolbarRowComponent {
      *
      * Never discard a label already resolved. The raw path-derived chain is a
      * last resort: for `/home/{uuid}` its label is the bare UUID, and for
-     * `/home` it is lowercase "home" rather than the titled "Home" — so
+     * `/home` it is lowercase "home" rather than the titled "Home" -- so
      * resetting to it made every navigation flash the raw path before the
      * response landed.
      *
      * MUST NOT read the `segments` signal. This runs inside an effect that
      * WRITES `segments`; reading it there makes the effect depend on its own
-     * output, so every write retriggers the effect — an infinite loop that
+     * output, so every write retriggers the effect -- an infinite loop that
      * hangs the browser tab. (It did, in two earlier drafts of this method.)
      * The static cache is a plain Map, not a signal, so consulting it creates
      * no dependency.

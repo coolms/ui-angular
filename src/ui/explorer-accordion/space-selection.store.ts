@@ -13,8 +13,8 @@ import { SpaceDto } from './space-dto';
  * `DocumentSpaceAccordionComponent` were left as deliberate near-duplicates,
  * and the Media composer's header says why: a single generic
  * `SpaceAccordionComponent` would have to expose three module-specific
- * concerns — which state service to bridge, which child tree to project, and
- * what to do after a space change — as inputs or callbacks, "which is worse
+ * concerns -- which state service to bridge, which child tree to project, and
+ * what to do after a space change -- as inputs or callbacks, "which is worse
  * than the ~150-LOC parallel composer for only two consumers".
  *
  * That reasoning was right, and it is also why this is a STORE and not a
@@ -25,7 +25,7 @@ import { SpaceDto } from './space-dto';
  * services, or side effects.
  *
  * Provide it on the component (`providers: [SpaceSelectionStore]`), not in
- * root — each explorer has its own independent selection.
+ * root -- each explorer has its own independent selection.
  */
 @Injectable()
 export class SpaceSelectionStore {
@@ -40,11 +40,11 @@ export class SpaceSelectionStore {
      * Root path of the active space, or `null` while unknown.
      *
      * Deliberately nullable rather than defaulting: the per-library fallback
-     * (`/media`, `/docs`, …) is module knowledge, so it stays in the composer
+     * (`/media`, `/docs`, ...) is module knowledge, so it stays in the composer
      * as a one-line `?? '/media'`. Baking a default in here would mean either
      * a constructor argument this class cannot take (it is component-provided)
      * or a `configure()` call that every caller must remember to make before
-     * the first read — temporal coupling for no gain.
+     * the first read -- temporal coupling for no gain.
      */
     readonly activeRootPath = computed<string | null>(() => {
         const key = this.activeKey();
@@ -68,10 +68,10 @@ export class SpaceSelectionStore {
      * original composers did (they re-read `state.currentDir()` inside the
      * subscribe) and it is what makes "reload keeps your space" work. Passing
      * a plain string here silently reverts users to the first space on every
-     * reload — caught in the browser, invisible to `ng build`.
+     * reload -- caught in the browser, invisible to `ng build`.
      *
      * `fallback` covers a legacy install whose manifest exposes no spaces URL,
-     * and doubles as the error path — an accordion with one usable entry beats
+     * and doubles as the error path -- an accordion with one usable entry beats
      * an empty left pane.
      */
     load(options: {

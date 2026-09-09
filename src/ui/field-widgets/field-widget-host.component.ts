@@ -3,14 +3,14 @@ import { NgComponentOutlet } from '@angular/common';
 import { FieldWidgetInputs, FieldWidgetRegistry } from './field-widget-registry';
 
 /**
- * Renders the field-widget registered for a `kind` — the single seam every
- * field-rendering surface (content field-panels, DynamicEntity forms, …) goes
+ * Renders the field-widget registered for a `kind` -- the single seam every
+ * field-rendering surface (content field-panels, DynamicEntity forms, ...) goes
  * through to turn a widget `kind` + value into a live input.
  *
  * Resolves `kind` to a component via {@link FieldWidgetRegistry} and binds it
  * with the {@link FieldWidgetInputs} callback contract through
  * `NgComponentOutlet`. When no widget is registered for the kind it renders
- * nothing and reports `false` from {@link resolved} — so a host can fall back to
+ * nothing and reports `false` from {@link resolved} -- so a host can fall back to
  * its own input (the registry is additive, never a dead end).
  */
 @Component({

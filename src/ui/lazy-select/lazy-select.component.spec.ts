@@ -5,7 +5,7 @@ import { AuthState } from '@coolms/core-angular';
 import { LazySelectComponent, LazySelectOption } from './lazy-select.component';
 
 /**
- * Task — behaviour spec for the generic lazy-loading select.
+ * Task -- behaviour spec for the generic lazy-loading select.
  *
  * Coverage:
  *   1. Client-side mode filters the static `options` by typed query
@@ -56,15 +56,15 @@ describe('LazySelectComponent', () => {
         // All options visible initially
         expect(component.filteredOptions().length).toBe(3);
 
-        // Type 'a' — Apple + Banana + Avocado all match (they contain 'a')
+        // Type 'a' -- Apple + Banana + Avocado all match (they contain 'a')
         component.searchQuery.set('a');
         expect(component.filteredOptions().map(o => o.label)).toEqual(['Apple', 'Banana', 'Avocado']);
 
-        // Type 'av' — only Avocado matches
+        // Type 'av' -- only Avocado matches
         component.searchQuery.set('av');
         expect(component.filteredOptions().map(o => o.label)).toEqual(['Avocado']);
 
-        // Type 'XYZ' — empty
+        // Type 'XYZ' -- empty
         component.searchQuery.set('XYZ');
         expect(component.filteredOptions().length).toBe(0);
     });
@@ -88,7 +88,7 @@ describe('LazySelectComponent', () => {
         // Type a query -> debounce -> one request with the RQL filter
         component.searchControl.setValue('ops');
         tick(299);
-        // Not yet — debounce window still open
+        // Not yet -- debounce window still open
         httpMock.expectNone(r => r.url === '/api/v1/calendar' && r.params.has('filter'));
         tick(1);
 

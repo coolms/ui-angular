@@ -109,7 +109,7 @@ describe('EscCoordinatorService', () => {
         for (let i = unregisters.length - 1; i >= 0; i -= 1) {
             unregisters[i]();
         }
-        // After full teardown, ESC reaches no handler — coordinator
+        // After full teardown, ESC reaches no handler -- coordinator
         // would not throw.
         expect(() => pressEscape()).not.toThrow();
     });

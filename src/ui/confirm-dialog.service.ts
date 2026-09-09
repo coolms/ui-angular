@@ -38,7 +38,7 @@ export class ConfirmDialogService {
     }
 
     /**
-     * "You have unsaved changes" — the one every editor needs and none had.
+     * "You have unsaved changes" -- the one every editor needs and none had.
      *
      * MEASURED before this existed: 30 surfaces in the admin track a `dirty`
      * flag, and there were ZERO `beforeunload` handlers and ZERO
@@ -47,7 +47,7 @@ export class ConfirmDialogService {
      * the code that threw the work away.
      *
      * `danger` is true because discarding IS the destructive branch, and the
-     * labels name the outcomes rather than answering a question — a "Cancel"
+     * labels name the outcomes rather than answering a question -- a "Cancel"
      * button on a dialog about cancelling is exactly the ambiguity people
      * click through. "Keep editing" is the safe default the Esc key lands on.
      */

@@ -1,5 +1,5 @@
 /**
- *-2.6a — types for `CmsFilterBuilder`.
+ *-2.6a -- types for `CmsFilterBuilder`.
  *
  * Wire shapes mirror the backend's `EntityFieldsResource`
  * (`/api/v1/entity/{alias}/filters`, X-2.5).
@@ -7,7 +7,7 @@
 
 /** Wire types reported by the descriptor. `unknown` is a defensive
  *  fallback the backend uses when reflection can't pin a property
- *  to a concrete category — the builder treats it as 'string'. */
+ *  to a concrete category -- the builder treats it as 'string'. */
 export type FieldType =
     | 'string'
     | 'int'

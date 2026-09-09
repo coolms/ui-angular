@@ -27,7 +27,7 @@ export interface InputOptions {
     /**
      * Render a textarea rather than a single-line field.
      *
-     * For a value that is genuinely multi-line — a list with one item per line,
+     * For a value that is genuinely multi-line -- a list with one item per line,
      * a note, a block of options. Without it such a caller gets a field that
      * silently joins the lines, which is how a "one per line" prompt shipped
      * as an unusable single-line box.
@@ -36,7 +36,7 @@ export interface InputOptions {
 }
 
 /**
- * {@link NativeDialogService.inputWithSelect} options — an {@link InputOptions}
+ * {@link NativeDialogService.inputWithSelect} options -- an {@link InputOptions}
  * plus the select that sits above the text field.
  */
 export interface InputWithSelectOptions extends InputOptions {
@@ -66,8 +66,8 @@ export class NativeDialogService {
      * Resolves true if confirmed, false if cancelled or dismissed.
      *
      * A3 convergence: opened through CDK `Dialog` so it renders the
-     * platform `<app-modal>` (`cms-dialog`) chrome — a sibling of every
-     * form dialog — instead of the old bespoke native `<dialog>`. The
+     * platform `<app-modal>` (`cms-dialog`) chrome -- a sibling of every
+     * form dialog -- instead of the old bespoke native `<dialog>`. The
      * X / backdrop / Esc all close with `undefined`, which resolves false.
      */
     confirm(options: ConfirmOptions): Promise<boolean> {
@@ -106,8 +106,8 @@ export class NativeDialogService {
      *
      * The point of collecting both here rather than splitting the caller's
      * affordance into one button per choice is that `choices` can be computed
-     * — from a capability endpoint, a registry, whatever the backend
-     * advertises — so a new option shows up without a frontend edit. Callers
+     * -- from a capability endpoint, a registry, whatever the backend
+     * advertises -- so a new option shows up without a frontend edit. Callers
      * with exactly one choice should still call {@link input}; a select with
      * one option is noise.
      */
@@ -119,7 +119,7 @@ export class NativeDialogService {
             options.initialChoice,
         ).then(result => {
             // `choice` is only null when the dialog had no select, which this
-            // method never does — narrowing rather than defaulting so a future
+            // method never does -- narrowing rather than defaulting so a future
             // empty `choices` fails loudly at the call site instead of
             // silently reporting an option nobody picked.
             if (null === result || null === result.choice) {

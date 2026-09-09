@@ -9,13 +9,13 @@ import { RouterLink } from '@angular/router';
 import { ToolbarAction } from './page-toolbar.component';
 
 /**
- * A heading for a GROUP inside a page — one tier below `cms-page-header`.
+ * A heading for a GROUP inside a page -- one tier below `cms-page-header`.
  *
  * The admin had exactly two heading levels: the page header, and a bare
  * uppercase caption. A caption carries no icon, no actions and no count, so a
  * grouped page either shouted its group keys in caps or dropped the grouping
- * altogether. This is the missing tier: same anatomy as the page header —
- * icon, title, optional subtitle, right-aligned actions — at roughly two-thirds
+ * altogether. This is the missing tier: same anatomy as the page header --
+ * icon, title, optional subtitle, right-aligned actions -- at roughly two-thirds
  * the weight, with a rule under it so groups read as sections rather than as
  * loose headings.
  *
@@ -161,7 +161,7 @@ export class CmsSectionHeaderComponent {
     /**
      * Router path the title links to, or null for plain text.
      *
-     * For a group that names something with a page of its own — clicking the
+     * For a group that names something with a page of its own -- clicking the
      * heading should go to the thing, not just describe it.
      */
     readonly titleLink = input<string | null>(null);

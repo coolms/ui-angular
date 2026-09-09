@@ -3,7 +3,7 @@ import { Pipe, PipeTransform, inject } from '@angular/core';
 import { DateTimeFormatService } from './date-time-format.service';
 
 /**
- * Preference-aware instant formatter pipe — the one-token way for any
+ * Preference-aware instant formatter pipe -- the one-token way for any
  * template across the platform to render a timestamp in the user's tz +
  * 12h/24h + date-format pref. Delegates to {@link DateTimeFormatService}.
  *
@@ -15,7 +15,7 @@ import { DateTimeFormatService } from './date-time-format.service';
  * Marked `pure: false` so it re-renders when the user changes their format pref
  * mid-session (the prefs are signals read inside the service; an impure pipe
  * re-evaluates each change-detection pass and picks the new value up). The cost
- * is trivial — formatting a handful of visible timestamps per pass.
+ * is trivial -- formatting a handful of visible timestamps per pass.
  */
 @Pipe({ name: 'appDateTime', standalone: true, pure: false })
 export class DateTimePipe implements PipeTransform {

@@ -8,7 +8,7 @@ import { DataGridFilterWidgetConfig } from './datagrid-filter-widget-registry';
 
 /**
  * Filter widget (`kind: 'option-source'`) that renders the grouped
- * `<app-multi-option-select>` in the filter row — the reference widget proving
+ * `<app-multi-option-select>` in the filter row -- the reference widget proving
  * the {@link DataGridFilterWidgetRegistry} end-to-end while reusing the existing
  * OptionSource primitive.
  *
@@ -16,7 +16,7 @@ import { DataGridFilterWidgetConfig } from './datagrid-filter-widget-registry';
  * tagged `source` key (-> `/api/v1/options/{source}`), exactly like the
  * type-driven multi-select branch in the grid. It owns the `in` operator
  * (falling back to the column's first operator) and stores the picked tokens as
- * a JSON-array string in a single {@link ActiveFilter} entry — the wire shape
+ * a JSON-array string in a single {@link ActiveFilter} entry -- the wire shape
  * `columnFilterRql` already expects. Clearing emits an empty set, which the host
  * relays to drop the column's filter.
  */
@@ -37,7 +37,7 @@ import { DataGridFilterWidgetConfig } from './datagrid-filter-widget-registry';
 })
 export class OptionSourceFilterWidgetComponent {
     readonly value = input<readonly ActiveFilter[]>([]);
-    // Non-required with an inert default — matches the field-widget builtins,
+    // Non-required with an inert default -- matches the field-widget builtins,
     // which are likewise instantiated via NgComponentOutlet (the host always
     // supplies a real config, so the default never renders meaningfully).
     readonly config = input<DataGridFilterWidgetConfig>({ column: '', label: '', ops: [], options: {} });
@@ -50,7 +50,7 @@ export class OptionSourceFilterWidgetComponent {
         return ops.includes('in') ? 'in' : ops[0] ?? 'in';
     });
 
-    /** Trigger placeholder — mirrors the type-driven multi-select branch's text. */
+    /** Trigger placeholder -- mirrors the type-driven multi-select branch's text. */
     readonly placeholder = computed<string>(() => {
         const label = this.config().label;
         return label ? `— Any ${label} —` : '— Any —';

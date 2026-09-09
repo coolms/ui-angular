@@ -3,7 +3,7 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
 
 /**
  * UI-polish A2 -- shared inline loading indicator. Replaces the ad-hoc
- * "Loading…" text / blank panels each page rolled on its own, so a page never
+ * "Loading..." text / blank panels each page rolled on its own, so a page never
  * just goes silently blank while data loads.
  *
  * It draws {@link CmsLoaderComponent}, the platform mark. It used to
@@ -13,7 +13,7 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
  * that fix scales from: every `<app-loading>` on every page changed with it,
  * and a page added tomorrow inherits it without knowing this component exists.
  *
- * Usage: `<app-loading label="Loading report…" />`
+ * Usage: `<app-loading label="Loading report..." />`
  */
 @Component({
     selector: 'app-loading',

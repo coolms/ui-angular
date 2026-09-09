@@ -6,14 +6,14 @@ import { DynamicFormComponent } from './dynamic-form.component';
 import { FormRenderService } from './form-render.service';
 
 /**
- * `readonlyFields` — the host's way to fix a control the form DEFINITION cannot
+ * `readonlyFields` -- the host's way to fix a control the form DEFINITION cannot
  * know is fixed.
  *
  * Its first caller is the settings screen, where a key the deployment pins in
  * its environment must render locked: the reader ignores a saved value for such
  * a key, so an editable control would accept an edit, report a save, and change
  * nothing. That makes "the control is actually disabled" the visible
- * half of a correctness property, not styling — which is why it is asserted
+ * half of a correctness property, not styling -- which is why it is asserted
  * here rather than left to the screen that uses it.
  */
 describe('DynamicFormComponent readonlyFields', () => {
@@ -92,7 +92,7 @@ describe('DynamicFormComponent readonlyFields', () => {
      *  **A `number` field must submit a NUMBER, and for a long time it did not.**
      *
      * Angular's `NumberValueAccessor` has the selector `input[type=number]`,
-     * matched at COMPILE time against the static template — and this form binds
+     * matched at COMPILE time against the static template -- and this form binds
      * `[type]="item().type"`, so it can never match and the default STRING
      * accessor is used. Every numeric field this form rendered therefore
      * submitted `"300"`.
@@ -147,7 +147,7 @@ describe('DynamicFormComponent readonlyFields', () => {
      *  Documents the sharp edge rather than asserting a wish: Angular reports
      * a DISABLED control in `getRawValue()`, which is what {@link DynamicFormComponent.submit}
      * emits. So disabling is NOT enough to keep a value out of the payload, and a
-     * host that must not send it drops it itself — see `withoutPinnedKeys` in the
+     * host that must not send it drops it itself -- see `withoutPinnedKeys` in the
      * settings feature. If this ever starts failing, that stripping is redundant
      * and should go, not be duplicated.
      */
