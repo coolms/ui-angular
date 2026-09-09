@@ -8,11 +8,11 @@ import { RelationFieldComponent } from './relation-field.component';
 import { provideFieldWidget } from '../../ui/field-widgets/field-widget-registry';
 
 /**
- * F5.d follow-up -- relation field cardinality semantics, RUN.
+ * Relation field cardinality semantics.
  *
  * History: every cardinality:one + widget:select form (Navi tree
  * siteSectionId, Calendar Settings parent calendar, Holiday Rule baseRule,
- * F5.d translation domain/locale, ...) had a UX bug where picking an option
+ * translation domain/locale, ...) had a UX bug where picking an option
  * silently set the FormControl but visually reset the <select> back to its
  * placeholder. Operators reported "the dropdown doesn't work" because the
  * field appeared empty even though the underlying control held the value.
@@ -38,7 +38,7 @@ import { provideFieldWidget } from '../../ui/field-widgets/field-widget-registry
  * Every assertion below drives the real `onSelectChange` through a real
  * `<select>` `change` event over a real `FormControl`.
  */
-describe('RelationFieldComponent — select cardinality semantics (F5.d)', () => {
+describe('RelationFieldComponent — select cardinality semantics', () => {
     const ALPHA = '/api/v1/tags/alpha';
     const BETA  = '/api/v1/tags/beta';
     const GAMMA = '/api/v1/tags/gamma';
@@ -170,7 +170,7 @@ describe('RelationFieldComponent — select cardinality semantics (F5.d)', () =>
         expect(control.dirty).toBeTrue();
     });
 
-    it('does NOT reset the select after a pick — the original F5.d bug', () => {
+    it('does NOT reset the select after a pick — the original bug', () => {
         mount('one');
 
         pick(ALPHA);

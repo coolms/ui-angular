@@ -391,7 +391,7 @@ export class CmsDirectoryPickerComponent {
     constructor() {
         // Initial seed from the inputs. Use `untracked` for the
         // signal writes so re-runs only happen when the inputs
-        // themselves change (mirrors the Phase 2 ext fix).
+        // themselves change (mirrors the entity-picker fix).
         effect(() => {
             const root = this.rootPath();
             const sel = this.value();

@@ -191,7 +191,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         '.datagrid-drag-preview { background: var(--cms-surface); border: 1px solid var(--cms-border); border-radius: var(--cms-radius); box-shadow: var(--cms-shadow-md); }',
         '.datagrid-drag-handle-glyph { color: var(--cms-text-muted); }',
         '.datagrid-drag-placeholder { height: 37px; background: var(--cms-accent-light); border: 2px dashed var(--cms-accent); opacity: .6; }',
-        // Phase 2 DataGrid live -- 2s fade flash on a row whose
+        // DataGrid live updates -- 2s fade flash on a row whose
         // entity received a live change event from Centrifugo. Uses
         // the existing `--cms-accent-light` warm-cream tone so the
         // attention-getting state matches other admin SPA accents
@@ -263,7 +263,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly externalData   = input<DataGridData | null>(null);
 
     /**
-     * Phase 2 DataGrid live -- when set, the component subscribes
+     * DataGrid live updates -- when set, the component subscribes
      * to `datagrid.{entityAlias}.list` via Centrifugo and emits
      * `liveEvent` per publication. The alias must match the
      * backend `#[ClassMeta(alias: ...)]` declaration (e.g.,
@@ -404,7 +404,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }>();
 
     /**
-     * Phase 2 DataGrid live -- emitted once per Centrifugo
+     * DataGrid live updates -- emitted once per Centrifugo
      * publication on the channel `datagrid.{entityAlias}.list`.
      * The parent decides how to react: typically refetch a single
      * row on `row.updated` and remove the row on `row.deleted`.
@@ -443,7 +443,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     private readonly userCalendarPrefs = inject(UserCalendarPreferencesService);
 
     /**
-     * Phase 2 DataGrid live -- ids of currently flashing rows.
+     * DataGrid live updates -- ids of currently flashing rows.
      * Each entry stays for ~2s while the row-flash CSS animation
      * runs; re-receiving a publication for the same id restarts
      * the timer by re-adding the id to a fresh Set instance.
@@ -935,7 +935,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // -- Lifecycle --------------------------------------------------------------
 
     constructor() {
-        // Phase 2 DataGrid live -- when the entityAlias is provided,
+        // DataGrid live updates -- when the entityAlias is provided,
         // subscribe to `datagrid.{alias}.list` once. The input is
         // typically set at component creation and does not change
         // afterwards; the effect captures the first non-empty value
@@ -2668,7 +2668,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     /**
-     * Phase 2 DataGrid live -- routes a typed event to the parent
+     * DataGrid live updates -- routes a typed event to the parent
      * (via `liveEvent` output) and flashes any matching loaded row.
      * `row.created` and `grid.refresh_required` are deferred to
      * Sub-phase D; emitting the output still lets a parent opt in
@@ -2689,8 +2689,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             // flashes since the rows themselves are about to be
             // replaced by the consumer's reload. `row.created` is
             // also emitted to consumers but DataGrid takes no
-            // visual action for it in Phase 2: new rows appear
-            // when the user scrolls to them via lazy load. Future
+            // visual action for it today: new rows appear when
+            // the user scrolls to them via lazy load. Future
             // refinement may prepend if sort matches and top is
             // loaded.
             this.flashingRowIds.set(new Set());
