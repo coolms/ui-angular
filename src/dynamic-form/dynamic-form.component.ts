@@ -1,4 +1,4 @@
-import { Component, DestroyRef, input, output, inject, OnInit, signal, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, DestroyRef, input, output, inject, OnInit, signal, computed, effect, untracked, ChangeDetectionStrategy } from '@angular/core';
 import { CmsLoaderComponent } from '@coolms/core-angular';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -113,6 +113,17 @@ export class DynamicFormComponent implements OnInit {
      * consumer keeps its footer.
      */
     showActions = input<boolean>(true);
+    /**
+     * A definition supplied by the host instead of fetched by `formId` -- the
+     * Form Builder's unsaved draft, rendered by `POST /forms/{id}/preview`.
+     *
+     * When set, nothing is fetched: the definition is applied as given, and
+     * applied again each time the host hands over a new one, without
+     * remounting the component. `formId` is still required because the layout
+     * and its relation/sub-form fields address the server by it. Null (the
+     * default) keeps every existing consumer on the fetch path.
+     */
+    draft = input<FormRenderDefinition | null>(null);
 
     // -- Outputs ---------------------------------------------------------------
     submitted    = output<Record<string, unknown>>();
@@ -140,8 +151,18 @@ export class DynamicFormComponent implements OnInit {
     private readonly errors            = inject(ErrorHandlerService);
     private readonly destroyRef        = inject(DestroyRef);
 
+    constructor() {
+        // A host-supplied draft is applied whenever it changes. `untracked` so
+        // the apply step's own signal reads (initialValue) do not become
+        // dependencies of this effect -- only the draft itself re-applies it.
+        effect(() => {
+            const draft = this.draft();
+            if (draft) untracked(() => this.applyDefinition(draft));
+        });
+    }
+
     ngOnInit(): void {
-        this.loadDefinition();
+        if (!this.draft()) this.loadDefinition();
     }
 
     /** (Re)fetch the form definition. Public so the error banner's Retry can re-run it. */
@@ -149,25 +170,29 @@ export class DynamicFormComponent implements OnInit {
         this.loading.set(true);
         this.loadError.set(null);
         this.formRenderService.fetch(this.formId(), this.context()).subscribe({
-            next: def => {
-                this.definition.set(def);
-                const group = this.buildFormGroup(def.items);
-                const init  = this.initialValue();
-                if (Object.keys(init).length > 0) {
-                    group.patchValue(init);
-                }
-                this.formGroup.set(group);
-                this.loading.set(false);
-                // Emit formChanged on every user interaction so parents can track dirty state.
-                group.valueChanges
-                    .pipe(takeUntilDestroyed(this.destroyRef))
-                    .subscribe(() => this.formChanged.emit());
-            },
+            next: def => this.applyDefinition(def),
             error: err => {
                 this.loadError.set(this.errors.humanize(err));
                 this.loading.set(false);
             },
         });
+    }
+
+    /** Install a definition: rebuild the FormGroup from its items and show it. */
+    private applyDefinition(def: FormRenderDefinition): void {
+        this.loadError.set(null);
+        this.definition.set(def);
+        const group = this.buildFormGroup(def.items);
+        const init  = this.initialValue();
+        if (Object.keys(init).length > 0) {
+            group.patchValue(init);
+        }
+        this.formGroup.set(group);
+        this.loading.set(false);
+        // Emit formChanged on every user interaction so parents can track dirty state.
+        group.valueChanges
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.formChanged.emit());
     }
 
     submit(): void {

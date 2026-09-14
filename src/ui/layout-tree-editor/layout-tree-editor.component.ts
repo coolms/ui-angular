@@ -120,7 +120,13 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
                         @for (t of containerTypes; track t) {
                             <button type="button" class="cms-btn cms-btn-sm" (click)="addContainer(children(node), t)">+ {{ t }}</button>
                         }
-                        <select class="cms-input cms-input-sm lte__fieldpick" [ngModel]="''" (ngModelChange)="addField(node, $event)">
+                        <!-- A picker, not a model binding. It was [ngModel]="''": a constant
+                             input never CHANGES, so after a pick NgModel never wrote '' back
+                             to the DOM and the select kept showing the alias it had just
+                             placed -- or not, depending on whether the option list's
+                             re-render happened to land it on the placeholder. Reset the
+                             element itself, synchronously, before that re-render runs. -->
+                        <select #pick class="cms-input cms-input-sm lte__fieldpick" (change)="addField(node, pick.value); pick.value = ''">
                             <option value="">+ field…</option>
                             @for (f of availableFields; track f) { <option [value]="f">{{ f }}</option> }
                         </select>
@@ -294,10 +300,28 @@ export class LayoutTreeEditorComponent {
         target.push({ type });
         this.emit();
     }
+    /**
+     * Place a field in this container, BESIDE its existing field chips rather
+     * than after its last sub-container.
+     *
+     * The picker sits directly above the chip row, and a plain push() put the
+     * new alias after every nested GROUP -- so on a tab that carried four chips
+     * and five option groups, the fifth chip rendered below the fifth group,
+     * out of sight of the control that placed it. Children render in array
+     * order (the same order the form renders in), so this is a placement rule,
+     * not a display trick: after the last existing leaf, or at the front when
+     * the container holds only sub-containers. Leaves have no move buttons, so
+     * the position chosen here is the one the operator gets.
+     */
     addField(node: LayoutNode, alias: string): void {
         const a = (alias ?? '').trim();
         if (a === '') return;
-        this.children(node).push(a);
+        const kids = this.children(node);
+        let at = 0;
+        for (let i = kids.length - 1; i >= 0; i--) {
+            if (this.isFieldLeaf(kids[i])) { at = i + 1; break; }
+        }
+        kids.splice(at, 0, a);
         this.emit();
     }
     removeAt(target: unknown[], index: number): void {
