@@ -142,6 +142,10 @@ export * from './navi-graph/navi-graph-tree-source';
 
 // -- VFS wire types ------------------------------------------------------------
 export * from './vfs/vfs.types';
+// The editor-side half of ADR-184: a node's write flag, re-asked of the
+// server on every change of elevation state so an editor and the listing
+// behind it cannot disagree.
+export * from './vfs/vfs-write-access.service';
 
 // -- Dashboard widgets ---------------------------------------------------------
 export * from './widgets/multiselect-search.component';
