@@ -23,7 +23,7 @@ import type { VfsNodeDto } from './vfs.types';
  * state the node is re-stated by path and the flag is taken from the answer,
  * which is exactly what the directory listing does -- so an editor and the
  * listing behind it cannot disagree. Deriving writability locally (say, flag
- * OR elevated) would be a second decider, and the whole point of ADR-184's
+ * OR elevated) would be a second decider, and the whole point of the elevation
  * client requirement is that the client keeps none.
  */
 export interface VfsWriteAccess {

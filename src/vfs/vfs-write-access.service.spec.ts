@@ -11,7 +11,7 @@ import type { VfsNodeDto } from './vfs.types';
 /**
  * The editor must agree with the listing at every step.
  *
- * ADR-184's client requirement, point 4: the flags and the prompt read ONE
+ * The elevation client requirement, point 4: the flags and the prompt read ONE
  * source, the server. The spec that matters here is the one that fails if
  * this service ever starts INFERRING writability -- `flag || elevated` would
  * pass a naive happy-path test and be wrong the moment the server disagrees,
