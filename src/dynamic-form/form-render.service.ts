@@ -22,6 +22,23 @@ export class FormRenderService {
     }
 
     /**
+     * Render a definition that has NOT been saved -- the Form Builder's draft.
+     * `POST /forms/{id}/preview` (admin): same server-side builder and
+     * serialiser as {@link fetch}, nothing persisted. The body is the same
+     * `{fields, formOptions, dataClass}` the builder sends on its replace
+     * save, so the preview and the save are one payload.
+     */
+    preview(
+        formId: string,
+        definition: { fields: Record<string, unknown>; formOptions: Record<string, unknown>; dataClass?: string | null },
+        context: 'create' | 'edit' = 'create',
+    ): Observable<FormRenderDefinition> {
+        const apiBase = this.store.selectSnapshot(AppConfigState.manifest)?.apiBase ?? '/api/v1';
+        const url     = `${apiBase}/forms/${encodeURIComponent(formId)}/preview?context=${context}`;
+        return this.http.post<FormRenderDefinition>(url, definition);
+    }
+
+    /**
      * WZ-C -- server-authoritative per-step validation. The wizard calls this on
      * "Next" (after its instant client-side check) to gate advancement on the
      * step's real server constraints. The server validates only the requested
