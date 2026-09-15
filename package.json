@@ -75,6 +75,9 @@
     "datagrid",
     "forms"
   ],
+  "bugs": {
+    "url": "https://github.com/coolms/ui-angular/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/coolms/ui-angular.git"
