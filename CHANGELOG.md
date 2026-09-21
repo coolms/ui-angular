@@ -19,6 +19,13 @@ predate this file would be a worse record than not having them.
   row -- when the host activates a tab that did not fit, it takes the place of
   the last visible one. Fit is measured from the DOM and re-measured on every
   width change; a strip that fits renders as before.
+
+### Changed
+
+- `TabStripComponent` underlines the active tab in `--cms-accent`, the colour
+  of every "you are here" mark and primary action in the admin, instead of the
+  blue `--cms-primary`; the underline sits on the strip's rule rather than
+  above it.
 - `SlotComponent` (`<app-slot key="..." [inputs]="...">`) is public. It renders
   whatever `ComponentRegistry` holds under a key and was reachable only through
   the explorer and list layouts; a feature page that opens a slot of its own,

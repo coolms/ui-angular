@@ -109,9 +109,21 @@ export interface TabStripItem {
             flex-shrink: 0;
             align-items: stretch;
             gap: 0.25rem;
-            border-bottom: 1px solid var(--cms-border, #e5e7eb);
             margin-bottom: 0.5rem;
             overflow: hidden;
+        }
+        /* The strip's rule, drawn inside the box (not as a border) so the
+           active tab's underline can sit ON it rather than above it; the
+           nav clips its overflow, which a border-overlapping negative margin
+           would fall victim to. */
+        .cms-tab-strip::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 1px;
+            background: var(--cms-border, #e5e7eb);
         }
         .cms-tab-strip__tab {
             display: inline-flex;
@@ -127,9 +139,15 @@ export interface TabStripItem {
             white-space: nowrap;
             flex-shrink: 0;
         }
+        /* The accent, as on every "you are here" mark and primary action in
+           the admin (the sidebar's active item, the primary button), not the
+           blue --cms-primary: an amber page with one blue underline read as a
+           foreign control (Dmitry, 2026-09-21). */
         .cms-tab-strip__tab--active {
+            position: relative;
+            z-index: 1;
             color: var(--cms-text, #111827);
-            border-bottom-color: var(--cms-primary, #2563eb);
+            border-bottom-color: var(--cms-accent, #F5A623);
             font-weight: 600;
         }
         /* Out of the flow and invisible, but still laid out at its natural

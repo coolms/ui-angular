@@ -100,6 +100,20 @@ describe('TabStripComponent -- overflow', () => {
         expect(host.querySelector('.cms-tab-strip__tab--active')!.getAttribute('data-tab')).toBe('interface');
     });
 
+ it('underlines the active tab in the accent, the admin`s "you are here" colour, not the blue primary', () => {
+        document.documentElement.style.setProperty('--cms-accent', 'rgb(245, 166, 35)');
+        document.documentElement.style.setProperty('--cms-primary', 'rgb(37, 99, 235)');
+        try {
+            fixture.detectChanges();
+            const active = host.querySelector('.cms-tab-strip__tab--active') as HTMLElement;
+            expect(active.dataset['tab']).toBe('personal');
+            expect(getComputedStyle(active).borderBottomColor).toBe('rgb(245, 166, 35)');
+        } finally {
+            document.documentElement.style.removeProperty('--cms-accent');
+            document.documentElement.style.removeProperty('--cms-primary');
+        }
+    });
+
  it('shows every tab and no more button once the box is wide enough', async () => {
         await settle(moreShown);
         fixture.componentInstance.width.set(1200);
