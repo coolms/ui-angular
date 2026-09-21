@@ -13,6 +13,10 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- `SlotComponent` (`<app-slot key="..." [inputs]="...">`) is public. It renders
+  whatever `ComponentRegistry` holds under a key and was reachable only through
+  the explorer and list layouts; a feature page that opens a slot of its own,
+  such as the profile page's `profile.tab`, imports it directly now.
 - Declares `bugs` so a page imported from this package, and the catalogue,
   know where a correction is filed. The registry filled the gap from GitHub when
   the manifest was silent; the declared field is the one that holds on any
