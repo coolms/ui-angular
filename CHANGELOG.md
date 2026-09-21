@@ -13,6 +13,12 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- `TabStripComponent` handles overflow: the strip is one row, and the tabs that
+  do not fit its width go behind a "more" button (three vertical dots) at the
+  right end, in a menu; picking one selects it. The active tab is always in the
+  row -- when the host activates a tab that did not fit, it takes the place of
+  the last visible one. Fit is measured from the DOM and re-measured on every
+  width change; a strip that fits renders as before.
 - `SlotComponent` (`<app-slot key="..." [inputs]="...">`) is public. It renders
   whatever `ComponentRegistry` holds under a key and was reachable only through
   the explorer and list layouts; a feature page that opens a slot of its own,
