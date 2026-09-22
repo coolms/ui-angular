@@ -230,7 +230,7 @@ type FlatRow =
             color: var(--cms-text, #111827);
         }
         .cms-dirpicker__row:hover { background: var(--cms-bg-muted, #f3f4f6); }
-        .cms-dirpicker__row--selected { background: var(--cms-accent-light, #FEF7E6); }
+        .cms-dirpicker__row--selected { background: var(--cms-selected-light); }
         .cms-dirpicker__row--unselectable {
             opacity: 0.5;
             cursor: not-allowed;

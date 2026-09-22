@@ -187,9 +187,9 @@ export interface ToolbarAction {
             border-color: var(--cms-accent-hover);
         }
         .toolbar-btn--active {
-            background: var(--cms-accent-light);
+            background: var(--cms-selected-light);
             border-color: var(--cms-selected);
-            color: var(--cms-accent-text);
+            color: var(--cms-selected-text);
         }
         .toolbar-btn--danger { color: var(--cms-danger); border-color: var(--cms-danger-border); }
         .toolbar-btn--danger:hover:not(:disabled) {

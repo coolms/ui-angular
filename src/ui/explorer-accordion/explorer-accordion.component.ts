@@ -88,8 +88,8 @@ import { SpaceDto } from './space-dto';
             &:hover { background: var(--cms-border-light); color: var(--cms-text); }
         }
         .accordion-section.active > .accordion-header {
-            color: var(--cms-text);
-            background: var(--cms-accent-light);
+            color: var(--cms-selected-text);
+            background: var(--cms-selected-light);
             box-shadow: inset 2px 0 0 var(--cms-selected);
         }
         .accordion-caret {
