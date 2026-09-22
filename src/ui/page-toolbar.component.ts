@@ -188,7 +188,7 @@ export interface ToolbarAction {
         }
         .toolbar-btn--active {
             background: var(--cms-accent-light);
-            border-color: var(--cms-accent);
+            border-color: var(--cms-selected);
             color: var(--cms-accent-text);
         }
         .toolbar-btn--danger { color: var(--cms-danger); border-color: var(--cms-danger-border); }

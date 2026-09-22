@@ -61,7 +61,7 @@ import {
         .view-switch__btn:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: 2px; }
         .view-switch__btn--active {
             background: var(--cms-accent-light);
-            border-color: var(--cms-accent);
+            border-color: var(--cms-selected);
             color: var(--cms-accent-text);
         }
         .view-switch__btn .bi { font-size: .875rem; line-height: 1; }

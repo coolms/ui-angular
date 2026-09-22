@@ -168,8 +168,8 @@ import type { WizardStepConfig } from './cms-wizard.types';
                 font-weight: 600;
             }
             .cms-wizard__step--active .cms-wizard__step-index {
-                background: var(--cms-accent);
-                border-color: var(--cms-accent);
+                background: var(--cms-selected);
+                border-color: var(--cms-selected);
                 color: var(--cms-accent-fg, #1a1a1a);
             }
             /* The numeral is small text, so it takes the -text tier: the raw

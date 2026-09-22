@@ -22,6 +22,14 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- Every selection mark reads `--cms-selected`, the host theme's token for
+  "this one is selected", instead of `--cms-accent`: the tab strip's underline,
+  the dynamic layout's form tabs and wizard step, the wizard's step index, the
+  page toolbar's pressed button, the view switcher's active button and the
+  explorer accordion's open section. The theme aliases the token to the accent
+  today; a rule that named the accent could not be re-themed apart from the
+  buttons. Checked controls (the range picker's toggle) keep the accent: a
+  switch that is on is not an item that is selected.
 - `TabStripComponent` underlines the active tab in `--cms-accent`, the colour
   of every "you are here" mark and primary action in the admin, instead of the
   blue `--cms-primary`; the underline sits on the strip's rule rather than
