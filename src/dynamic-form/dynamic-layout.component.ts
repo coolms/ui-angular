@@ -191,7 +191,7 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
         .form-tabs__btn:hover { color: var(--cms-text); }
         .form-tabs__btn--active {
             color: var(--cms-accent-text);
-            border-bottom-color: var(--cms-accent);
+            border-bottom-color: var(--cms-selected);
         }
         .form-tabs__content { padding-top: 4px; }
 
@@ -219,10 +219,10 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
             background: var(--cms-success, #16a34a); color: var(--cms-text-inverse);
         }
         .form-wizard__step--active {
-            border-color: var(--cms-accent); color: var(--cms-accent-text); font-weight: 600;
+            border-color: var(--cms-selected); color: var(--cms-accent-text); font-weight: 600;
         }
         .form-wizard__step--active .form-wizard__step-num {
-            background: var(--cms-accent); color: var(--cms-accent-fg, #1a1a1a);
+            background: var(--cms-selected); color: var(--cms-accent-fg, #1a1a1a);
         }
         .form-wizard__nav {
             display: flex; align-items: center; gap: 10px;

@@ -90,7 +90,7 @@ import { SpaceDto } from './space-dto';
         .accordion-section.active > .accordion-header {
             color: var(--cms-text);
             background: var(--cms-accent-light);
-            box-shadow: inset 2px 0 0 var(--cms-accent);
+            box-shadow: inset 2px 0 0 var(--cms-selected);
         }
         .accordion-caret {
             display: inline-block; width: 12px;

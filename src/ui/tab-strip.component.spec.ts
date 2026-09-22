@@ -100,15 +100,20 @@ describe('TabStripComponent -- overflow', () => {
         expect(host.querySelector('.cms-tab-strip__tab--active')!.getAttribute('data-tab')).toBe('interface');
     });
 
- it('underlines the active tab in the accent, the admin`s "you are here" colour, not the blue primary', () => {
+ it('underlines the active tab in the selected-item token, not the brand accent and not the blue primary', () => {
+        // Three distinct colours, so the assertion can tell WHICH token the
+        // underline reads: the theme aliases --cms-selected to the accent, and
+        // a strip that read the accent directly would pass a two-colour test.
+        document.documentElement.style.setProperty('--cms-selected', 'rgb(16, 185, 129)');
         document.documentElement.style.setProperty('--cms-accent', 'rgb(245, 166, 35)');
         document.documentElement.style.setProperty('--cms-primary', 'rgb(37, 99, 235)');
         try {
             fixture.detectChanges();
             const active = host.querySelector('.cms-tab-strip__tab--active') as HTMLElement;
             expect(active.dataset['tab']).toBe('personal');
-            expect(getComputedStyle(active).borderBottomColor).toBe('rgb(245, 166, 35)');
+            expect(getComputedStyle(active).borderBottomColor).toBe('rgb(16, 185, 129)');
         } finally {
+            document.documentElement.style.removeProperty('--cms-selected');
             document.documentElement.style.removeProperty('--cms-accent');
             document.documentElement.style.removeProperty('--cms-primary');
         }

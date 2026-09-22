@@ -139,15 +139,16 @@ export interface TabStripItem {
             white-space: nowrap;
             flex-shrink: 0;
         }
-        /* The accent, as on every "you are here" mark and primary action in
-           the admin (the sidebar's active item, the primary button), not the
-           blue --cms-primary: an amber page with one blue underline read as a
-           foreign control (Dmitry, 2026-09-21). */
+        /* The selected-item token, as on every "you are here" mark in the
+           admin (the sidebar's active item, the picked card), not the blue
+           --cms-primary: an amber page with one blue underline read as a
+           foreign control (Dmitry, 2026-09-21). The token is the accent
+           today; it is named by meaning so the theme decides. */
         .cms-tab-strip__tab--active {
             position: relative;
             z-index: 1;
             color: var(--cms-text, #111827);
-            border-bottom-color: var(--cms-accent, #F5A623);
+            border-bottom-color: var(--cms-selected);
             font-weight: 600;
         }
         /* Out of the flow and invisible, but still laid out at its natural
