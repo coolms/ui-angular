@@ -22,6 +22,13 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- The selected family: a selected wash reads `--cms-selected-light` and the
+  text on it `--cms-selected-text` (the page toolbar's pressed button, the
+  view switcher, the accordion's open header, the directory and tree
+  pickers' rows, the multi-option's checked option); the foreground on a
+  solid selected mark reads `--cms-selected-fg` (the wizard's step index,
+  the dynamic layout's step number). The host theme aliases each to the
+  accent's tier and refuses a selected fill whose text names another family.
 - Every selection mark reads `--cms-selected`, the host theme's token for
   "this one is selected", instead of `--cms-accent`: the tab strip's underline,
   the dynamic layout's form tabs and wizard step, the wizard's step index, the

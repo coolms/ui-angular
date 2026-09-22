@@ -267,7 +267,7 @@ interface OptionGroup {
             input { margin: 0; cursor: pointer; }
             span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         }
-        .mos-option--checked { background: var(--cms-accent-light, #FEF7E6); }
+        .mos-option--checked { background: var(--cms-selected-light); }
         .mos-option--checked span { font-weight: 500; }
         .mos-message {
             padding: 12px;

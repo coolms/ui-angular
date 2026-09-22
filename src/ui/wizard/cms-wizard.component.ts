@@ -170,7 +170,7 @@ import type { WizardStepConfig } from './cms-wizard.types';
             .cms-wizard__step--active .cms-wizard__step-index {
                 background: var(--cms-selected);
                 border-color: var(--cms-selected);
-                color: var(--cms-accent-fg, #1a1a1a);
+                color: var(--cms-selected-fg, #1a1a1a);
             }
             /* The numeral is small text, so it takes the -text tier: the raw
                hue on --cms-success-light measures 3.15 in light theme. The

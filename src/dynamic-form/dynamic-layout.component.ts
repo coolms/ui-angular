@@ -222,7 +222,7 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
             border-color: var(--cms-selected); color: var(--cms-accent-text); font-weight: 600;
         }
         .form-wizard__step--active .form-wizard__step-num {
-            background: var(--cms-selected); color: var(--cms-accent-fg, #1a1a1a);
+            background: var(--cms-selected); color: var(--cms-selected-fg, #1a1a1a);
         }
         .form-wizard__nav {
             display: flex; align-items: center; gap: 10px;

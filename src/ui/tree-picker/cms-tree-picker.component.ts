@@ -287,10 +287,10 @@ const OVERLAY_MAX_HEIGHT_PX = 360;
             background: var(--cms-surface-hover, #f3f4f6);
         }
         .cms-tree-picker__leaf--active {
-            background: var(--cms-accent-light);
+            background: var(--cms-selected-light);
         }
         .cms-tree-picker__leaf--active.cms-tree-picker__leaf--focused {
-            background: var(--cms-accent-light);
+            background: var(--cms-selected-light);
         }
     `],
 })

@@ -60,9 +60,9 @@ import {
         .view-switch__btn:hover { background: var(--cms-btn-hover-bg); border-color: var(--cms-btn-hover-border); }
         .view-switch__btn:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: 2px; }
         .view-switch__btn--active {
-            background: var(--cms-accent-light);
+            background: var(--cms-selected-light);
             border-color: var(--cms-selected);
-            color: var(--cms-accent-text);
+            color: var(--cms-selected-text);
         }
         .view-switch__btn .bi { font-size: .875rem; line-height: 1; }
     `],
