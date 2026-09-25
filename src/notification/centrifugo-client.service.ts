@@ -17,6 +17,7 @@ import type { Centrifuge, Subscription } from 'centrifuge';
 import { Store } from '@ngxs/store';
 import { firstValueFrom } from 'rxjs';
 import { AuthRefreshCoordinator, AuthState, RealtimeTokenClient } from '@coolms/core-angular';
+import { SessionEndedOnDisconnect } from './session-ended-on-disconnect';
 
 /**
  * Grace window in milliseconds: if the access token will expire
@@ -62,6 +63,7 @@ export class CentrifugoClientService implements OnDestroy {
     private readonly tokens = inject(RealtimeTokenClient);
     private readonly store = inject(Store);
     private readonly refreshCoordinator = inject(AuthRefreshCoordinator);
+    private readonly sessionEnded = inject(SessionEndedOnDisconnect);
 
     private centrifuge: Centrifuge | null = null;
     private connectPromise: Promise<Centrifuge> | null = null;
@@ -162,18 +164,25 @@ export class CentrifugoClientService implements OnDestroy {
         // a subscription without connecting first.
         this.sdk = await import('centrifuge');
         const initial = await firstValueFrom(this.tokens.connectionToken());
+        // The server's "your session ended" close code, as its token response declares it.
+        let sessionEndedCode = initial.sessionEndedCode;
         const client = new this.sdk.Centrifuge(initial.wsUrl, {
             token: initial.token,
             getToken: async () => {
                 await this.ensureFreshAccessToken();
                 const fresh = await firstValueFrom(this.tokens.connectionToken());
+                sessionEndedCode = fresh.sessionEndedCode ?? sessionEndedCode;
                 return fresh.token;
             },
         });
         client.on('state', (ctx) => {
             this._isConnected.set(ctx.newState === 'connected');
         });
-        client.on('disconnected', () => this._isConnected.set(false));
+        client.on('disconnected', (ctx) => {
+            this._isConnected.set(false);
+            // Closed because the session ended: sign out now, not at the next 401.
+            this.sessionEnded.handle(ctx.code, sessionEndedCode);
+        });
         client.connect();
         return client;
     }
