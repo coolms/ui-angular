@@ -9,10 +9,15 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## Unreleased
+## 2.0.0-alpha.3 - 2026-09-27
 
 ### Added
 
+- `VfsWriteAccessService` and `FormRenderService` are public: 2.0.0-alpha.2
+  exported neither, so a package importing `VfsWriteAccessService` from the
+  published build failed to compile (TS2305) -- dtmpl-angular's first CI run
+  stopped on exactly that. Measured on the bundles: 104 runtime exports in
+  alpha.2, 107 in alpha.3 (these two and `SlotComponent`), none removed.
 - `TabStripComponent` handles overflow: the strip is one row, and the tabs that
   do not fit its width go behind a "more" button (three vertical dots) at the
   right end, in a menu; picking one selects it. The active tab is always in the
@@ -49,6 +54,10 @@ predate this file would be a worse record than not having them.
   know where a correction is filed. The registry filled the gap from GitHub when
   the manifest was silent; the declared field is the one that holds on any
   registry.
+
+### Fixed
+
+- The README counted 101 of 146 modules as exported; it is 104 of 147.
 
 ## 2.0.0-alpha.2 -- 2026-09-03
 

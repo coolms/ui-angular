@@ -28,8 +28,8 @@ path, and that is enforced rather than encouraged — the barrel at
 import { CmsListPageComponent, DataGridComponent, ToastService } from '@coolms/ui-angular';
 ```
 
-101 of the package's 146 modules are exported, chosen from the symbols a real
-application names. The remaining 45 are internal: `export`ed so their
+104 of the package's 147 modules are exported, chosen from the symbols a real
+application names. The remaining 43 are internal: `export`ed so their
 neighbours can reach them, which is not the same as being public. If something
 you need is missing, exporting it is a deliberate decision about the API rather
 than an import detail — open an issue.
