@@ -141,9 +141,9 @@ export interface DateRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #848b96); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #69707c); }
         .picker__icon {
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -154,7 +154,7 @@ export interface DateRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;

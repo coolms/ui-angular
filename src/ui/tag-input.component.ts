@@ -92,7 +92,7 @@ export interface TagOption {
            blue while every other field in the admin rings amber. */
         .tagin-wrap {
             display: flex; flex-wrap: wrap; gap: 4px;
-            border: 1px solid var(--cms-btn-border); border-radius: .375rem;
+            border: 1px solid var(--cms-border-control); border-radius: .375rem;
             padding: 4px 8px; min-height: 38px; cursor: text;
             background: var(--cms-input-bg);
         }

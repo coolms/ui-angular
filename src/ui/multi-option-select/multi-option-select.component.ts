@@ -161,7 +161,7 @@ interface OptionGroup {
         .mos-trigger {
             display: flex; align-items: center; gap: 6px;
             padding: 3px 8px;
-            border: 1px solid var(--cms-btn-border, #d1d5db);
+            border: 1px solid var(--cms-border-control, #868c96);
             border-radius: var(--cms-radius, 4px);
             background: var(--cms-surface);
             cursor: pointer;
@@ -173,7 +173,7 @@ interface OptionGroup {
             overflow: hidden;
             &:hover { border-color: var(--cms-btn-hover-border, #9ca3af); }
         }
-        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #848b96); }
+        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #69707c); }
         .mos-chips {
             flex: 1; min-width: 0;
             display: flex; flex-wrap: wrap; gap: 3px;
@@ -206,7 +206,7 @@ interface OptionGroup {
         }
         .mos-chevron {
             font-size: .625rem;
-            color: var(--cms-text-secondary, #6b7280);
+            color: var(--cms-text-secondary, #525a66);
             flex-shrink: 0;
             transition: transform .15s;
         }
@@ -231,7 +231,7 @@ interface OptionGroup {
         }
         .mos-search {
             width: 100%;
-            border: 1px solid var(--cms-btn-border, #d1d5db);
+            border: 1px solid var(--cms-border-control, #868c96);
             border-radius: var(--cms-radius-sm, 3px);
             padding: 4px 8px;
             font-size: .8125rem;
@@ -248,7 +248,7 @@ interface OptionGroup {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: .04em;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             background: var(--cms-border-light, #f0f2f5);
             border-top: 1px solid var(--cms-border, #e5e7eb);
             border-bottom: 1px solid var(--cms-border, #e5e7eb);
@@ -273,7 +273,7 @@ interface OptionGroup {
             padding: 12px;
             text-align: center;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .mos-footer {
@@ -283,7 +283,7 @@ interface OptionGroup {
         }
         .mos-clear-all {
             border: 0; background: transparent;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-size: .75rem;
             cursor: pointer;
             padding: 2px 4px;

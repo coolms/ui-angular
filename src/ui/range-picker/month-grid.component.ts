@@ -63,7 +63,7 @@ import {
             text-align: center;
             font-size: .7rem;
             font-weight: 600;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             text-transform: uppercase;
             padding: 4px 0;
         }
@@ -82,7 +82,7 @@ import {
         .month__cell:hover:not(:disabled) {
             background: var(--cms-bg-hover, #f3f4f6);
         }
-        .month__cell--other { color: var(--cms-text-muted, #848b96); }
+        .month__cell--other { color: var(--cms-text-muted, #69707c); }
         .month__cell--today {
             font-weight: 700;
             box-shadow: inset 0 0 0 1px var(--cms-accent, #F5A623);

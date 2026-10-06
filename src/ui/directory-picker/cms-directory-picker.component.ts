@@ -237,14 +237,14 @@ type FlatRow =
         }
         .cms-dirpicker__row--unselectable .cms-dirpicker__name { cursor: not-allowed; }
         .cms-dirpicker__row--system .cms-dirpicker__name {
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-style: italic;
         }
         .cms-dirpicker__chevron {
             border: none;
             background: transparent;
             cursor: pointer;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             padding: 0 2px;
             line-height: 1;
         }
@@ -256,7 +256,7 @@ type FlatRow =
         .cms-dirpicker__placeholder {
             padding: 3px 8px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
         }
         .cms-dirpicker__placeholder--muted { font-style: italic; }
         .cms-dirpicker__placeholder--error { color: var(--cms-danger, #dc2626); }
@@ -316,7 +316,7 @@ type FlatRow =
             align-items: center;
             gap: 4px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             cursor: pointer;
         }
     `],
