@@ -132,7 +132,7 @@ export interface TabStripItem {
             padding: 0.5rem 0.9rem;
             border: 0;
             background: transparent;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             border-bottom: 2px solid transparent;
             cursor: pointer;
             font: inherit;
@@ -178,7 +178,7 @@ export interface TabStripItem {
             border: 0;
             border-radius: var(--cms-radius, 6px);
             background: transparent;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             cursor: pointer;
             font: inherit;
         }

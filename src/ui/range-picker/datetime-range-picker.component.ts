@@ -216,9 +216,9 @@ export interface DateTimeRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #848b96); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #69707c); }
         .picker__icon {
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -229,7 +229,7 @@ export interface DateTimeRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;
@@ -279,8 +279,8 @@ export interface DateTimeRangeValue {
             color: var(--cms-accent-text, #7C4D00);
             font-weight: 500;
         }
-        .overlay__placeholder { color: var(--cms-text-muted, #848b96); }
-        .overlay__arrow { color: var(--cms-text-muted, #848b96); }
+        .overlay__placeholder { color: var(--cms-text-muted, #69707c); }
+        .overlay__arrow { color: var(--cms-text-muted, #69707c); }
         .overlay__months {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -366,17 +366,17 @@ export interface DateTimeRangeValue {
         }
         .overlay__time-label {
             font-size: .85rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             white-space: nowrap;
         }
         .overlay__time-sep {
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-size: .85rem;
         }
         .overlay__tz {
             margin: 4px 0 0;
             font-size: .7rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-style: italic;
             min-height: 1em;            /* keep its own line height even when empty */
         }

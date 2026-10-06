@@ -64,7 +64,7 @@ import { FieldItem } from '@coolms/core-angular';
             height: 30px;
             padding: 2px;
             flex: 0 0 auto;
-            border: 1px solid var(--cms-btn-border);
+            border: 1px solid var(--cms-border-control);
             border-radius: var(--cms-radius);
             background: var(--cms-input-bg);
             cursor: pointer;

@@ -137,7 +137,7 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
         }
         .fp__crumb:disabled { color: var(--cms-text, #111827); cursor: default; font-weight: 600; }
         .fp__crumb:hover:not(:disabled) { background: var(--cms-surface-hover, #f3f4f6); }
-        .fp__sep { color: var(--cms-text-muted, #848b96); }
+        .fp__sep { color: var(--cms-text-muted, #69707c); }
         /* Bounded so a large folder scrolls inside the picker instead of pushing
            a hosting dialog's footer off-screen. */
         /*
@@ -170,9 +170,9 @@ export type FileSelectablePredicate = (node: VfsNodeDto) => boolean;
         .fp__row:disabled { opacity: .5; cursor: not-allowed; }
         .fp__row--picked { background: var(--cms-accent-light, #FEF7E6); }
         .fp__name { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .fp__size { flex: 0 0 auto; color: var(--cms-text-muted, #848b96); font-size: .75rem; }
-        .fp__chevron { color: var(--cms-text-muted, #848b96); font-size: .75rem; }
-        .fp__note { margin: 0; padding: 12px 10px; font-size: .8125rem; color: var(--cms-text-muted, #848b96); }
+        .fp__size { flex: 0 0 auto; color: var(--cms-text-muted, #69707c); font-size: .75rem; }
+        .fp__chevron { color: var(--cms-text-muted, #69707c); font-size: .75rem; }
+        .fp__note { margin: 0; padding: 12px 10px; font-size: .8125rem; color: var(--cms-text-muted, #69707c); }
         .fp__note--error { color: var(--cms-danger, #dc2626); }
         .fp__more { display: block; width: calc(100% - 20px); margin: 6px 10px 10px; }
     `],

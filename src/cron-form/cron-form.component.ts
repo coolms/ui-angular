@@ -192,10 +192,10 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
         .field__label {
             font-size: .8125rem;
             font-weight: 500;
-            color: var(--cms-text-secondary, #6b7280);
+            color: var(--cms-text-secondary, #525a66);
         }
         input, select {
-            border: 1px solid var(--cms-btn-border, #d1d5db);
+            border: 1px solid var(--cms-border-control, #868c96);
             border-radius: var(--cms-radius, 4px);
             padding: 5px 10px;
             font-size: .8125rem;
@@ -275,7 +275,7 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
         }
         .summary__text { color: var(--cms-text, #111827); }
         .summary__expr {
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
             font-size: .75rem;
             margin-left: auto;
         }

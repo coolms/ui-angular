@@ -108,7 +108,7 @@ import { AppConfigState } from '@coolms/core-angular';
         }
         .locsw-menu-item:hover { background: var(--cms-border-light, #f0f2f5); }
         .locsw-menu-item.is-active { font-weight: 600; }
-        .locsw-code { font-variant: small-caps; min-width: 2.5em; color: var(--cms-text-secondary, #6b7280); }
+        .locsw-code { font-variant: small-caps; min-width: 2.5em; color: var(--cms-text-secondary, #525a66); }
         .locsw-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     `],
 })

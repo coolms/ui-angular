@@ -105,13 +105,13 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
             text-align: center;
             font-size: .875rem;
             flex-shrink: 0;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
         }
         .ctx-item--danger .ctx-icon { color: inherit; }
         .ctx-empty {
             padding: 10px 16px;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #848b96);
+            color: var(--cms-text-muted, #69707c);
         }
     `],
 })
