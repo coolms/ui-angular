@@ -185,7 +185,7 @@ export type LazySelectSearchStyle = 'rql' | 'q';
             min-height: 32px;
             transition: border-color .1s;
             user-select: none;
-            &:hover { border-color: var(--cms-btn-hover-border, #9ca3af); }
+            &:hover { border-color: var(--cms-btn-hover-border, #6b7280); }
         }
         .lzs-value       { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .lzs-placeholder { flex: 1; color: var(--cms-text-muted, #69707c); }
@@ -224,7 +224,7 @@ export type LazySelectSearchStyle = 'rql' | 'q';
             width: 100%; border: 1px solid var(--cms-border-control, #868c96);
             border-radius: var(--cms-radius-sm, 3px); padding: 4px 8px;
             font-size: .8125rem; outline: none;
-            &:focus { border-color: var(--cms-accent, #F5A623); box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6); }
+            &:focus { border-color: var(--cms-focus-ring, #7c4d00); box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00); }
         }
         .lzs-list { flex: 1; overflow-y: auto; }
         .lzs-group-header {

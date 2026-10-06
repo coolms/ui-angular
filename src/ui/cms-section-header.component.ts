@@ -128,7 +128,7 @@ import { ToolbarAction } from './page-toolbar.component';
             text-decoration: none;
         }
         .section-header__link:hover { color: var(--cms-accent-text); text-decoration: underline; }
-        .section-header__link:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: 2px; }
+        .section-header__link:focus-visible { outline: 2px solid var(--cms-focus-ring, #7c4d00); outline-offset: 2px; }
 
         .section-header__badge {
             font-size: .6875rem;
