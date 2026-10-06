@@ -162,8 +162,8 @@ import { EntitySearchResult, EntitySearchService } from '@coolms/core-angular';
         }
         .cms-entity-picker__input:focus {
             outline: none;
-            border-color: var(--cms-accent, #F5A623);
-            box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
+            border-color: var(--cms-focus-ring, #7c4d00);
+            box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00);
         }
         .cms-entity-picker__single {
             display: flex;

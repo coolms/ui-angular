@@ -97,8 +97,8 @@ export interface TagOption {
             background: var(--cms-input-bg);
         }
         .tagin-wrap:focus-within {
-            border-color: var(--cms-accent);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--cms-accent) 15%, transparent);
+            border-color: var(--cms-focus-ring, #7c4d00);
+            box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00);
         }
         .tagin-chip {
             display: inline-flex; align-items: center; gap: 4px;

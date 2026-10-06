@@ -242,7 +242,7 @@ const OVERLAY_MAX_HEIGHT_PX = 360;
             color: var(--cms-text);
         }
         .cms-tree-picker__search-input:focus {
-            outline: 2px solid var(--cms-accent);
+            outline: 2px solid var(--cms-focus-ring, #7c4d00);
             outline-offset: -1px;
         }
         .cms-tree-picker__loading,

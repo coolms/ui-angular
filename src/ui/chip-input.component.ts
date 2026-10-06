@@ -41,7 +41,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
             padding: 4px 8px; min-height: 38px; cursor: text;
             background: var(--cms-surface);
         }
-        .chip-input-wrap:focus-within { border-color: var(--cms-info-subtle-border); box-shadow: 0 0 0 .25rem var(--cms-accent-light, #FEF7E6); }
+        .chip-input-wrap:focus-within { border-color: var(--cms-focus-ring, #7c4d00); box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00); }
         .chip {
             display: inline-flex; align-items: center; gap: 4px;
             background: var(--cms-surface-muted); border-radius: var(--cms-radius-sm, 4px);

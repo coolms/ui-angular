@@ -190,7 +190,7 @@ export interface DateTimeRangeValue {
             justify-content: space-between;
             gap: 6px;
             width: 100%;
-            border: 1px solid var(--cms-border, #e5e7eb);
+            border: 1px solid var(--cms-border-control, #868c96);
             border-radius: var(--cms-radius-sm, 4px);
             background: var(--cms-surface, #fff);
             padding: 6px 8px;
@@ -353,7 +353,7 @@ export interface DateTimeRangeValue {
             transform: translateX(14px);
         }
         .overlay__toggle-input:focus-visible + .overlay__toggle-slider {
-            outline: 2px solid var(--cms-accent, #F5A623);
+            outline: 2px solid var(--cms-focus-ring, #7c4d00);
             outline-offset: 2px;
         }
         .overlay__toggle-label {

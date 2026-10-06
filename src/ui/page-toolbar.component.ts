@@ -172,7 +172,7 @@ export interface ToolbarAction {
             border-color: var(--cms-btn-hover-border);
         }
         .toolbar-btn:focus-visible {
-            outline: 2px solid var(--cms-accent);
+            outline: 2px solid var(--cms-focus-ring, #7c4d00);
             outline-offset: 2px;
         }
         .toolbar-btn:disabled { opacity: .45; cursor: not-allowed; }
@@ -188,10 +188,13 @@ export interface ToolbarAction {
         }
         .toolbar-btn--active {
             background: var(--cms-selected-light);
-            border-color: var(--cms-selected);
+            /* The edge shows the state: the selection's text colour, 6.54:1 or more (the amber was 1.84:1). */
+            border-color: var(--cms-selected-text);
             color: var(--cms-selected-text);
         }
-        .toolbar-btn--danger { color: var(--cms-danger); border-color: var(--cms-danger-border); }
+        /* An outline button's edge shows it is one: the danger red itself, 3:1 or more on every ground; its label
+           the danger TEXT colour, 4.5:1 or more (Dmitry, 2026-10-06, (a)). */
+        .toolbar-btn--danger { color: var(--cms-danger-text); border-color: var(--cms-danger); }
         .toolbar-btn--danger:hover:not(:disabled) {
             background: var(--cms-danger-light);
             border-color: var(--cms-danger);

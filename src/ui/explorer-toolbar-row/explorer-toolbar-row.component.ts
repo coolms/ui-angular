@@ -189,7 +189,7 @@ interface BreadcrumbResponseDto {
             background: var(--cms-border-light);
         }
         .seg:focus-visible {
-            outline: 2px solid var(--cms-accent);
+            outline: 2px solid var(--cms-focus-ring, #7c4d00);
             outline-offset: 1px;
         }
 

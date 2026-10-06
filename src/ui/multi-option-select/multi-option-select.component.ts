@@ -171,7 +171,7 @@ interface OptionGroup {
             transition: border-color .1s;
             user-select: none;
             overflow: hidden;
-            &:hover { border-color: var(--cms-btn-hover-border, #9ca3af); }
+            &:hover { border-color: var(--cms-btn-hover-border, #6b7280); }
         }
         .mos-placeholder { flex: 1; color: var(--cms-text-muted, #69707c); }
         .mos-chips {
@@ -237,8 +237,8 @@ interface OptionGroup {
             font-size: .8125rem;
             outline: none;
             &:focus {
-                border-color: var(--cms-accent, #F5A623);
-                box-shadow: 0 0 0 2px var(--cms-accent-light, #FEF7E6);
+                border-color: var(--cms-focus-ring, #7c4d00);
+                box-shadow: 0 0 0 1px var(--cms-focus-ring, #7c4d00);
             }
         }
         .mos-list { flex: 1; overflow-y: auto; padding: 4px 0; }
