@@ -2,11 +2,21 @@ import { Injectable, signal } from '@angular/core';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
+/**
+ * One thing the person can do about what the toast says, as a button in it: "Elevate" on a refusal
+ * for want of elevation. Clicking it runs `run` and dismisses the toast.
+ */
+export interface ToastAction {
+    readonly label: string;
+    readonly run:   () => void;
+}
+
 export interface Toast {
     readonly id:      number;
     readonly type:    ToastType;
     readonly title?:  string;
     readonly message: string;
+    readonly action?: ToastAction;
 }
 
 @Injectable({ providedIn: 'root' })
