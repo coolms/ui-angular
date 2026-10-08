@@ -25,6 +25,11 @@ import { EmptyStateComponent } from './empty-state.component';
                     [disabled]="asking()" (click)="elevate()">
                 Elevate
             </button>
+            @if (unavailable()) {
+                <p class="cms-elevation-required__unavailable" data-test="elevation-unavailable" role="status">
+                    Elevation isn't available here. Ask an administrator.
+                </p>
+            }
         </app-empty-state>
     `,
 })
@@ -37,6 +42,8 @@ export class ElevationRequiredComponent {
 
     private readonly elevation = inject(ElevationService);
     protected readonly asking = signal(false);
+    /** The installation cannot elevate: the button opened nothing, and the person is told so. */
+    protected readonly unavailable = signal(false);
 
     elevate(): void {
         this.asking.set(true);
@@ -46,6 +53,8 @@ export class ElevationRequiredComponent {
             // offerFor() answers false without a prompt when the session is elevated already.
             if (granted || this.elevation.elevated()) {
                 this.elevated.emit();
+            } else if (!this.elevation.available) {
+                this.unavailable.set(true);
             }
         });
     }
