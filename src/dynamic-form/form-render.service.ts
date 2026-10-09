@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Store } from '@ngxs/store';
-import { AppConfigState, FormRenderDefinition } from '@coolms/core-angular';
+import { AppConfigState, BACKGROUND_REQUEST, FormRenderDefinition } from '@coolms/core-angular';
 /** WZ-C -- result of `POST /forms/{id}/validate-step`. */
 export interface FormStepValidationResult {
     valid: boolean;
@@ -35,7 +35,11 @@ export class FormRenderService {
     ): Observable<FormRenderDefinition> {
         const apiBase = this.store.selectSnapshot(AppConfigState.manifest)?.apiBase ?? '/api/v1';
         const url     = `${apiBase}/forms/${encodeURIComponent(formId)}/preview?context=${context}`;
-        return this.http.post<FormRenderDefinition>(url, definition);
+        // A read sent by POST, as the builder's draft changes: no one's action, so a refusal is the
+        // caller's to show and never an elevation notice.
+        return this.http.post<FormRenderDefinition>(url, definition, {
+            context: new HttpContext().set(BACKGROUND_REQUEST, true),
+        });
     }
 
     /**

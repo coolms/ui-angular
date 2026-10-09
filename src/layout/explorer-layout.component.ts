@@ -11,10 +11,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { debounceTime, Subject } from 'rxjs';
-import { ConfigService, LayoutConfig, UserPreferencesService } from '@coolms/core-angular';
+import {
+    ConfigService, ErrorHandlerService, isElevationRefusal, LayoutConfig, UserPreferencesService,
+} from '@coolms/core-angular';
 import { SlotComponent } from '../ui/slot.component';
 import { CmsPageFooterComponent } from '../ui/cms-page-footer.component';
 import { CmsPageHeaderComponent } from '../ui/cms-page-header.component';
+import { ElevationRequiredComponent } from '../ui/state/elevation-required.component';
+import { ErrorBannerComponent } from '../ui/state/error-banner.component';
 import { ToolbarAction } from '../ui/page-toolbar.component';
 import { ExplorerViewMode, toExplorerViewMode } from './explorer-view-mode';
 
@@ -50,7 +54,9 @@ interface PanelSlotConfig {
     selector: 'app-explorer-layout',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SlotComponent, CmsPageFooterComponent, CmsPageHeaderComponent],
+    imports: [
+        SlotComponent, CmsPageFooterComponent, CmsPageHeaderComponent, ElevationRequiredComponent, ErrorBannerComponent,
+    ],
     template: `
         <div class="explorer-layout">
 
@@ -96,10 +102,25 @@ interface PanelSlotConfig {
                     }
                 }
 
-                @if (mainSlot(); as cfg) {
-                    <div class="explorer-main" (click)="onMainAreaClick($event)">
-                        <app-slot [key]="cfg.component" [inputs]="cfg.inputs ?? {}" />
-                    </div>
+                @switch (layoutState()) {
+                    @case ('elevation') {
+                        <div class="explorer-main" data-test="explorer-elevation-required">
+                            <cms-elevation-required (elevated)="loadLayout()" />
+                        </div>
+                    }
+                    @case ('error') {
+                        <div class="explorer-main" data-test="explorer-layout-error">
+                            <app-error-banner [message]="layoutError() ?? ''" [showRetry]="true"
+                                              (retry)="loadLayout()" />
+                        </div>
+                    }
+                    @default {
+                        @if (mainSlot(); as cfg) {
+                            <div class="explorer-main" (click)="onMainAreaClick($event)">
+                                <app-slot [key]="cfg.component" [inputs]="cfg.inputs ?? {}" />
+                            </div>
+                        }
+                    }
                 }
 
                 @if (showRightPanel()) {
@@ -122,9 +143,12 @@ interface PanelSlotConfig {
 
             </div>
 
-            <div class="explorer-footer">
-                <cms-page-footer />
-            </div>
+            <!-- The footer counts what the main area shows, so it shows only with it. -->
+            @if (layoutState() === 'ready') {
+                <div class="explorer-footer">
+                    <cms-page-footer />
+                </div>
+            }
 
         </div>
     `,
@@ -254,6 +278,17 @@ export class ExplorerLayoutComponent implements OnInit {
     readonly defaultViewMode = signal<ExplorerViewMode | null>(null);
 
     // Slot configs (populated after layout YAML loads)
+    /**
+     * Where the layout read stands. The page's content renders only from a layout that loaded; a
+     * refused or failed read shows its own state in the main area, never an empty page: `elevation`
+     * is a refusal for want of elevation, with an Elevate button, and `error` any other failure,
+     * with its readable reason and a retry.
+     */
+    readonly layoutState = signal<'loading' | 'ready' | 'elevation' | 'error'>('loading');
+    readonly layoutError = signal<string | null>(null);
+
+    private readonly errors = inject(ErrorHandlerService);
+
     readonly leftSlot  = signal<PanelSlotConfig | null>(null);
     readonly mainSlot  = signal<PanelSlotConfig | null>(null);
     readonly rightSlot = signal<PanelSlotConfig | null>(null);
@@ -310,9 +345,29 @@ export class ExplorerLayoutComponent implements OnInit {
                 }
             });
 
+        this.loadLayout();
+    }
+
+    /** Reads the layout, and again after the person elevates or retries. */
+    loadLayout(): void {
+        this.layoutState.set('loading');
+        this.layoutError.set(null);
         this.configSvc.layout(this.layoutId()).pipe(
             takeUntilDestroyed(this.destroyRef),
-        ).subscribe(cfg => this.applyConfig(cfg));
+        ).subscribe({
+            next: cfg => {
+                this.applyConfig(cfg);
+                this.layoutState.set('ready');
+            },
+            error: (err: unknown) => {
+                if (isElevationRefusal(err)) {
+                    this.layoutState.set('elevation');
+                } else {
+                    this.layoutError.set(this.errors.humanize(err));
+                    this.layoutState.set('error');
+                }
+            },
+        });
     }
 
     toggleLeftCollapsed(): void {

@@ -24,6 +24,13 @@ import { ToastService } from './toast.service';
                             <div class="cms-toast-title">{{ t.title }}</div>
                         }
                         <div class="cms-toast-message">{{ t.message }}</div>
+                        @if (t.action; as action) {
+                            <button type="button" class="cms-btn cms-btn-sm cms-btn-primary cms-toast-action"
+                                    data-test="toast-action"
+                                    (click)="$event.stopPropagation(); toast.dismiss(t.id); action.run()">
+                                {{ action.label }}
+                            </button>
+                        }
                     </div>
 
                     <button type="button"
@@ -37,6 +44,9 @@ import { ToastService } from './toast.service';
         </div>
     `,
     styles: [`
+        .cms-toast-action {
+            margin-top: 8px;
+        }
         .cms-toast-container {
             position: fixed;
             top: 68px;

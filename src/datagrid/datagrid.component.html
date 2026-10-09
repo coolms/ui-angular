@@ -1,8 +1,11 @@
 @if (loading() && !config()) {
   <app-loading />
 }
+@if (elevationRequired()) {
+  <cms-elevation-required data-test="datagrid-elevation-required" (elevated)="retry()" />
+}
 @if (error(); as err) {
-  <app-error-banner [message]="err" [showRetry]="true" (retry)="reload()" />
+  <app-error-banner [message]="err" [showRetry]="true" (retry)="retry()" />
 }
 
 @if (config(); as cfg) {

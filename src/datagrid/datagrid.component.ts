@@ -67,7 +67,9 @@ const TREE_DRAG_AUTO_EXPAND_MS = 700;
 import { DataGridRowActionsComponent } from './datagrid-row-actions.component';
 import { ColumnChooserComponent } from './column-chooser.component';
 import { DataGridLiveEventsService, type DataGridChangeEvent } from './datagrid-live-events.service';
-import { UserPreferencesService, NaviGraphService } from '@coolms/core-angular';
+import {
+    ErrorHandlerService, isElevationRefusal, NaviGraphService, UserPreferencesService,
+} from '@coolms/core-angular';
 import { ContextMenuService, ContextMenuItem } from '../context-menu/context-menu.service';
 import {
     DateRangePickerComponent,
@@ -95,6 +97,7 @@ import { UserCalendarPreferencesService } from '../util/user-calendar-preference
 import { LoadingComponent } from '../ui/state/loading.component';
 import { EmptyStateComponent } from '../ui/state/empty-state.component';
 import { ErrorBannerComponent } from '../ui/state/error-banner.component';
+import { ElevationRequiredComponent } from '../ui/state/elevation-required.component';
 
 // Convention-based enum value -> Bootstrap badge colour mapping. Case-insensitive.
 const POSITIVE_ENUM_VALUES = new Set(['ready', 'published', 'active', 'enabled', 'success', 'done', 'complete', 'approved']);
@@ -126,7 +129,7 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
     selector: 'coolms-datagrid',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CmsLoaderComponent, FormsModule, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPreview, CdkDragPlaceholder, DataGridRowActionsComponent, ColumnChooserComponent, LoadingComponent, EmptyStateComponent, ErrorBannerComponent, DateRangePickerComponent, DateTimeRangePickerComponent, TimeRangePickerComponent, MultiOptionSelectComponent, DataGridFilterHostComponent, DataGridCellHostComponent],
+    imports: [CmsLoaderComponent, FormsModule, CdkDropList, CdkDrag, CdkDragHandle, CdkDragPreview, CdkDragPlaceholder, DataGridRowActionsComponent, ColumnChooserComponent, LoadingComponent, EmptyStateComponent, ErrorBannerComponent, ElevationRequiredComponent, DateRangePickerComponent, DateTimeRangePickerComponent, TimeRangePickerComponent, MultiOptionSelectComponent, DataGridFilterHostComponent, DataGridCellHostComponent],
     host: {
         style: 'display:flex; flex-direction:column; flex:1; min-height:0',
         // The grid is a SELECTABLE SURFACE. `ExplorerLayout` treats any
@@ -455,6 +458,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly data    = signal<DataGridData | null>(null);
     readonly loading = signal(false);
     readonly error   = signal<string | null>(null);
+    /**
+     * The grid's definition was refused for want of elevation: the grid shows that, with an
+     * Elevate button, in place of an error banner or an empty grid.
+     */
+    readonly elevationRequired = signal(false);
+    private readonly errors = inject(ErrorHandlerService);
 
     /**
      * Multi-select state: source of truth is the Set of row ids.
@@ -1146,10 +1155,16 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             return;
         }
         this.loading.set(true);
+        this.error.set(null);
+        this.elevationRequired.set(false);
         const url = `${this.configBaseUrl()}/${encodeURIComponent(id)}`;
         this.http.get<DataGridConfig>(url).pipe(
-            catchError(err => {
-                this.error.set(`Failed to load grid config: ${err?.message ?? 'Unknown error'}`);
+            catchError((err: unknown) => {
+                if (isElevationRefusal(err)) {
+                    this.elevationRequired.set(true);
+                } else {
+                    this.error.set(`The list could not be loaded: ${this.errors.humanize(err)}`);
+                }
                 this.configError.emit();
                 this.loading.set(false);
                 return of(null);
@@ -1188,8 +1203,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.loading.set(true);
         const url = `${this.configBaseUrl()}/${encodeURIComponent(this.gridId())}/data`;
         this.http.get<DataGridData>(url, { params }).pipe(
-            catchError(err => {
-                this.error.set(`Failed to load grid data: ${err?.message ?? 'Unknown error'}`);
+            catchError((err: unknown) => {
+                if (isElevationRefusal(err)) {
+                    this.elevationRequired.set(true);
+                } else {
+                    this.error.set(`The list could not be loaded: ${this.errors.humanize(err)}`);
+                }
                 this.loading.set(false);
                 return of(null);
             }),
@@ -1197,6 +1216,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             if (d) {
                 this.data.set(d);
                 this.error.set(null);
+                this.elevationRequired.set(false);
             }
             this.loading.set(false);
         });
@@ -1211,6 +1231,18 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             params[`filter[${f.column}]`] = f.value;
         }
         return params;
+    }
+
+    /**
+     * The error banner's Retry: read the definition again when that is what failed (there is no
+     * data to reload without it), otherwise reload the data.
+     */
+    retry(): void {
+        if (this.config() === null) {
+            this.fetchConfig();
+        } else {
+            this.reload();
+        }
     }
 
     reload(): void {
@@ -2203,7 +2235,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             observe: 'response',
         }).pipe(
             catchError(err => {
-                this.error.set(`Reorder failed: ${err?.message ?? 'Unknown error'}`);
+                this.error.set(`Reorder failed: ${this.errors.humanize(err)}`);
                 return of(null);
             }),
         ).subscribe(res => {
@@ -2321,7 +2353,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             }
             this.http.delete(url).pipe(
                 catchError(err => {
-                    this.error.set(`Delete failed: ${err?.message ?? 'Unknown error'}`);
+                    this.error.set(`Delete failed: ${this.errors.humanize(err)}`);
                     return of(null);
                 }),
             ).subscribe(res => {
