@@ -57,7 +57,7 @@ export interface ToolbarAction {
                                     [class.toolbar-btn--active]="action.active"
                                     [class.toolbar-btn--locked]="action.locked"
                                     [disabled]="action.disabled ?? false"
-                                    [title]="action.title ?? action.label ?? ''"
+                                    [title]="tooltip(action)"
                                     (click)="actionClick.emit(action.id)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
                                 @if (action.locked) {
@@ -67,7 +67,7 @@ export interface ToolbarAction {
                                     <span>{{ action.label }}</span>
                                 }
                                 @if (action.locked) {
-                                    <span class="toolbar-btn__sr">(needs an elevated session)</span>
+                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -103,7 +103,7 @@ export interface ToolbarAction {
                                     [class.toolbar-btn--locked]="action.locked"
                                     [class.toolbar-btn--primary]="action.primary"
                                     [disabled]="action.disabled ?? false"
-                                    [title]="action.title ?? action.label ?? ''"
+                                    [title]="tooltip(action)"
                                     (click)="actionClick.emit(action.id)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
                                 @if (action.locked) {
@@ -113,7 +113,7 @@ export interface ToolbarAction {
                                     <span>{{ action.label }}</span>
                                 }
                                 @if (action.locked) {
-                                    <span class="toolbar-btn__sr">(needs an elevated session)</span>
+                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -456,6 +456,28 @@ export class PageToolbarComponent {
         this.rightActions().length > 0,
     );
 
+    /** The button's tooltip: its title, and for a locked action why it is locked. */
+    protected tooltip(action: ToolbarAction): string {
+        const name = action.title ?? action.label ?? '';
+
+        return true === action.locked ? name + ' -- needs an elevated session' : name;
+    }
+
+    /**
+     * What a screen reader hears for a locked action besides what is drawn. After a drawn label, the
+     * reason alone; with no label drawn -- an icon-only bar, a node with no label -- this phrase is the
+     * button's only text and so its NAME, so it carries the action's name as well as the reason.
+     */
+    protected lockedPhrase(action: ToolbarAction): string {
+        const reason = '(needs an elevated session)';
+        if (undefined !== action.label && '' !== action.label && !this.iconsOnly()) {
+            return reason;
+        }
+        const name = action.title ?? action.label ?? '';
+
+        return '' === name ? reason : name + ' ' + reason;
+    }
+
     /** Converts a NaviGraphNode to a ToolbarAction for rendering. */
     private nodeToAction(node: NaviGraphNode, ctx: Record<string, unknown>): ToolbarAction {
         const meta     = node.meta;
@@ -483,7 +505,7 @@ export class PageToolbarComponent {
             id:      actionId,
             icon:    String(meta['icon'] ?? ''),
             label,
-            title:   locked ? node.title + ' -- needs an elevated session' : node.title,
+            title:   node.title,
             danger:  Boolean(meta['danger']),
             primary: Boolean(meta['primary']),
             divider: (meta['type'] as string | undefined) === 'separator',

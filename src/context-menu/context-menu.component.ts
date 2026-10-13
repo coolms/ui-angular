@@ -50,7 +50,7 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
                             {{ item.label }}
                             @if (item.locked) {
                                 <i class="bi bi-lock-fill ctx-lock" aria-hidden="true"></i>
-                                <span class="ctx-sr">(needs an elevated session)</span>
+                                <span class="ctx-sr"> (needs an elevated session)</span>
                             }
                         </button>
                     }

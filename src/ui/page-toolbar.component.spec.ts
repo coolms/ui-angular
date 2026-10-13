@@ -285,7 +285,7 @@ describe('PageToolbarComponent bar rendering', () => {
  * the node as it was.
  */
 describe('PageToolbarComponent capability state', () => {
-    function rendered(context: Record<string, unknown>): { action: ToolbarAction; host: HTMLElement } {
+    function rendered(context: Record<string, unknown>, iconsOnly = false): { action: ToolbarAction; host: HTMLElement } {
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({
             imports: [PageToolbarComponent],
@@ -307,6 +307,7 @@ describe('PageToolbarComponent capability state', () => {
         const fixture = TestBed.createComponent(PageToolbarComponent);
         fixture.componentRef.setInput('treeSlug', 'navi.toolbar.test');
         fixture.componentRef.setInput('context', context);
+        fixture.componentRef.setInput('iconsOnly', iconsOnly);
         fixture.detectChanges();
 
         return {
@@ -321,6 +322,7 @@ describe('PageToolbarComponent capability state', () => {
         expect(action.disabled).toBe(false);
         expect(action.locked).toBeUndefined();
         expect(action.title).toBe('Title for /chmod');
+        expect((host.querySelector('.toolbar-btn') as HTMLButtonElement).title).toBe('Title for /chmod');
         expect(host.querySelector('.toolbar-btn__lock')).toBeNull();
         expect(host.querySelector('.toolbar-btn__sr')).toBeNull();
     });
@@ -338,14 +340,25 @@ describe('PageToolbarComponent capability state', () => {
 
         expect(action.disabled).toBe(false);
         expect(action.locked).toBe(true);
-        expect(action.title).toBe('Title for /chmod -- needs an elevated session');
         const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
+        expect(button.title).toBe('Title for /chmod -- needs an elevated session');
         expect(button.disabled).toBe(false);
         expect(button.classList).toContain('toolbar-btn--locked');
         expect(button.querySelector('.toolbar-btn__lock')).not.toBeNull();
         // Said to a screen reader too, AFTER the label: the title alone is a description some skip.
         expect(button.querySelector('.toolbar-btn__sr')?.textContent?.trim()).toBe('(needs an elevated session)');
         expect(button.lastElementChild?.classList).toContain('toolbar-btn__sr');
+        expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Permissions (needs an elevated session)');
+    });
+
+    it('names an icon-only locked action in its screen-reader text, which is then the button\'s only text', () => {
+        // The VFS bar draws icons only: with no label drawn the phrase is the button's whole name, so it must
+        // carry which action this is, not only that it is locked.
+        const { host } = rendered({ _capabilities: { 'vfs.node.chmod': 'elevate' } }, true);
+        const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
+
+        expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Title for /chmod (needs an elevated session)');
+        expect(button.title).toBe('Title for /chmod -- needs an elevated session');
     });
 
     it('reads an action the published answer lacks as denied', () => {
