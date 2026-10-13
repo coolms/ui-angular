@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
 import { AppConfigState, NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
+import { capabilityStateOf } from './capability-state';
 export interface ToolbarAction {
     id:       string;
     icon:     string;      // Bootstrap Icons name WITHOUT 'bi-': 'upload', 'trash'
@@ -25,6 +26,12 @@ export interface ToolbarAction {
     disabled?: boolean;
     hidden?:  boolean;     // remove entirely (vs disabled = grayed)
     divider?: boolean;     // render | separator — still needs unique id for @for track
+    /**
+     * Allowed once the session is elevated: drawn with a lock, and said to a screen reader after the label.
+     * The click is emitted as usual -- what a locked action does (ask for elevation, then act on the grant)
+     * is the page's.
+     */
+    locked?:  boolean;
 }
 
 @Component({
@@ -48,12 +55,19 @@ export interface ToolbarAction {
                                     [class.toolbar-btn--danger]="action.danger"
                                     [class.toolbar-btn--primary]="action.primary"
                                     [class.toolbar-btn--active]="action.active"
+                                    [class.toolbar-btn--locked]="action.locked"
                                     [disabled]="action.disabled ?? false"
-                                    [title]="action.title ?? action.label ?? ''"
+                                    [title]="tooltip(action)"
                                     (click)="actionClick.emit(action.id)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
+                                @if (action.locked) {
+                                    <i class="bi bi-lock-fill toolbar-btn__lock" aria-hidden="true"></i>
+                                }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.locked) {
+                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -86,13 +100,20 @@ export interface ToolbarAction {
                                     class="toolbar-btn"
                                     [class.toolbar-btn--danger]="action.danger"
                                     [class.toolbar-btn--active]="action.active"
+                                    [class.toolbar-btn--locked]="action.locked"
                                     [class.toolbar-btn--primary]="action.primary"
                                     [disabled]="action.disabled ?? false"
-                                    [title]="action.title ?? action.label ?? ''"
+                                    [title]="tooltip(action)"
                                     (click)="actionClick.emit(action.id)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
+                                @if (action.locked) {
+                                    <i class="bi bi-lock-fill toolbar-btn__lock" aria-hidden="true"></i>
+                                }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.locked) {
+                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -176,6 +197,24 @@ export interface ToolbarAction {
             outline-offset: 2px;
         }
         .toolbar-btn:disabled { opacity: .45; cursor: not-allowed; }
+        /* Allowed once elevated: a small lock tucked against the action's icon. */
+        .toolbar-btn__lock {
+            font-size: .625rem;
+            margin-left: -4px;
+            align-self: flex-start;
+        }
+        /* The lock's meaning, for a screen reader only: the title alone is a description some skip. */
+        .toolbar-btn__sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         .toolbar-btn--primary {
             background: var(--cms-accent);
@@ -193,7 +232,7 @@ export interface ToolbarAction {
             color: var(--cms-selected-text);
         }
         /* An outline button's edge shows it is one: the danger red itself, 3:1 or more on every ground; its label
-           the danger TEXT colour, 4.5:1 or more (Dmitry, 2026-10-06, (a)). */
+           the danger TEXT colour, 4.5:1 or more (decided 2026-10-06). */
         .toolbar-btn--danger { color: var(--cms-danger-text); border-color: var(--cms-danger); }
         .toolbar-btn--danger:hover:not(:disabled) {
             background: var(--cms-danger-light);
@@ -417,6 +456,28 @@ export class PageToolbarComponent {
         this.rightActions().length > 0,
     );
 
+    /** The button's tooltip: its title, and for a locked action why it is locked. */
+    protected tooltip(action: ToolbarAction): string {
+        const name = action.title ?? action.label ?? '';
+
+        return true === action.locked ? name + ' -- needs an elevated session' : name;
+    }
+
+    /**
+     * What a screen reader hears for a locked action besides what is drawn. After a drawn label, the
+     * reason alone; with no label drawn -- an icon-only bar, a node with no label -- this phrase is the
+     * button's only text and so its NAME, so it carries the action's name as well as the reason.
+     */
+    protected lockedPhrase(action: ToolbarAction): string {
+        const reason = '(needs an elevated session)';
+        if (undefined !== action.label && '' !== action.label && !this.iconsOnly()) {
+            return reason;
+        }
+        const name = action.title ?? action.label ?? '';
+
+        return '' === name ? reason : name + ' ' + reason;
+    }
+
     /** Converts a NaviGraphNode to a ToolbarAction for rendering. */
     private nodeToAction(node: NaviGraphNode, ctx: Record<string, unknown>): ToolbarAction {
         const meta     = node.meta;
@@ -425,11 +486,17 @@ export class PageToolbarComponent {
         const active     = this.evalMetaCondition(meta['activeWhen'], ctx);
         const unavailable = this.evalMetaCondition(meta['disabledWhen'], ctx);
         const busy        = this.evalMetaCondition(meta['busyWhen'], ctx);
+        // A node naming a `capability` takes its state from the page's subjects:
+        // `denied` disables it (it stays put, so the bar does not reflow as the
+        // selection changes), `elevate` locks it. No answer leaves it as it was.
+        const capability = capabilityStateOf(meta, ctx);
+        const denied     = 'denied' === capability;
+        const locked     = 'elevate' === capability;
         // Busy implies disabled: an action already running must not be pressed
-        // twice. Both undefined leaves `disabled` undefined -- see below.
-        const disabled = undefined === unavailable && undefined === busy
+        // twice. All three undefined leaves `disabled` undefined -- see below.
+        const disabled = undefined === unavailable && undefined === busy && undefined === capability
             ? undefined
-            : true === unavailable || true === busy;
+            : true === unavailable || true === busy || denied;
         const label = true === busy && undefined !== meta['busyLabel']
             ? String(meta['busyLabel'])
             : (undefined !== meta['label'] ? String(meta['label']) : undefined);
@@ -444,6 +511,7 @@ export class PageToolbarComponent {
             divider: (meta['type'] as string | undefined) === 'separator',
             active,
             disabled,
+            ...(locked ? { locked: true } : {}),
         };
     }
 

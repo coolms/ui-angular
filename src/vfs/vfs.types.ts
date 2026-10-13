@@ -1,3 +1,5 @@
+import type { CapabilityState } from '../ui/capability-state';
+
 export interface VfsNodeDto {
     readonly id:          string;
     readonly name:        string;
@@ -38,6 +40,13 @@ export interface VfsNodeDto {
     readonly description:    string | null;
     /** Caller's effective permissions on this node. */
     readonly permissions: { readonly read: boolean; readonly write: boolean; readonly execute: boolean };
+    /**
+     * What each declared node action (`vfs.node.chmod`, `vfs.node.delete`, ...) comes to for the caller on
+     * this node, as the server answered it when the node was fetched -- a snapshot, re-read when elevation
+     * changes. Absent from an older server; an empty map arrives as JSON `[]`. Read it through
+     * `leastCapabilities`, never by key alone: that is where "no answer" and "missing = denied" live.
+     */
+    readonly capabilities?: Readonly<Record<string, CapabilityState>> | readonly never[];
     /**
      * Module-owned metadata bag. Always been on the wire; declared here since
  * An earlier fix, where the DTMPL editor reads `documentNative` to know it is

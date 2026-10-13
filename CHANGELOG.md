@@ -9,6 +9,28 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Added
+
+- A navi node that names a `capability` (a declared action's name) takes its
+  state from the page's subjects, on the toolbar and in the context menu
+  alike: `denied` disables it -- it stays put, so a bar does not reflow as the
+  selection changes -- and `elevate` locks it: drawn with a lock, its title
+  saying it needs an elevated session -- as does a visually hidden phrase after
+  its label, for a screen reader -- its click emitted as before (what a locked
+  action does is the page's). No answer leaves the node as it was.
+  `ToolbarAction.locked` and `ContextMenuItem.locked` carry it.
+- `leastCapabilities(subjects)` turns a selection into one state per action
+  -- the least across the subjects (`denied` < `elevate` < `allowed`) -- for a
+  page to publish as `_capabilities` (`CAPABILITIES_CONTEXT_KEY`), and
+  `capabilityStateOf(meta, context)` reads a node's state from it. A subject
+  with no answer, or an empty one (an empty map arrives as JSON `[]`), does not
+  vote; a key missing from a non-empty answer, or a state not recognised, is
+  `denied`.
+- `VfsNodeDto.capabilities`: what each declared node action comes to for the
+  caller on that node, as the server sends it.
+
 ## 2.0.0-alpha.3 - 2026-09-27
 
 ### Added
