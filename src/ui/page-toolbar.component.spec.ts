@@ -278,3 +278,95 @@ describe('PageToolbarComponent bar rendering', () => {
         expect(barFor(nodes, {}, true).actions[0].label).toBe('Rename');
     });
 });
+
+/**
+ * A node naming a `capability` (a declared action): its PRESENCE is the graph's, its STATE the
+ * page's subjects', published as `_capabilities` -- `denied` disables, `elevate` locks, no answer leaves
+ * the node as it was.
+ */
+describe('PageToolbarComponent capability state', () => {
+    function rendered(context: Record<string, unknown>): { action: ToolbarAction; host: HTMLElement } {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PageToolbarComponent],
+            providers: [
+                { provide: HttpClient, useValue: {} },
+                { provide: Router, useValue: {} },
+                { provide: ErrorHandlerService, useValue: {} },
+                {
+                    provide: Store,
+                    useValue: { selectSnapshot: () => ({ navi: { graphBySlug: '/api/v1/navi/graph/{slug}' } }) },
+                },
+            ],
+        });
+        spyOn(TestBed.inject(NaviGraphService), 'loadTree').and.returnValue(of([
+            barNode('/chmod', { action: 'VfsChmod', icon: 'shield-lock', capability: 'vfs.node.chmod' }),
+        ]));
+
+        const fixture = TestBed.createComponent(PageToolbarComponent);
+        fixture.componentRef.setInput('treeSlug', 'navi.toolbar.test');
+        fixture.componentRef.setInput('context', context);
+        fixture.detectChanges();
+
+        return {
+            action: fixture.componentInstance.resolvedLeft()[0],
+            host:   fixture.nativeElement as HTMLElement,
+        };
+    }
+
+    it('keeps an allowed action enabled, unlocked, its title as declared', () => {
+        const { action, host } = rendered({ _capabilities: { 'vfs.node.chmod': 'allowed' } });
+
+        expect(action.disabled).toBe(false);
+        expect(action.locked).toBeUndefined();
+        expect(action.title).toBe('Title for /chmod');
+        expect(host.querySelector('.toolbar-btn__lock')).toBeNull();
+    });
+
+    it('disables a denied action and keeps it in the bar', () => {
+        const { action, host } = rendered({ _capabilities: { 'vfs.node.chmod': 'denied' } });
+
+        expect(action.disabled).toBe(true);
+        expect(action.locked).toBeUndefined();
+        expect((host.querySelector('.toolbar-btn') as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it('locks an action allowed once elevated: enabled, a lock drawn, the title saying why', () => {
+        const { action, host } = rendered({ _capabilities: { 'vfs.node.chmod': 'elevate' } });
+
+        expect(action.disabled).toBe(false);
+        expect(action.locked).toBe(true);
+        expect(action.title).toBe('Title for /chmod -- needs an elevated session');
+        const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
+        expect(button.disabled).toBe(false);
+        expect(button.classList).toContain('toolbar-btn--locked');
+        expect(button.querySelector('.toolbar-btn__lock')).not.toBeNull();
+    });
+
+    it('reads an action the published answer lacks as denied', () => {
+        expect(rendered({ _capabilities: { 'vfs.node.delete': 'allowed' } }).action.disabled).toBe(true);
+    });
+
+    it('leaves the node as it was when the page published no answer', () => {
+        // No answer is not "denied": the refusal decides, as before the server answered at all.
+        for (const context of [{}, { _capabilities: [] }]) {
+            const { action, host } = rendered(context);
+
+            expect(action.disabled).toBeUndefined();
+            expect(action.locked).toBeUndefined();
+            expect(host.querySelector('.toolbar-btn__lock')).toBeNull();
+        }
+    });
+
+    it('keeps a disabledWhen in force on an allowed action', () => {
+        const nodes = [barNode('/paste', {
+            action:       'VfsPaste',
+            capability:   'vfs.node.chmod',
+            disabledWhen: { field: '_hasClipboard', op: 'eq', value: false },
+        })];
+
+        const { actions } = barFor(nodes, { _hasClipboard: false, _capabilities: { 'vfs.node.chmod': 'allowed' } });
+
+        expect(actions[0].disabled).toBe(true);
+    });
+});

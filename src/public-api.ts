@@ -60,6 +60,7 @@ export * from './ui/page-actions.service';
 export * from './ui/page-footer.service';
 export * from './ui/page-title.service';
 export * from './ui/page-toolbar.component';
+export * from './ui/capability-state';
 export * from './ui/pane-splitter/cms-pane-splitter.component';
 export * from './ui/range-picker/datetime-field.component';
 export * from './ui/range-picker/datetime-range-picker.component';

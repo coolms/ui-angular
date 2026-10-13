@@ -40,12 +40,17 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
                     } @else {
                         <button class="ctx-item"
                                 [class.ctx-item--danger]="item.danger"
+                                [class.ctx-item--locked]="item.locked"
                                 [disabled]="item.disabled ?? false"
+                                [attr.title]="item.locked ? item.label + ' -- needs an elevated session' : null"
                                 (click)="ctx.onAction(item.id); svc.close()">
                             @if (item.icon) {
                                 <i class="bi ctx-icon" [class]="'bi-' + item.icon"></i>
                             }
                             {{ item.label }}
+                            @if (item.locked) {
+                                <i class="bi bi-lock-fill ctx-lock" aria-hidden="true"></i>
+                            }
                         </button>
                     }
                 }
@@ -108,6 +113,12 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
             color: var(--cms-text-muted, #69707c);
         }
         .ctx-item--danger .ctx-icon { color: inherit; }
+        /* Allowed once elevated: the lock sits at the item's far end. */
+        .ctx-lock {
+            margin-left: auto;
+            font-size: .75rem;
+            color: var(--cms-text-muted, #69707c);
+        }
         .ctx-empty {
             padding: 10px 16px;
             font-size: .8125rem;

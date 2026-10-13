@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
+import { capabilityStateOf } from '../ui/capability-state';
 export interface ContextMenuItem {
     id:        string;
     label?:    string;
@@ -7,6 +8,8 @@ export interface ContextMenuItem {
     danger?:   boolean;
     disabled?: boolean;
     divider?:  boolean;
+    /** Allowed once the session is elevated: drawn with a lock; what choosing it does is the caller's. */
+    locked?:   boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -70,7 +73,7 @@ export class ContextMenuService {
 
         if (visible.length === 0) { this.close(); return; }
 
-        const items = this.buildItems(visible);
+        const items = this.buildItems(visible, record);
         if (items.length === 0) { this.close(); return; }
         this.menu.set({
             x: event.clientX,
@@ -93,7 +96,11 @@ export class ContextMenuService {
         this.menu.set({ ...m, x, y });
     }
 
-    private buildItems(nodes: NaviGraphNode[]): ContextMenuItem[] {
+    /**
+     * A node naming a `capability` takes its state from the record's subjects, as on the toolbar
+     * (capability-state.ts): `denied` disables the item, `elevate` locks it, no answer leaves it as it was.
+     */
+    private buildItems(nodes: NaviGraphNode[], record: Record<string, unknown>): ContextMenuItem[] {
         const result: ContextMenuItem[] = [];
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
@@ -104,12 +111,14 @@ export class ContextMenuService {
                 result.push({ id: n.path, divider: true });
                 continue;
             }
+            const capability = capabilityStateOf(n.meta, record);
             result.push({
                 id:       String(n.meta['action'] ?? n.path),
                 label:    n.title,
                 icon:     n.meta['icon'] ? String(n.meta['icon']) : undefined,
                 danger:   Boolean(n.meta['danger']),
-                disabled: Boolean(n.meta['disabled']),
+                disabled: Boolean(n.meta['disabled']) || 'denied' === capability,
+                ...('elevate' === capability ? { locked: true } : {}),
             });
         }
         return result;
