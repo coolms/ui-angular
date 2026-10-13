@@ -50,6 +50,7 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
                             {{ item.label }}
                             @if (item.locked) {
                                 <i class="bi bi-lock-fill ctx-lock" aria-hidden="true"></i>
+                                <span class="ctx-sr">(needs an elevated session)</span>
                             }
                         </button>
                     }
@@ -118,6 +119,18 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
             margin-left: auto;
             font-size: .75rem;
             color: var(--cms-text-muted, #69707c);
+        }
+        /* The lock's meaning, for a screen reader only. */
+        .ctx-sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
         .ctx-empty {
             padding: 10px 16px;

@@ -300,7 +300,8 @@ describe('PageToolbarComponent capability state', () => {
             ],
         });
         spyOn(TestBed.inject(NaviGraphService), 'loadTree').and.returnValue(of([
-            barNode('/chmod', { action: 'VfsChmod', icon: 'shield-lock', capability: 'vfs.node.chmod' }),
+            // A label, so the bar draws one and the screen-reader phrase's place after it is measurable.
+            barNode('/chmod', { action: 'VfsChmod', icon: 'shield-lock', label: 'Permissions', capability: 'vfs.node.chmod' }),
         ]));
 
         const fixture = TestBed.createComponent(PageToolbarComponent);
@@ -321,6 +322,7 @@ describe('PageToolbarComponent capability state', () => {
         expect(action.locked).toBeUndefined();
         expect(action.title).toBe('Title for /chmod');
         expect(host.querySelector('.toolbar-btn__lock')).toBeNull();
+        expect(host.querySelector('.toolbar-btn__sr')).toBeNull();
     });
 
     it('disables a denied action and keeps it in the bar', () => {
@@ -341,6 +343,9 @@ describe('PageToolbarComponent capability state', () => {
         expect(button.disabled).toBe(false);
         expect(button.classList).toContain('toolbar-btn--locked');
         expect(button.querySelector('.toolbar-btn__lock')).not.toBeNull();
+        // Said to a screen reader too, AFTER the label: the title alone is a description some skip.
+        expect(button.querySelector('.toolbar-btn__sr')?.textContent?.trim()).toBe('(needs an elevated session)');
+        expect(button.lastElementChild?.classList).toContain('toolbar-btn__sr');
     });
 
     it('reads an action the published answer lacks as denied', () => {

@@ -17,8 +17,9 @@ predate this file would be a worse record than not having them.
   state from the page's subjects, on the toolbar and in the context menu
   alike: `denied` disables it -- it stays put, so a bar does not reflow as the
   selection changes -- and `elevate` locks it: drawn with a lock, its title
-  saying it needs an elevated session, its click emitted as before (what a
-  locked action does is the page's). No answer leaves the node as it was.
+  saying it needs an elevated session -- as does a visually hidden phrase after
+  its label, for a screen reader -- its click emitted as before (what a locked
+  action does is the page's). No answer leaves the node as it was.
   `ToolbarAction.locked` and `ContextMenuItem.locked` carry it.
 - `leastCapabilities(subjects)` turns a selection into one state per action
   -- the least across the subjects (`denied` < `elevate` < `allowed`) -- for a

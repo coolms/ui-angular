@@ -27,8 +27,9 @@ export interface ToolbarAction {
     hidden?:  boolean;     // remove entirely (vs disabled = grayed)
     divider?: boolean;     // render | separator — still needs unique id for @for track
     /**
-     * Allowed once the session is elevated: drawn with a lock. The click is emitted as usual -- what a
-     * locked action does (ask for elevation, re-read, then act) is the page's.
+     * Allowed once the session is elevated: drawn with a lock, and said to a screen reader after the label.
+     * The click is emitted as usual -- what a locked action does (ask for elevation, then act on the grant)
+     * is the page's.
      */
     locked?:  boolean;
 }
@@ -64,6 +65,9 @@ export interface ToolbarAction {
                                 }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.locked) {
+                                    <span class="toolbar-btn__sr">(needs an elevated session)</span>
                                 }
                             </button>
                         }
@@ -107,6 +111,9 @@ export interface ToolbarAction {
                                 }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.locked) {
+                                    <span class="toolbar-btn__sr">(needs an elevated session)</span>
                                 }
                             </button>
                         }
@@ -195,6 +202,18 @@ export interface ToolbarAction {
             font-size: .625rem;
             margin-left: -4px;
             align-self: flex-start;
+        }
+        /* The lock's meaning, for a screen reader only: the title alone is a description some skip. */
+        .toolbar-btn__sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .toolbar-btn--primary {
