@@ -97,6 +97,8 @@ export * from './layout/list-layout.component';
 export * from './datagrid/datagrid-live-events.service';
 export * from './datagrid/datagrid.component';
 export * from './datagrid/datagrid.types';
+export * from './datagrid/declared-rows.source';
+export * from './datagrid/declared-rows-notice.component';
 export * from './datagrid/filter-widgets/datagrid-filter-widget-registry';
 export * from './datagrid/filter-widgets/option-source-filter-widget.component';
 

@@ -13,6 +13,19 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- A grid's rows can come from where its definition declares they do.
+  `DataGridConfig.rows` carries the declared list action, its operation, what
+  it comes to for the caller (`allowed` / `elevate` / `denied`) and its query
+  style (`rql` / `none`). `declaredRowsSource()` reads the rows from that
+  operation and nowhere else -- `rql`: the grid's page, limit, sort and one
+  `filter` per RQL expression; `none`: one GET -- drops answers a later
+  request superseded, keeps a request that came before the definition, and
+  fetches nothing for `elevate` or `denied`. `DeclaredRowsNoticeComponent`
+  shows those states (the elevation notice; "Not available to you"; the
+  server's words) instead of an empty grid.
+- `DataGridComponent` emits `configLoaded` with each definition it reads,
+  BEFORE it first asks for rows, and reads a definition that declares its rows
+  again when elevation is granted, dropped or expires.
 - A navi node that names a `capability` (a declared action's name) takes its
   state from the page's subjects, on the toolbar and in the context menu
   alike: `denied` disables it -- it stays put, so a bar does not reflow as the
