@@ -68,7 +68,7 @@ import { DataGridRowActionsComponent } from './datagrid-row-actions.component';
 import { ColumnChooserComponent } from './column-chooser.component';
 import { DataGridLiveEventsService, type DataGridChangeEvent } from './datagrid-live-events.service';
 import {
-    ErrorHandlerService, isElevationRefusal, NaviGraphService, UserPreferencesService,
+    ElevationService, ErrorHandlerService, isElevationRefusal, NaviGraphService, UserPreferencesService,
 } from '@coolms/core-angular';
 import { ContextMenuService, ContextMenuItem } from '../context-menu/context-menu.service';
 import {
@@ -288,6 +288,13 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      */
     readonly configError = output<void>();
 
+    /**
+     * Emitted with each definition the grid reads -- BEFORE it asks for its first rows, so a parent that fetches the
+     * rows (`[externalData]` + `(loadMore)`) knows where they come from (`rows`) by the time it is asked. Emitted
+     * again when the definition is read again (an elevation change, a new gridId).
+     */
+    readonly configLoaded = output<DataGridConfig>();
+
     /** Emitted for every row action click. */
     readonly rowActionTriggered = output<{ action: string; row: Record<string, unknown> }>();
 
@@ -436,6 +443,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /** Reused for `rowActions.showWhen` evaluation in the context menu. */
     private readonly naviGraph   = inject(NaviGraphService);
     private readonly destroyRef  = inject(DestroyRef);
+    private readonly elevation   = inject(ElevationService);
     /**
      * DataGrid Ship C -- TZ-aware rendering for `'datetime'` columns. The
      * Calendar prefs service is `providedIn: 'root'` so it always
@@ -944,6 +952,15 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // -- Lifecycle --------------------------------------------------------------
 
     constructor() {
+        // A definition that declares where its rows come from carries what that comes to for the caller
+        // (`rows.state`) -- a snapshot of the session's elevation. Read it again when elevation is granted, dropped
+        // or expires, so the grid never draws an answer older than the session.
+        this.elevation.changes$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+            if (null !== (this.config()?.rows ?? null) && null === this.externalConfig()) {
+                this.fetchConfig();
+            }
+        });
+
         // DataGrid live updates -- when the entityAlias is provided,
         // subscribe to `datagrid.{alias}.list` once. The input is
         // typically set at component creation and does not change
@@ -1172,6 +1189,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         ).subscribe(cfg => {
             if (cfg) {
                 this.config.set(cfg);
+                this.configLoaded.emit(cfg);
                 this.applyStoredPrefs(cfg);
                 // Only fetch data internally when no external data provider is present.
                 // When externalData is provided (lazy-load with parent-managed paging),

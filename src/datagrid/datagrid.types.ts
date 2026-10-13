@@ -1,6 +1,8 @@
 // Typed contract -- mirrors DataGridRenderDefinition / DataGridResult PHP VOs exactly.
 // No `any` anywhere.
 
+import type { CapabilityState } from '../ui/capability-state';
+
 /**
  * Column kinds supported by the DataGrid renderer / filter row.
  *
@@ -251,6 +253,27 @@ export interface DataGridConfig {
      * per-parent children fetches via `(loadChildren)`.
      */
     readonly tree?: TreeConfigDto;
+    /**
+     * Where the grid's rows come from, when the server declares it: a declared list action and what it comes to
+     * for the signed-in caller. Absent from a grid whose rows the server does not declare (or an older server).
+     */
+    readonly rows?: DataGridRows | null;
+}
+
+/**
+ * The declared source of a grid's rows, as the definition answers it for the signed-in caller.
+ *
+ * - `operation`: `GET /api/v1/...` -- where the rows are read; a client fetches nothing else for them.
+ * - `state`: what the action comes to for this caller now -- `allowed`, `elevate` (allowed once the session is
+ *   elevated) or `denied`. A snapshot: re-read with the definition when elevation is granted, dropped or expires.
+ * - `query`: `rql` -- the operation reads this grid's RQL (page, limit, sort, repeated `filter`); `none` -- one GET
+ *   answers every row, and the grid pages them itself.
+ */
+export interface DataGridRows {
+    readonly action:    string;
+    readonly operation: string;
+    readonly state:     CapabilityState;
+    readonly query:     'rql' | 'none';
 }
 
 export interface DataGridData {
