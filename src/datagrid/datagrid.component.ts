@@ -6,7 +6,6 @@ import {
     DestroyRef,
     effect,
     ElementRef,
-    HostListener,
     inject,
     input,
     OnDestroy,
@@ -95,6 +94,7 @@ import {
 } from './cell-widgets/datagrid-cell-widget-registry';
 import { UserCalendarPreferencesService } from '../util/user-calendar-preferences.service';
 import { LoadingComponent } from '../ui/state/loading.component';
+import { bindKeys } from '../ui/keyboard-scope/keyboard-scope.service';
 import { EmptyStateComponent } from '../ui/state/empty-state.component';
 import { ErrorBannerComponent } from '../ui/state/error-banner.component';
 import { ElevationRequiredComponent } from '../ui/state/elevation-required.component';
@@ -963,6 +963,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     // -- Lifecycle --------------------------------------------------------------
 
     constructor() {
+        // The grid's shortcuts belong to the layer it lies in: the page, or the dialog it is shown in.
+        bindKeys(event => {
+            this.onKeyDown(event);
+            return event.defaultPrevented;
+        });
+
         // A definition that declares where its rows come from carries what that comes to for the caller
         // (`rows.state`) -- a snapshot of the session's elevation. Read it again when elevation is granted, dropped
         // or expires, so the grid never draws an answer older than the session.
@@ -2591,38 +2597,17 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      *   Delete     -> trigger 'delete' rowAction on EVERY selected row
      *   Space      -> toggle focused row in selection
      */
-    @HostListener('document:keydown', ['$event'])
+    /**
+     * Bound through the keyboard scope (see the constructor), never on
+     * `document` directly: the scope gives a key to the grid only while the
+     * layer the grid lies in is the topmost one, and never while the person
+     * types in a field or a contenteditable (the Tiptap editor's
+     * `<div contenteditable="true">`, where Enter would otherwise open a
+     * stacked editor). That is what keeps Delete on the BPMN designer canvas
+     * -- an SVG in a dialog over the Definitions list -- from firing the
+     * grid's `delete` row action on the row selected behind the dialog.
+     */
     onKeyDown(event: KeyboardEvent): void {
-        const el = event.target as HTMLElement;
-        // Skip editable inputs, including contenteditable hosts (e.g., the
-        // Tiptap editor's `<div contenteditable="true">`). Without this guard
-        // Enter inside the editor bubbles to document and triggers the grid's
-        // 'edit' rowAction -- opening a stacked editor dialog on top of the
-        // one the user is typing in.
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable) return;
-
-        /**
-         *  This listener is on `document`, so it fires for keystrokes
-         * anywhere on the page -- INCLUDING inside a CDK overlay, which
-         * renders outside this component's DOM subtree entirely.
-         *
-         * That is how pressing Delete on the BPMN designer canvas (an
-         * SVG -- not an input, so the guard above lets it through) fired
-         * the Definitions grid's `delete` row action on whatever row was
-         * selected behind the dialog. A destructive action on an object
-         * the user could not even see. It only became reachable when the
-         * Definitions grid gained a `delete` row action; every other
-         * grid with one has the same exposure.
-         *
-         * Two checks, because they catch different shapes: a BACKDROP
-         * means something modal owns the page, and an event ORIGINATING
-         * inside the overlay container means the user is interacting
-         * with a menu/dialog even if it is backdrop-less.
-         */
-        const doc = el.ownerDocument ?? document;
-        if (doc.querySelector('.cdk-overlay-backdrop') !== null) return;
-        if (el.closest('.cdk-overlay-container') !== null) return;
-
         const ids = this.selectableRows().map(r => this.rowId(r));
         if (ids.length === 0 && event.key !== 'Escape') return;
 
