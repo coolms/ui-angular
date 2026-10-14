@@ -51,6 +51,16 @@ predate this file would be a worse record than not having them.
 - `VfsNodeDto.capabilities`: what each declared node action comes to for the
   caller on that node, as the server sends it.
 
+### Fixed
+
+- A grid whose definition is refused with a plain 403 -- one the elevation
+  stamp does not mark, so elevating would not change it -- says "Not available
+  to you" (`accessDenied()`, `data-test="datagrid-denied"`, announced as a
+  status). It showed "The list could not be loaded" with a Retry that could
+  only be refused again. The same holds for the grid's own rows request, and
+  nothing of the list shows beside it (no table, no "Loading more"). A 403 stamped as needing elevation still offers
+  elevation, and any other failure still shows the error.
+
 ## 2.0.0-alpha.3 - 2026-09-27
 
 ### Added

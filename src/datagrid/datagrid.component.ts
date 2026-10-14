@@ -20,7 +20,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CmsLoaderComponent } from '@coolms/core-angular';
 
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
     CdkDragDrop,
     CdkDropList,
@@ -98,6 +98,11 @@ import { LoadingComponent } from '../ui/state/loading.component';
 import { EmptyStateComponent } from '../ui/state/empty-state.component';
 import { ErrorBannerComponent } from '../ui/state/error-banner.component';
 import { ElevationRequiredComponent } from '../ui/state/elevation-required.component';
+
+/** A refusal elevation would not change: 403, read after the elevation stamp has been ruled out. */
+function isForbidden(err: unknown): boolean {
+    return err instanceof HttpErrorResponse && 403 === err.status;
+}
 
 // Convention-based enum value -> Bootstrap badge colour mapping. Case-insensitive.
 const POSITIVE_ENUM_VALUES = new Set(['ready', 'published', 'active', 'enabled', 'success', 'done', 'complete', 'approved']);
@@ -471,6 +476,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
      * Elevate button, in place of an error banner or an empty grid.
      */
     readonly elevationRequired = signal(false);
+    /**
+     * The grid's definition (or its rows) was refused and elevation would not change that -- a 403 without the
+     * elevation stamp: the list is not the caller's. The grid says so, "Not available to you", in place of an
+     * error banner whose Retry can only be refused again.
+     */
+    readonly accessDenied = signal(false);
     private readonly errors = inject(ErrorHandlerService);
 
     /**
@@ -1174,11 +1185,14 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.loading.set(true);
         this.error.set(null);
         this.elevationRequired.set(false);
+        this.accessDenied.set(false);
         const url = `${this.configBaseUrl()}/${encodeURIComponent(id)}`;
         this.http.get<DataGridConfig>(url).pipe(
             catchError((err: unknown) => {
                 if (isElevationRefusal(err)) {
                     this.elevationRequired.set(true);
+                } else if (isForbidden(err)) {
+                    this.accessDenied.set(true);
                 } else {
                     this.error.set(`The list could not be loaded: ${this.errors.humanize(err)}`);
                 }
@@ -1224,6 +1238,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
             catchError((err: unknown) => {
                 if (isElevationRefusal(err)) {
                     this.elevationRequired.set(true);
+                } else if (isForbidden(err)) {
+                    this.accessDenied.set(true);
                 } else {
                     this.error.set(`The list could not be loaded: ${this.errors.humanize(err)}`);
                 }
@@ -1235,6 +1251,7 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
                 this.data.set(d);
                 this.error.set(null);
                 this.elevationRequired.set(false);
+                this.accessDenied.set(false);
             }
             this.loading.set(false);
         });
