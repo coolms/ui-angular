@@ -9,9 +9,38 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## Unreleased
+## 2.0.0-alpha.4 - 2026-10-14
+
+Measured on the bundles: 107 runtime exports in alpha.3, 120 in alpha.4, none
+removed. The 13 added: `KeyboardScopeService`, `bindKeys`, `controlOwnsKey`,
+`ElevationRequiredComponent`, `DeclaredRowsNoticeComponent`,
+`capabilityContext`, `capabilityRefusals`, `capabilityStateOf`,
+`leastCapabilities`, `refusalPhraseOf`, `declaredRowsSource`,
+`CAPABILITIES_CONTEXT_KEY` and `CAPABILITY_REFUSALS_CONTEXT_KEY`.
 
 ### Added
+
+- The topmost overlay owns the keyboard. `KeyboardScopeService` keeps one stack
+  of layers -- the page, every open CDK dialog in the order it opened, and any
+  surface pushed with `pushLayer()` -- and one document listener: a key reaches
+  only the bindings whose host lies in the topmost layer, last bound first, so
+  no shortcut of a view fires while a dialog, an editor or a menu is open over
+  it. `bindKeys(handler, options)` binds a component's shortcuts to its own
+  layer and unbinds them on destroy. A key from an overlay that is no layer (a
+  menu, an autocomplete), or under a modal opened without the Dialog service,
+  reaches no page binding. The ESC coordinator and the data grid go through it;
+  the context menu is a layer while it is open.
+- A focused control keeps the keys that work it: `controlOwnsKey(el, event)`.
+  A form field of any kind (text, select, contenteditable, checkbox, radio,
+  range) takes every key, and a button, a link or a control role takes Space
+  and Enter, which press it. A binding takes them anyway only with
+  `inControls: true`.
+- `ElevationRequiredComponent` (`cms-elevation-required`): what a page or
+  section shows in place of its content after a read refused for want of
+  elevation -- "This section needs an elevated session", and an Elevate button,
+  the only thing there that opens the prompt. It emits `elevated` once the
+  session is elevated, and the host loads again. A toast can carry one action
+  button (`ToastAction`), e.g. "Elevate".
 
 - A disabled action says how many of the selection refuse it.
   `capabilityRefusals()` counts, per action, the selected subjects that answer
@@ -51,6 +80,30 @@ predate this file would be a worse record than not having them.
 - `VfsNodeDto.capabilities`: what each declared node action comes to for the
   caller on that node, as the server sends it.
 
+### Changed
+
+- A confirmation of what cannot be undone opens with Cancel focused
+  (`cdkFocusInitial`): the delete dialog, and the shared confirm when it is
+  `danger`. Enter or Space then presses Cancel.
+- Every focus indicator is a 2px ring in `--cms-focus-ring`, 3:1 against what
+  surrounds it (the fallback is the admin theme's light value, `#7c4d00`):
+  fields draw their edge plus a 1px ring, toggles a 2px gap and then a 2px ring.
+  The edges of the field controls the kit draws itself -- the tag input, the
+  multi-option and lazy selects' triggers and searches, the cron form's inputs,
+  the colour field's swatch and the range pickers' trigger -- take
+  `--cms-border-control` (3:1 or better on every surface in both schemes);
+  buttons keep `--cms-btn-border`. The page toolbar's danger button takes the
+  danger red for its edge and the danger text colour for its label, and the
+  active button's edge the selection's text colour. The literal text fallbacks
+  follow the theme's muted (`#69707c`) and secondary (`#525a66`) values.
+- `FormRenderService.preview()`, a read sent by POST as a builder's draft
+  changes, carries `BACKGROUND_REQUEST`, so a refusal never raises an elevation
+  notice at every debounce tick. On an installation that cannot elevate,
+  Elevate says "Elevation isn't available here. Ask an administrator." instead
+  of doing nothing visible.
+- Requires `@coolms/core-angular` `^2.0.0-alpha.5` (`BACKGROUND_REQUEST`,
+  `isElevationRefusal`).
+
 ### Fixed
 
 - A grid whose definition is refused with a plain 403 -- one the elevation
@@ -60,6 +113,21 @@ predate this file would be a worse record than not having them.
   only be refused again. The same holds for the grid's own rows request, and
   nothing of the list shows beside it (no table, no "Loading more"). A 403 stamped as needing elevation still offers
   elevation, and any other failure still shows the error.
+- A section refused for want of elevation drew nothing: the explorer layout
+  rendered only from a layout that loaded, and its read had no error branch.
+  It now tracks the read (loading, ready, elevation, error): the elevation
+  notice for a stamped refusal, the readable reason with a Retry for any other
+  failure, and the footer only with the content it counts. The data grid shows
+  the same notice when its definition or its rows are refused for want of
+  elevation; its error texts are readable sentences, and Retry reads the
+  definition again when that is what failed.
+- An icon-only locked button had the hidden phrase as its whole accessible
+  name -- "(needs an elevated session)", without the action. Where no label is
+  drawn the phrase now carries the action's name ("Permissions (needs an
+  elevated session)"), and after a drawn label the reason alone.
+  `ToolbarAction.title` is the action's own title again; the tooltip adds
+  " -- needs an elevated session" for a locked action.
+- The README counted 104 of 147 modules as exported; it is 109 of 152.
 
 ## 2.0.0-alpha.3 - 2026-09-27
 
