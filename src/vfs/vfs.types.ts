@@ -27,6 +27,11 @@ export interface VfsNodeDto {
     /** True when the node can contain children (Directory, Package, or Resource). */
     readonly isContainer:    boolean;
     /**
+     * A file's version: the hash of its content when this answer was made. An editor sends it back as If-Match when it
+     * saves, so a file saved meanwhile answers 412 and one deleted 404 (2026-10-14). Absent from older servers.
+     */
+    readonly contentHash?:   string | null;
+    /**
      * Human-readable display label, resolved and persisted server-side.
      *
      * This is the DISPLAY name; `name` remains the identity used for paths,

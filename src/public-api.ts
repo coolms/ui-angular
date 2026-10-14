@@ -148,6 +148,7 @@ export * from './navi-graph/navi-graph-tree-source';
 
 // -- VFS wire types ------------------------------------------------------------
 export * from './vfs/vfs.types';
+export * from './vfs/vfs-node-watch';
 // The editor-side half of elevation as session state: a node's write flag, re-asked of the
 // server on every change of elevation state so an editor and the listing
 // behind it cannot disagree.

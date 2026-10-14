@@ -9,6 +9,23 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Added
+
+- A save names the version it opened. `VfsNodeDto.contentHash` carries a file's
+  version to a reader who may read it; the code editor keeps the version the
+  file was read at and sends it with its save (`If-Match`). When the server
+  answers that the file changed meanwhile (412), the editor says so and offers
+  to save the edits as a copy, written with overwrite off -- never over the
+  file; when the file was deleted (404), it says so and offers the same copy,
+  and the file is not made again. Once the file moved on, Save never goes to it
+  again. A file that could not be read is not opened empty, and Save never
+  writes it.
+- `VFS_NODE_WATCH` and `VfsNodeChange`: what a host hands an editor so it hears
+  at once that its file changed or went; the editor's own save, told apart by
+  its version, is not reported back to it.
+
 ## 2.0.0-alpha.4 - 2026-10-14
 
 Measured on the bundles: 107 runtime exports in alpha.3, 120 in alpha.4, none
