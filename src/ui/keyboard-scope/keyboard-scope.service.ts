@@ -10,11 +10,12 @@ export type KeyHandler = (event: KeyboardEvent) => boolean;
 
 export interface KeyBindingOptions {
     /**
-     * Fire while focus is in a text field (input, textarea, select) or a
-     * contenteditable. Default `false`: a shortcut never takes a key the
-     * person is typing.
+     * Fire while the focused control takes the key itself (see
+     * {@link controlOwnsKey}): a form field, or Space and Enter on a button.
+     * Default `false`: a shortcut never takes a key the person is typing, or
+     * the key that presses the control they are on.
      */
-    readonly inTextFields?: boolean;
+    readonly inControls?: boolean;
 }
 
 interface Layer {
@@ -25,7 +26,7 @@ interface Binding {
     /** The element whose layer the binding belongs to; `null` = any layer (the Esc coordinator's handlers). */
     readonly host: Element | null;
     readonly handler: KeyHandler;
-    readonly inTextFields: boolean;
+    readonly inControls: boolean;
 }
 
 /**
@@ -88,12 +89,12 @@ export class KeyboardScopeService {
      * twice is a no-op.
      */
     bind(host: Element, handler: KeyHandler, options: KeyBindingOptions = {}): () => void {
-        return this.add({ host, handler, inTextFields: options.inTextFields ?? false });
+        return this.add({ host, handler, inControls: options.inControls ?? false });
     }
 
-    /** The Esc coordinator's binding: any layer, last bound first, in text fields too. */
+    /** The Esc coordinator's binding: any layer, last bound first, in controls too. */
     bindAnyLayer(handler: KeyHandler): () => void {
-        return this.add({ host: null, handler, inTextFields: true });
+        return this.add({ host: null, handler, inControls: true });
     }
 
     private add(binding: Binding): () => void {
@@ -128,7 +129,7 @@ export class KeyboardScopeService {
     private dispatch(event: KeyboardEvent): void {
         const target = event.target instanceof Element ? event.target : null;
         const top = this.layers.length - 1;
-        const typing = target !== null && isTextField(target);
+        const owned = target !== null && controlOwnsKey(target, event);
         // A key from inside the overlay container but in no layer -- a menu, an
         // autocomplete -- belongs to that surface, not to the page under it.
         const inUntrackedOverlay = target !== null && this.layerIndexOf(target) < 0
@@ -139,7 +140,7 @@ export class KeyboardScopeService {
 
         for (let i = this.bindings.length - 1; i >= 0; i -= 1) {
             const b = this.bindings[i];
-            if (typing && !b.inTextFields) continue;
+            if (owned && !b.inControls) continue;
             if (b.host !== null) {
                 if (inUntrackedOverlay || untrackedModal) continue;
                 if (this.layerIndexOf(b.host) !== top) continue;
@@ -153,15 +154,20 @@ export class KeyboardScopeService {
     }
 }
 
-/** Focus is where the person types: a text field or a contenteditable. */
-export function isTextField(el: Element): boolean {
+/** The controls that press on Space and Enter. */
+const PRESSABLE = 'button, a[href], summary, [role="button"], [role="link"], [role="checkbox"], [role="radio"], '
+    + '[role="switch"], [role="tab"], [role="menuitem"], [role="option"]';
+
+/**
+ * The focused control takes the key itself: a form field takes every key (typing, the arrows of a range or a radio
+ * group, Space on a checkbox), and a button, a link or a control role takes Space and Enter, which press it.
+ */
+export function controlOwnsKey(el: Element, event: KeyboardEvent): boolean {
     const tag = el.tagName;
-    if (tag === 'TEXTAREA' || tag === 'SELECT') return true;
-    if (tag === 'INPUT') {
-        const type = (el.getAttribute('type') ?? 'text').toLowerCase();
-        return !['button', 'checkbox', 'radio', 'range', 'color', 'file', 'submit', 'reset', 'image'].includes(type);
-    }
-    return el instanceof HTMLElement && el.isContentEditable;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    if (el instanceof HTMLElement && el.isContentEditable) return true;
+    const presses = event.key === ' ' || event.key === 'Enter';
+    return presses && el.matches(PRESSABLE);
 }
 
 /**

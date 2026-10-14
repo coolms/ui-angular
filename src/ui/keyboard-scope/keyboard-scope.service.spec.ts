@@ -100,30 +100,58 @@ describe('KeyboardScopeService', () => {
         expect(handler).withContext('its dialog is topmost again').toHaveBeenCalledTimes(2);
     });
 
-    it('a shortcut does not take a key typed in a field; one bound for text fields does', () => {
+    it('a shortcut does not take a key typed in a field; one bound for controls does', () => {
         const field = document.createElement('input');
         page.appendChild(field);
         const shortcut = jasmine.createSpy('shortcut').and.returnValue(false);
         const typed = jasmine.createSpy('typed').and.returnValue(false);
         scope.bind(page, shortcut);
-        scope.bind(page, typed, { inTextFields: true });
+        scope.bind(page, typed, { inControls: true });
         press(field, 'Delete');
         expect(shortcut).not.toHaveBeenCalled();
         expect(typed).toHaveBeenCalledTimes(1);
     });
 
-    it('a contenteditable is a text field; a checkbox is not', () => {
+    it('a form field of any kind takes every key: a contenteditable, a checkbox, a radio, a range, a select', () => {
         const editable = document.createElement('div');
         editable.contentEditable = 'true';
-        const box = document.createElement('input');
-        box.type = 'checkbox';
-        page.append(editable, box);
-        const shortcut = jasmine.createSpy('shortcut').and.returnValue(false);
-        scope.bind(page, shortcut);
-        press(editable, 'Delete');
-        expect(shortcut).not.toHaveBeenCalled();
-        press(box, 'Delete');
-        expect(shortcut).toHaveBeenCalledTimes(1);
+        const fields: Element[] = [editable, document.createElement('select'), document.createElement('textarea')];
+        for (const type of ['checkbox', 'radio', 'range', 'color', 'file', 'button']) {
+            const input = document.createElement('input');
+            input.type = type;
+            fields.push(input);
+        }
+        page.append(...fields);
+        const reached: string[] = [];
+        scope.bind(page, e => {
+            reached.push(`${(e.target as Element).tagName}/${(e.target as HTMLInputElement).type ?? ''}:${e.key}`);
+            return false;
+        });
+        for (const field of fields) {
+            for (const key of [' ', 'Enter', 'Delete', 'ArrowDown', 'a']) press(field, key);
+        }
+        expect(reached).withContext('keys that reached the shortcut from a field').toEqual([]);
+    });
+
+    it('a button, a link or a control role takes Space and Enter, which press it; other keys reach the shortcut', () => {
+        const button = document.createElement('button');
+        const link = document.createElement('a');
+        link.href = '#here';
+        const role = document.createElement('div');
+        role.setAttribute('role', 'checkbox');
+        role.tabIndex = 0;
+        const row = hostIn(page);
+        page.append(button, link, role);
+        const names = new Map<EventTarget, string>([[button, 'button'], [link, 'link'], [role, 'role'], [row, 'row']]);
+        const reached: string[] = [];
+        scope.bind(page, e => {
+            reached.push(`${names.get(e.target!)}:${e.key === ' ' ? 'Space' : e.key}`);
+            return false;
+        });
+        for (const el of [button, link, role, row]) {
+            for (const key of [' ', 'Enter', 'Delete']) press(el, key);
+        }
+        expect(reached).toEqual(['button:Delete', 'link:Delete', 'role:Delete', 'row:Space', 'row:Enter', 'row:Delete']);
     });
 
     it('a key from an overlay that is no layer (a menu) reaches no page binding', () => {
