@@ -361,6 +361,20 @@ describe('PageToolbarComponent capability state', () => {
         expect(button.title).toBe('Title for /chmod -- needs an elevated session');
     });
 
+    it('says on a denied action how many of the selection refuse it: in its title, and to a screen reader', () => {
+        const { action, host } = rendered({
+            _capabilities:       { 'vfs.node.chmod': 'denied' },
+            _capabilityRefusals: { 'vfs.node.chmod': { refused: 2, of: 3 } },
+        });
+        const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
+
+        expect(action.refusal).toBe('not allowed for 2 of 3 selected items');
+        expect(button.disabled).toBe(true);
+        expect(button.title).toBe('Title for /chmod -- not allowed for 2 of 3 selected items');
+        expect(button.querySelector('.toolbar-btn__lock')).toBeNull();
+        expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Permissions (not allowed for 2 of 3 selected items)');
+    });
+
     it('reads an action the published answer lacks as denied', () => {
         expect(rendered({ _capabilities: { 'vfs.node.delete': 'allowed' } }).action.disabled).toBe(true);
     });

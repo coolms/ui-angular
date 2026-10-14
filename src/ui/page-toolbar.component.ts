@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
 import { AppConfigState, NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
-import { capabilityStateOf } from './capability-state';
+import { capabilityStateOf, refusalPhraseOf } from './capability-state';
 export interface ToolbarAction {
     id:       string;
     icon:     string;      // Bootstrap Icons name WITHOUT 'bi-': 'upload', 'trash'
@@ -32,6 +32,11 @@ export interface ToolbarAction {
      * is the page's.
      */
     locked?:  boolean;
+    /**
+     * Why a denied action is disabled, in words -- "not allowed for 2 of 5 selected items" -- shown in its
+     * tooltip and said to a screen reader after the label, as a lock's reason is.
+     */
+    refusal?: string;
 }
 
 @Component({
@@ -66,8 +71,8 @@ export interface ToolbarAction {
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
                                 }
-                                @if (action.locked) {
-                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
+                                @if (action.locked || action.refusal) {
+                                    <span class="toolbar-btn__sr"> {{ reasonPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -112,8 +117,8 @@ export interface ToolbarAction {
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
                                 }
-                                @if (action.locked) {
-                                    <span class="toolbar-btn__sr"> {{ lockedPhrase(action) }}</span>
+                                @if (action.locked || action.refusal) {
+                                    <span class="toolbar-btn__sr"> {{ reasonPhrase(action) }}</span>
                                 }
                             </button>
                         }
@@ -456,20 +461,23 @@ export class PageToolbarComponent {
         this.rightActions().length > 0,
     );
 
-    /** The button's tooltip: its title, and for a locked action why it is locked. */
+    /** The button's tooltip: its title, and for a locked or refused action why it is so. */
     protected tooltip(action: ToolbarAction): string {
         const name = action.title ?? action.label ?? '';
+        if (true === action.locked) {
+            return name + ' -- needs an elevated session';
+        }
 
-        return true === action.locked ? name + ' -- needs an elevated session' : name;
+        return undefined !== action.refusal ? name + ' -- ' + action.refusal : name;
     }
 
     /**
-     * What a screen reader hears for a locked action besides what is drawn. After a drawn label, the
-     * reason alone; with no label drawn -- an icon-only bar, a node with no label -- this phrase is the
+     * What a screen reader hears for a locked or refused action besides what is drawn. After a drawn label,
+     * the reason alone; with no label drawn -- an icon-only bar, a node with no label -- this phrase is the
      * button's only text and so its NAME, so it carries the action's name as well as the reason.
      */
-    protected lockedPhrase(action: ToolbarAction): string {
-        const reason = '(needs an elevated session)';
+    protected reasonPhrase(action: ToolbarAction): string {
+        const reason = true === action.locked ? '(needs an elevated session)' : '(' + (action.refusal ?? '') + ')';
         if (undefined !== action.label && '' !== action.label && !this.iconsOnly()) {
             return reason;
         }
@@ -512,6 +520,7 @@ export class PageToolbarComponent {
             active,
             disabled,
             ...(locked ? { locked: true } : {}),
+            ...(denied ? { refusal: refusalPhraseOf(meta, ctx) } : {}),
         };
     }
 

@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
-import { capabilityStateOf } from '../ui/capability-state';
+import { capabilityStateOf, refusalPhraseOf } from '../ui/capability-state';
 export interface ContextMenuItem {
     id:        string;
     label?:    string;
@@ -10,6 +10,8 @@ export interface ContextMenuItem {
     divider?:  boolean;
     /** Allowed once the session is elevated: drawn with a lock; what choosing it does is the caller's. */
     locked?:   boolean;
+    /** Why a denied item is disabled, in words ("not allowed for 2 of 5 selected items"): its title, and said. */
+    refusal?:  string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -119,6 +121,7 @@ export class ContextMenuService {
                 danger:   Boolean(n.meta['danger']),
                 disabled: Boolean(n.meta['disabled']) || 'denied' === capability,
                 ...('elevate' === capability ? { locked: true } : {}),
+                ...('denied' === capability ? { refusal: refusalPhraseOf(n.meta, record) } : {}),
             });
         }
         return result;
