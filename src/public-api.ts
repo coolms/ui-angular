@@ -33,6 +33,7 @@ export * from './ui/dropzone/cms-dropzone.directive';
 export * from './ui/dtmpl-token-input/cms-dtmpl-token-input.component';
 export * from './ui/entity-picker/cms-entity-picker.component';
 export * from './ui/esc-coordinator/esc-coordinator.service';
+export * from './ui/keyboard-scope/keyboard-scope.service';
 export * from './ui/explorer-accordion/explorer-accordion.component';
 export * from './ui/explorer-accordion/space-dto';
 export * from './ui/explorer-accordion/space-selection.store';
