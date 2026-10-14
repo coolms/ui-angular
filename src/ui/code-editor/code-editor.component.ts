@@ -45,6 +45,9 @@ import { ToastService } from '../toast.service';
 import { ConfirmDialogService } from '../confirm-dialog.service';
 import { UnsavedChangesService } from '../unsaved-changes.service';
 import { VfsNodeDto } from '../../vfs/vfs.types';
+import { VFS_NODE_WATCH } from '../../vfs/vfs-node-watch';
+import { NativeDialogService } from '../dialog/native-dialog.service';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
 /** Everything the editor needs from CodeMirror, fetched in one go. */
 interface CodeMirrorBundle {
@@ -138,7 +141,7 @@ function themeExtension(cm: CodeMirrorBundle, theme: ResolvedTheme): CmState.Ext
             <div class="code-editor-dialog__header">
                 <span class="code-editor-dialog__title">
                     <i class="bi bi-file-earmark-code"></i>
-                    {{ node.path }}
+                    {{ target().path }}
                 </span>
                 <div class="code-editor-dialog__actions">
                     @if (dirty()) {
@@ -150,6 +153,17 @@ function themeExtension(cm: CodeMirrorBundle, theme: ResolvedTheme): CmState.Ext
                 </div>
             </div>
 
+            @if (notice(); as n) {
+                <div class="code-editor-dialog__notice" role="status">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    @switch (n) {
+                        @case ('changed') { This file was saved by someone else since you opened it. Your edits are kept here; saving them goes to a copy. }
+                        @case ('deleted') { This file was deleted since you opened it. Your edits are kept here; saving them goes to a copy. }
+                        @case ('unreadable') { This file could not be read, so it cannot be edited here. }
+                    }
+                </div>
+            }
+
             <div class="code-editor-dialog__body" #editorHost></div>
 
             <div class="code-editor-dialog__footer">
@@ -157,7 +171,7 @@ function themeExtension(cm: CodeMirrorBundle, theme: ResolvedTheme): CmState.Ext
                 <div class="d-flex gap-2">
                     <button class="cms-btn cms-btn-sm" (click)="close()">Cancel</button>
                     <button class="cms-btn cms-btn-primary cms-btn-sm"
-                            [disabled]="saving() || !dirty()"
+                            [disabled]="saving() || !dirty() || notice() === 'unreadable'"
                             (click)="save()">
                         {{ saving() ? 'Saving…' : 'Save' }}
                     </button>
@@ -199,6 +213,12 @@ function themeExtension(cm: CodeMirrorBundle, theme: ResolvedTheme): CmState.Ext
             font-size: .8125rem;
         }
         .code-editor-dialog__dirty { color: var(--cms-warning-text); font-size: .75rem; }
+        .code-editor-dialog__notice {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 16px; flex-shrink: 0; font-size: .8125rem;
+            background: var(--cms-warning-light); color: var(--cms-warning-text);
+            border-bottom: 1px solid var(--cms-border);
+        }
         .code-editor-dialog__status { color: var(--cms-text-muted); }
 
         /* CodeMirror builds .cm-editor imperatively inside #editorHost, so it
@@ -223,8 +243,18 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     private readonly theme      = inject(ThemeService);
     private readonly confirm    = inject(ConfirmDialogService);
     private readonly unsaved    = inject(UnsavedChangesService);
+    private readonly dialogs    = inject(NativeDialogService);
 
     readonly node = this.data.node;
+
+    /**
+     * Where a save goes and the version it was based on (Dmitry, 2026-10-14: "Save sends the version it opened
+     * (If-Match); on 404 or 412 it offers to save as a copy"). The opened file until a copy is saved; then the copy.
+     */
+    readonly target = signal<{ path: string; version: string | null }>({ path: this.data.node.path, version: null });
+
+    /** Said above the editor: the file changed or went elsewhere, or could not be read at all. */
+    readonly notice = signal<'changed' | 'deleted' | 'unreadable' | null>(null);
 
     readonly dirty      = signal(false);
     readonly saving     = signal(false);
@@ -253,6 +283,17 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         // cannot see a tab close or a reload. Disposed with the component, so
         // a closed editor stops voting.
         this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.dirty()));
+        // A change made elsewhere is said when it happens, from the host's file watch; the editor's own saves are told
+        // apart by the version each one answered.
+        const watch = inject(VFS_NODE_WATCH, { optional: true });
+        watch?.(this.data.node).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(change => {
+            if (this.target().path !== this.data.node.path) return; // already saving to a copy
+            if (change.kind === 'deleted') {
+                this.notice.set('deleted');
+            } else if (change.version == null || change.version !== this.target().version) {
+                this.notice.set('changed');
+            }
+        });
         // The admin theme can flip while this dialog is open, so the editor
         // reconfigures instead of staying on whatever it was built with. The
         // effect also runs before ngAfterViewInit, when there is no view yet --
@@ -283,16 +324,18 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
             return;
         }
 
-        this.http.get<{ content: string }>(url).pipe(
+        this.http.get<{ content: string; contentHash?: string | null }>(url).pipe(
             takeUntilDestroyed(this.destroyRef),
         ).subscribe({
-            next: ({ content }) => {
+            next: ({ content, contentHash }) => {
                 this.loading.set(false);
+                this.target.update(t => ({ ...t, version: contentHash ?? null }));
                 this.initEditor(content);
             },
             error: () => {
+                // Never an empty, editable file: a Save would have overwritten the real one with nothing.
                 this.loading.set(false);
-                this.initEditor('');
+                this.notice.set('unreadable');
             },
         });
     }
@@ -337,24 +380,85 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         this.saving.set(true);
 
         const content  = this.editorView.state.doc.toString();
+        // The file changed or went since it was opened: the edits go to a copy, never over it.
+        if (this.notice() === 'changed' || this.notice() === 'deleted') {
+            this.saving.set(false);
+            void this.offerCopy(content);
+            return;
+        }
         const manifest = this.store.selectSnapshot(AppConfigState.manifest);
-        const url = manifest?.vfs?.fileContentUrl?.replace('{path}', encodeURIComponent(this.node.path));
+        const { path, version } = this.target();
+        const url = manifest?.vfs?.fileContentUrl?.replace('{path}', encodeURIComponent(path));
         if (!url) {
             this.saving.set(false);
             return;
         }
+        // The version this text was based on: a file saved meanwhile answers 412, one deleted 404 -- and neither is
+        // overwritten or made again.
+        const headers = version === null ? undefined : new HttpHeaders({ 'If-Match': `"${version}"` });
 
-        this.http.put<{ contentHash: string }>(url, { content }).pipe(
+        this.http.put<{ contentHash: string }>(url, { content }, { headers }).pipe(
             takeUntilDestroyed(this.destroyRef),
         ).subscribe({
-            next: () => {
+            next: res => {
+                this.target.update(t => ({ ...t, version: res?.contentHash ?? null }));
                 this.dirty.set(false);
                 this.saving.set(false);
-                this.toast.success('Saved', this.node.name);
+                this.toast.success('Saved', this.target().path.split('/').pop() ?? this.node.name);
             },
-            error: () => {
+            error: (err: unknown) => {
                 this.saving.set(false);
+                const status = err instanceof HttpErrorResponse ? err.status : 0;
+                if (status === 412 || status === 404) {
+                    this.notice.set(status === 412 ? 'changed' : 'deleted');
+                    void this.offerCopy(content);
+                    return;
+                }
                 this.toast.error('Save failed');
+            },
+        });
+    }
+
+    /**
+     * The file moved on since it was opened (saved elsewhere, or deleted): offer the edits a copy next to it. The copy
+     * is written by the binary write with overwrite off, so it never replaces a file of that name (409). Declined, the
+     * edits stay in the editor.
+     */
+    private async offerCopy(content: string): Promise<void> {
+        const original = this.target().path;
+        const dir = original.slice(0, original.lastIndexOf('/')) || '';
+        const name = original.slice(original.lastIndexOf('/') + 1);
+        const dot = name.lastIndexOf('.');
+        const suggested = dot > 0 ? `${name.slice(0, dot)} (copy)${name.slice(dot)}` : `${name} (copy)`;
+        const chosen = await this.dialogs.input({
+            title:        this.notice() === 'deleted' ? 'The file was deleted' : 'The file was changed',
+            label:        'Save your edits as a copy named',
+            initialValue: suggested,
+            confirmLabel: 'Save as a copy',
+            cancelLabel:  'Keep editing',
+            required:     true,
+            validator:    v => (v.includes('/') ? 'A name, without a folder' : null),
+        });
+        if (chosen === null) return;
+        const binaryUrl = this.store.selectSnapshot(AppConfigState.manifest)?.vfs?.binaryWriteUrl;
+        if (!binaryUrl) return;
+        const copyPath = `${dir}/${chosen.trim()}`;
+        const form = new FormData();
+        form.append('path', copyPath);
+        form.append('overwrite', '0');
+        form.append('file', new Blob([content], { type: this.node.mimeType ?? 'text/plain' }), chosen.trim());
+        this.http.post<{ contentHash?: string | null }>(binaryUrl, form).pipe(
+            takeUntilDestroyed(this.destroyRef),
+        ).subscribe({
+            next: res => {
+                this.target.set({ path: copyPath, version: res?.contentHash ?? null });
+                this.notice.set(null);
+                this.dirty.set(false);
+                this.toast.success('Saved as a copy', chosen.trim());
+            },
+            error: (err: unknown) => {
+                const status = err instanceof HttpErrorResponse ? err.status : 0;
+                this.toast.error(status === 409 ? 'A file with that name exists' : 'The copy could not be saved', chosen.trim());
             },
         });
     }
