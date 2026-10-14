@@ -55,6 +55,18 @@ describe('ContextMenuService capability state', () => {
         expect(chmod.id).toBe('VfsChmod');
         expect(chmod.disabled).toBe(true);
         expect(chmod.locked).toBeUndefined();
+        expect(chmod.refusal).toBe('not allowed');
+    });
+
+    it('says on a denied item how many of the selection refuse it', () => {
+        const [chmod, open] = itemsFor({
+            _capabilities:       { 'vfs.node.chmod': 'denied' },
+            _capabilityRefusals: { 'vfs.node.chmod': { refused: 3, of: 4 } },
+        });
+
+        expect(chmod.disabled).toBe(true);
+        expect(chmod.refusal).toBe('not allowed for 3 of 4 selected items');
+        expect(open.refusal).toBeUndefined();
     });
 
     it('locks an item allowed once elevated, and leaves it enabled', () => {
@@ -62,6 +74,7 @@ describe('ContextMenuService capability state', () => {
 
         expect(chmod.disabled).toBe(false);
         expect(chmod.locked).toBe(true);
+        expect(chmod.refusal).toBeUndefined();
     });
 
     it('leaves an allowed item, and every item naming no capability, as they were', () => {

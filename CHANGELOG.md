@@ -13,6 +13,13 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- A disabled action says how many of the selection refuse it.
+  `capabilityRefusals()` counts, per action, the selected subjects that answer
+  `denied`, out of every one selected; `capabilityContext()` publishes it beside
+  the least state, under `_capabilityRefusals`. The page toolbar and the context
+  menu put it in a denied action's title and screen-reader text: "not allowed
+  for 2 of 5 selected items", or "not allowed for the selected item".
+
 - A grid's rows can come from where its definition declares they do.
   `DataGridConfig.rows` carries the declared list action, its operation, what
   it comes to for the caller (`allowed` / `elevate` / `denied`) and its query

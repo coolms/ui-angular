@@ -42,7 +42,8 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
                                 [class.ctx-item--danger]="item.danger"
                                 [class.ctx-item--locked]="item.locked"
                                 [disabled]="item.disabled ?? false"
-                                [attr.title]="item.locked ? item.label + ' -- needs an elevated session' : null"
+                                [attr.title]="item.locked ? item.label + ' -- needs an elevated session'
+                                    : (item.refusal ? item.label + ' -- ' + item.refusal : null)"
                                 (click)="ctx.onAction(item.id); svc.close()">
                             @if (item.icon) {
                                 <i class="bi ctx-icon" [class]="'bi-' + item.icon"></i>
@@ -51,6 +52,8 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
                             @if (item.locked) {
                                 <i class="bi bi-lock-fill ctx-lock" aria-hidden="true"></i>
                                 <span class="ctx-sr"> (needs an elevated session)</span>
+                            } @else if (item.refusal) {
+                                <span class="ctx-sr"> ({{ item.refusal }})</span>
                             }
                         </button>
                     }

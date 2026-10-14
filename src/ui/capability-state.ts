@@ -76,6 +76,90 @@ export function leastCapabilities(
 }
 
 /**
+ * How many subjects of a selection refuse one action (`denied`), out of how many are selected -- the words
+ * a disabled action shows, so the person knows it is the selection, not the action, that says no.
+ */
+export interface CapabilityRefusal {
+    readonly refused: number;
+    readonly of: number;
+}
+
+/**
+ * The page-context key a page publishes its selection's refusals under -- the result of
+ * {@link capabilityRefusals} -- beside {@link CAPABILITIES_CONTEXT_KEY}.
+ */
+export const CAPABILITY_REFUSALS_CONTEXT_KEY = '_capabilityRefusals';
+
+/**
+ * Per action, how many of the subjects answer `denied`, out of every subject selected; only the actions
+ * at least one refuses. Undefined when none of them carries an answer. A subject without an answer is
+ * counted in `of` but never in `refused`: it does not vote.
+ */
+export function capabilityRefusals(
+    subjects: ReadonlyArray<{ readonly capabilities?: unknown }>,
+): Record<string, CapabilityRefusal> | undefined {
+    const answers = subjects.map(answerOf).filter((a): a is Record<string, unknown> => null !== a);
+    if (0 === answers.length) {
+        return undefined;
+    }
+
+    const actions = new Set<string>();
+    for (const answer of answers) {
+        Object.keys(answer).forEach(action => actions.add(action));
+    }
+
+    const refusals: Record<string, CapabilityRefusal> = {};
+    for (const action of actions) {
+        const refused = answers.filter(answer => 'denied' === stateIn(answer, action)).length;
+        if (refused > 0) {
+            refusals[action] = { refused, of: subjects.length };
+        }
+    }
+
+    return refusals;
+}
+
+/**
+ * The two context entries a page publishes for its selection, to spread into the context: the least state
+ * of each action ({@link leastCapabilities}) and how many subjects refuse it ({@link capabilityRefusals}).
+ */
+export function capabilityContext(
+    subjects: ReadonlyArray<{ readonly capabilities?: unknown }>,
+): Record<string, unknown> {
+    return {
+        [CAPABILITIES_CONTEXT_KEY]:        leastCapabilities(subjects),
+        [CAPABILITY_REFUSALS_CONTEXT_KEY]: capabilityRefusals(subjects),
+    };
+}
+
+/**
+ * Why a node naming a `capability` is disabled, in words: how many of the selection refuse it. A context
+ * without the count (a page that publishes only the states) still answers "not allowed".
+ */
+export function refusalPhraseOf(
+    meta: Readonly<Record<string, unknown>>,
+    context: Readonly<Record<string, unknown>>,
+): string {
+    const action = meta['capability'];
+    const refusals = context[CAPABILITY_REFUSALS_CONTEXT_KEY];
+    const refusal = typeof action === 'string' && isPlainMap(refusals)
+        && Object.prototype.hasOwnProperty.call(refusals, action)
+        ? refusals[action] as Partial<CapabilityRefusal>
+        : undefined;
+    const refused = typeof refusal?.refused === 'number' ? refusal.refused : 0;
+    const of = typeof refusal?.of === 'number' ? refusal.of : 0;
+
+    if (refused <= 0 || of <= 0) {
+        return 'not allowed';
+    }
+    if (1 === of) {
+        return 'not allowed for the selected item';
+    }
+
+    return `not allowed for ${refused} of ${of} selected items`;
+}
+
+/**
  * The state of a node that names a `capability`, under the page's context; undefined when the node names
  * none or the context carries no answer -- the node then behaves as it did before capabilities existed.
  */
