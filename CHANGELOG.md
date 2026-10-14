@@ -9,7 +9,10 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## Unreleased
+## 2.0.0-alpha.5 - 2026-10-15
+
+Measured on the bundles: 120 runtime exports in alpha.4, 121 in alpha.5, none
+removed. The one added: `VFS_NODE_WATCH`.
 
 ### Added
 
