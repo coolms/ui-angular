@@ -4,11 +4,15 @@
 @if (elevationRequired()) {
   <cms-elevation-required data-test="datagrid-elevation-required" (elevated)="retry()" />
 }
+@if (accessDenied()) {
+  <app-empty-state data-test="datagrid-denied" role="status" icon="slash-circle" title="Not available to you"
+                   hint="Your account may not read this list." />
+}
 @if (error(); as err) {
   <app-error-banner [message]="err" [showRetry]="true" (retry)="retry()" />
 }
 
-@if (config(); as cfg) {
+@if (!accessDenied() && config(); as cfg) {
   <!-- Toolbar: shown when not embedded AND the grid has a label.
   List-layout pages omit cfg.label so this row stays hidden there;
   the page header already owns title + actions in that context. -->
