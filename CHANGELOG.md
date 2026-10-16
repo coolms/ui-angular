@@ -9,6 +9,16 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Fixed
+
+- The code editor never saves over a file whose read named no version.
+  Such a file is shown and editable, the notice says its version could not
+  be read, and Save offers the copy (written with overwrite off) instead of
+  writing over the file. Before, it saved such a read without `If-Match`,
+  so nothing could refuse a save over a newer version.
+
 ## 2.0.0-alpha.5 - 2026-10-15
 
 Measured on the bundles: 120 runtime exports in alpha.4, 121 in alpha.5, none

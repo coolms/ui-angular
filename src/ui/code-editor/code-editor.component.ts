@@ -159,6 +159,7 @@ function themeExtension(cm: CodeMirrorBundle, theme: ResolvedTheme): CmState.Ext
                     @switch (n) {
                         @case ('changed') { This file was saved by someone else since you opened it. Your edits are kept here; saving them goes to a copy. }
                         @case ('deleted') { This file was deleted since you opened it. Your edits are kept here; saving them goes to a copy. }
+                        @case ('unversioned') { The version of this file could not be read, so it is never saved over. Your edits are kept here; saving them goes to a copy. }
                         @case ('unreadable') { This file could not be read, so it cannot be edited here. }
                     }
                 </div>
@@ -248,13 +249,16 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
     readonly node = this.data.node;
 
     /**
-     * Where a save goes and the version it was based on (Dmitry, 2026-10-14: "Save sends the version it opened
-     * (If-Match); on 404 or 412 it offers to save as a copy"). The opened file until a copy is saved; then the copy.
+     * Where a save goes and the version it was based on: every save sends the version it opened (If-Match), and on
+     * 404 or 412 offers to save as a copy. The opened file until a copy is saved; then the copy.
      */
     readonly target = signal<{ path: string; version: string | null }>({ path: this.data.node.path, version: null });
 
-    /** Said above the editor: the file changed or went elsewhere, or could not be read at all. */
-    readonly notice = signal<'changed' | 'deleted' | 'unreadable' | null>(null);
+    /**
+     * Said above the editor: the file changed or went elsewhere, its read named no version (so it is never saved over;
+     * the edits go to a copy), or it could not be read at all.
+     */
+    readonly notice = signal<'changed' | 'deleted' | 'unversioned' | 'unreadable' | null>(null);
 
     readonly dirty      = signal(false);
     readonly saving     = signal(false);
@@ -330,6 +334,8 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
             next: ({ content, contentHash }) => {
                 this.loading.set(false);
                 this.target.update(t => ({ ...t, version: contentHash ?? null }));
+                // A read that names no version: shown and editable, never saved over -- there is nothing to name.
+                if (!contentHash) this.notice.set('unversioned');
                 this.initEditor(content);
             },
             error: () => {
@@ -380,14 +386,16 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         this.saving.set(true);
 
         const content  = this.editorView.state.doc.toString();
-        // The file changed or went since it was opened: the edits go to a copy, never over it.
-        if (this.notice() === 'changed' || this.notice() === 'deleted') {
+        // The file changed or went since it was opened, or its version was never read: the edits go to a copy, never
+        // over it.
+        const { path, version } = this.target();
+        if (this.notice() === 'changed' || this.notice() === 'deleted' || this.notice() === 'unversioned' || version === null) {
             this.saving.set(false);
+            if (this.notice() === null) this.notice.set('unversioned');
             void this.offerCopy(content);
             return;
         }
         const manifest = this.store.selectSnapshot(AppConfigState.manifest);
-        const { path, version } = this.target();
         const url = manifest?.vfs?.fileContentUrl?.replace('{path}', encodeURIComponent(path));
         if (!url) {
             this.saving.set(false);
@@ -395,7 +403,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         }
         // The version this text was based on: a file saved meanwhile answers 412, one deleted 404 -- and neither is
         // overwritten or made again.
-        const headers = version === null ? undefined : new HttpHeaders({ 'If-Match': `"${version}"` });
+        const headers = new HttpHeaders({ 'If-Match': `"${version}"` });
 
         this.http.put<{ contentHash: string }>(url, { content }, { headers }).pipe(
             takeUntilDestroyed(this.destroyRef),
@@ -431,7 +439,8 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
         const dot = name.lastIndexOf('.');
         const suggested = dot > 0 ? `${name.slice(0, dot)} (copy)${name.slice(dot)}` : `${name} (copy)`;
         const chosen = await this.dialogs.input({
-            title:        this.notice() === 'deleted' ? 'The file was deleted' : 'The file was changed',
+            title:        this.notice() === 'deleted' ? 'The file was deleted'
+                : this.notice() === 'unversioned' ? 'The version of the file could not be read' : 'The file was changed',
             label:        'Save your edits as a copy named',
             initialValue: suggested,
             confirmLabel: 'Save as a copy',
