@@ -13,9 +13,9 @@ import { VFS_NODE_WATCH, type VfsNodeChange } from '../../vfs/vfs-node-watch';
 import type { VfsNodeDto } from '../../vfs/vfs.types';
 
 /**
- * The code editor's save names the version it opened (Dmitry, 2026-10-14: "Save never silently recreates the file or
- * overwrites a newer version. Save sends the version it opened (If-Match); on 404 or 412 it offers to save as a copy").
- * Built directly over stubs; the CodeMirror view is a stand-in that holds the text, so nothing here loads CodeMirror.
+ * The code editor's save names the version it opened: Save never silently recreates the file or overwrites a newer
+ * version. It sends the version it opened (If-Match); on 404 or 412 it offers to save as a copy; and a read that named
+ * no version is never saved over at all. Built directly over stubs; the CodeMirror view is a stand-in that holds the text, so nothing here loads CodeMirror.
  */
 describe('CodeEditorComponent -- a save names the version it opened', () => {
     const CONTENT = '/api/v1/vfs/files/content?path=%2Fdocs%2Fa.txt';
@@ -122,6 +122,21 @@ describe('CodeEditorComponent -- a save names the version it opened', () => {
         expect(editor.notice()).withContext('its own save').toBeNull();
         changes.next({ kind: 'changed', version: 'h3' });
         expect(editor.notice()).toBe('changed');
+    });
+
+    it('a read that names no version is shown, never saved over: Save offers the copy', async () => {
+        opened(null);
+        expect(editor.notice()).toBe('unversioned');
+        editor.save();
+        http.expectNone({ method: 'PUT', url: CONTENT });
+        await Promise.resolve();
+        await Promise.resolve();
+        expect(input).toHaveBeenCalledTimes(1);
+        const post = http.expectOne({ method: 'POST', url: BINARY });
+        expect((post.request.body as FormData).get('overwrite')).toBe('0');
+        post.flush({ contentHash: 'c1' });
+        expect(editor.target()).toEqual({ path: '/docs/a (copy).txt', version: 'c1' });
+        expect(editor.notice()).toBeNull();
     });
 
     it('a file that could not be read is not opened empty, and Save never writes it', () => {
