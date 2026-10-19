@@ -81,6 +81,33 @@ describe('ToastService -- one stack for what was done and what arrived', () => {
         expect(messages()).toEqual([]);
     }));
 
+    it('a paused toast updated by its group gets its full time again, and still waits for resume', fakeAsync(() => {
+        const id = toasts.show({ type: 'info', kind: 'message', groupKey: 'chat:7', message: '1 new message' });
+        tick(3000);
+        toasts.pause(id);
+        toasts.show({ type: 'info', kind: 'message', groupKey: 'chat:7', message: '2 new messages' });
+        tick(60000);
+        expect(messages()).withContext('hovered while updated').toEqual(['2 new messages']);
+
+        toasts.resume(id);
+        tick(4999);
+        expect(messages()).toEqual(['2 new messages']);
+        tick(1);
+        expect(messages()).toEqual([]);
+    }));
+
+    it('with four persistent toasts shown, a new toast that is not persistent is dropped at once', fakeAsync(() => {
+        for (const n of [1, 2, 3, 4]) {
+            toasts.show({ type: 'info', kind: 'ring', groupKey: 'call:' + n, persistent: true, message: 'ring ' + n });
+        }
+        toasts.show({ type: 'success', message: 'Saved' });
+
+        expect(messages()).toEqual(['ring 1', 'ring 2', 'ring 3', 'ring 4']);
+        for (const n of [1, 2, 3, 4]) {
+            toasts.closeGroup('call:' + n);
+        }
+    }));
+
     it('the shorthands keep their meaning: an error stays longer than a success', fakeAsync(() => {
         toasts.success('ok');
         toasts.error('failed');

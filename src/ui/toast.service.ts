@@ -49,6 +49,8 @@ interface Clock {
     handle:    ReturnType<typeof setTimeout> | null;
     remaining: number;
     startedAt: number;
+    /** Hovered or focused: the clock does not run, even when the toast's group is updated. */
+    paused:    boolean;
 }
 
 /**
@@ -56,8 +58,10 @@ interface Clock {
  * a message, a visitor waiting, a task, mail, a notification) are drawn by the same component, in one stack.
  *
  * At most `MAX_VISIBLE` are shown. When one more arrives, the oldest that is not persistent goes; a persistent toast
- * (a ringing call) is never pushed out. Hovering a toast stops its clock; leaving starts it again with the time it
- * had left.
+ * (a ringing call) is never pushed out. With `MAX_VISIBLE` persistent toasts shown, a new toast that is not
+ * persistent is therefore dropped at once. Hovering or focusing a toast stops its clock (`pause`); leaving starts it
+ * again with the time it had left (`resume`). A paused toast whose group is updated gets its full time again, and
+ * its clock still waits for `resume`.
  */
 @Injectable({ providedIn: 'root' })
 export class ToastService {
@@ -121,10 +125,14 @@ export class ToastService {
         }
     }
 
-    /** Stops a toast's clock while it is hovered. */
+    /** Stops a toast's clock while it is hovered or focused. */
     pause(id: number): void {
         const clock = this.clocks.get(id);
-        if (clock === undefined || clock.handle === null) {
+        if (clock === undefined || clock.paused) {
+            return;
+        }
+        clock.paused = true;
+        if (clock.handle === null) {
             return;
         }
         this.stopClock(id);
@@ -134,10 +142,13 @@ export class ToastService {
     /** Starts a paused toast's clock again with the time it had left. */
     resume(id: number): void {
         const clock = this.clocks.get(id);
-        if (clock === undefined || clock.handle !== null || clock.remaining <= 0) {
+        if (clock === undefined || !clock.paused) {
             return;
         }
-        this.arm(id, clock);
+        clock.paused = false;
+        if (clock.handle === null && clock.remaining > 0) {
+            this.arm(id, clock);
+        }
     }
 
     /** The list with at most MAX_VISIBLE: the oldest toasts that are not persistent leave first. */
@@ -155,16 +166,19 @@ export class ToastService {
         return next;
     }
 
-    /** `duration` 0: no clock, the toast stays. */
+    /** `duration` 0: no clock, the toast stays. A paused toast gets the time but waits for `resume`. */
     private startClock(id: number, duration: number): void {
+        const paused = this.clocks.get(id)?.paused === true;
         this.stopClock(id);
         if (duration <= 0) {
             this.clocks.delete(id);
             return;
         }
-        const clock: Clock = { handle: null, remaining: duration, startedAt: 0 };
+        const clock: Clock = { handle: null, remaining: duration, startedAt: 0, paused };
         this.clocks.set(id, clock);
-        this.arm(id, clock);
+        if (!paused) {
+            this.arm(id, clock);
+        }
     }
 
     private arm(id: number, clock: Clock): void {

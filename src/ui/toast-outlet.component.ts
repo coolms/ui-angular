@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { Toast, ToastAction, ToastKind, ToastService } from './toast.service';
 
 /** Each arrival kind's icon (Bootstrap Icons). */
@@ -22,13 +23,15 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
 /**
  * The admin's one toast stack, bottom right: what the person did (saved, refused) and what arrived for them (a call,
  * a message, a waiting visitor, a task, mail, a notification) in one component. An arrival is drawn with its kind's
- * icon; a ringing call is drawn as urgent and stays until it is answered, declined or closed. Hovering a toast stops
- * its clock. Clicking its body opens what it announces when it has something to open, and dismisses it.
+ * icon; a ringing call is drawn as urgent and announced as an alert. Hovering a toast, or moving the keyboard focus
+ * into it, stops its clock. A toast with something to open has its title and message as a button of their own, so
+ * it opens by keyboard too; clicking elsewhere on it does the same. Without, a click dismisses it.
  */
 @Component({
     selector: 'app-toast-outlet',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [NgTemplateOutlet],
     template: `
         <div class="cms-toast-container" aria-live="polite" aria-atomic="false">
             @for (t of toast.toasts(); track t.id) {
@@ -36,8 +39,10 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
                      [class.cms-toast--urgent]="t.kind === 'ring'"
                      [attr.role]="t.type === 'error' || t.kind === 'ring' ? 'alert' : 'status'"
                      [attr.data-test]="'toast-' + (t.kind ?? t.type)"
-                     (mouseenter)="toast.pause(t.id)"
-                     (mouseleave)="toast.resume(t.id)"
+                     (mouseenter)="enter(t.id, 'hover')"
+                     (mouseleave)="leave(t.id, 'hover')"
+                     (focusin)="enter(t.id, 'focus')"
+                     (focusout)="focusLeft(t.id, $event)"
                      (click)="openOrDismiss(t)">
 
                     <div class="cms-toast-icon">
@@ -45,15 +50,14 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
                     </div>
 
                     <div class="cms-toast-body">
-                        @if (t.title) {
-                            <div class="cms-toast-title">
-                                {{ t.title }}
-                                @if ((t.count ?? 1) > 1) {
-                                    <span class="cms-toast-count" data-test="toast-count">{{ t.count }}</span>
-                                }
-                            </div>
+                        @if (t.open) {
+                            <button type="button" class="cms-toast-open" data-test="toast-open"
+                                    (click)="$event.stopPropagation(); openOrDismiss(t)">
+                                <ng-container *ngTemplateOutlet="text; context: { $implicit: t }" />
+                            </button>
+                        } @else {
+                            <ng-container *ngTemplateOutlet="text; context: { $implicit: t }" />
                         }
-                        <div class="cms-toast-message">{{ t.message }}</div>
                         @if (actionsOf(t); as list) {
                             @if (list.length > 0) {
                                 <div class="cms-toast-actions">
@@ -70,6 +74,18 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
                             }
                         }
                     </div>
+
+                    <ng-template #text let-t>
+                        @if (t.title || (t.count ?? 1) > 1) {
+                            <span class="cms-toast-title">
+                                {{ t.title }}
+                                @if ((t.count ?? 1) > 1) {
+                                    <span class="cms-toast-count" data-test="toast-count">{{ t.count }}</span>
+                                }
+                            </span>
+                        }
+                        <span class="cms-toast-message">{{ t.message }}</span>
+                    </ng-template>
 
                     <button type="button"
                             class="cms-toast-close"
@@ -145,8 +161,14 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
         }
 
         .cms-toast-body   { flex: 1; min-width: 0; }
+        .cms-toast-open {
+            display: block; width: 100%; padding: 0; margin: 0;
+            background: none; border: none; text-align: left; color: inherit; font: inherit; cursor: pointer;
+            border-radius: var(--cms-radius-sm);
+        }
+        .cms-toast-open:focus-visible { outline: 2px solid var(--cms-accent); outline-offset: 2px; }
         .cms-toast-title  {
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 6px; min-height: 18px;
             font-size: .8125rem; font-weight: 600; color: var(--cms-text);
         }
         .cms-toast-count {
@@ -155,6 +177,7 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
             font-size: .6875rem; font-weight: 600; line-height: 18px; text-align: center;
         }
         .cms-toast-message {
+            display: block;
             font-size: .8125rem;
             color: var(--cms-text-secondary);
             word-break: break-word;
@@ -172,6 +195,35 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
 })
 export class ToastOutletComponent {
     readonly toast = inject(ToastService);
+
+    /** Why each toast's clock is stopped: hovered, focused, or both. It runs again when neither holds. */
+    private readonly holds = new Map<number, Set<'hover' | 'focus'>>();
+
+    enter(id: number, why: 'hover' | 'focus'): void {
+        const held = this.holds.get(id) ?? new Set<'hover' | 'focus'>();
+        held.add(why);
+        this.holds.set(id, held);
+        this.toast.pause(id);
+    }
+
+    leave(id: number, why: 'hover' | 'focus'): void {
+        const held = this.holds.get(id);
+        held?.delete(why);
+        if (held === undefined || held.size === 0) {
+            this.holds.delete(id);
+            this.toast.resume(id);
+        }
+    }
+
+    /** Focus moving between the toast's own buttons is not leaving it. */
+    focusLeft(id: number, event: FocusEvent): void {
+        const toastEl = event.currentTarget as HTMLElement | null;
+        const next = event.relatedTarget as Node | null;
+        if (toastEl !== null && next !== null && toastEl.contains(next)) {
+            return;
+        }
+        this.leave(id, 'focus');
+    }
 
     /** Up to two: `actions` when given, else the one `action`. */
     actionsOf(t: Toast): readonly ToastAction[] {

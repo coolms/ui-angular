@@ -92,6 +92,62 @@ describe('ToastOutletComponent -- what was done and what arrived, drawn alike', 
         expect(saved.querySelector('.bi-check-circle-fill')).not.toBeNull();
     });
 
+    it('a toast with something to open opens by keyboard: its title and message are a button of their own', () => {
+        const open = jasmine.createSpy('open');
+        toasts.show({ type: 'info', kind: 'message', title: 'Anna', message: 'Are you there?', open });
+        toasts.success('Saved');
+        const button = host().querySelector('[data-test="toast-message"] [data-test="toast-open"]') as HTMLButtonElement;
+
+        expect(button.tagName).toBe('BUTTON');
+        expect(button.textContent).toContain('Anna');
+        expect(button.textContent).toContain('Are you there?');
+        expect(host().querySelector('[data-test="toast-success"] [data-test="toast-open"]'))
+            .withContext('nothing to open: no button').toBeNull();
+        button.focus();
+        button.click();
+        expect(open).toHaveBeenCalledTimes(1);
+        expect(toasts.toasts().map(t => t.message)).toEqual(['Saved']);
+    });
+
+    it('the count is drawn without a title too', () => {
+        toasts.show({ type: 'info', kind: 'mail', message: 'New mail', count: 2 });
+
+        expect(host().querySelector('[data-test="toast-count"]')?.textContent?.trim()).toBe('2');
+    });
+
+    it('focus in a toast stops its clock; moving between its own buttons does not start it again', fakeAsync(() => {
+        toasts.show({
+            type: 'info', kind: 'visitor', message: 'A visitor is waiting',
+            actions: [{ label: 'Accept', run: () => undefined }, { label: 'Later', run: () => undefined }],
+        });
+        const el = host().querySelector('[data-test="toast-visitor"]') as HTMLElement;
+        const [, later] = Array.from(el.querySelectorAll<HTMLButtonElement>('[data-test="toast-action"]'));
+
+        el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        tick(60000);
+        expect(toasts.toasts().length).toBe(1);
+        el.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: later }));
+        tick(60000);
+        expect(toasts.toasts().length).withContext('focus is still inside the toast').toBe(1);
+        el.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
+        tick(5000);
+        expect(toasts.toasts().length).toBe(0);
+    }));
+
+    it('hovered and focused: the clock waits until both have left', fakeAsync(() => {
+        toasts.show({ type: 'info', kind: 'task', message: 'A task for you' });
+        const el = host().querySelector('[data-test="toast-task"]') as HTMLElement;
+
+        el.dispatchEvent(new MouseEvent('mouseenter'));
+        el.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+        el.dispatchEvent(new MouseEvent('mouseleave'));
+        tick(60000);
+        expect(toasts.toasts().length).withContext('still focused').toBe(1);
+        el.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
+        tick(5000);
+        expect(toasts.toasts().length).toBe(0);
+    }));
+
     it('hovering a toast stops its clock; leaving starts it again', fakeAsync(() => {
         toasts.show({ type: 'info', kind: 'bell', message: 'Hovered' });
         const el = host().querySelector('[data-test="toast-bell"]') as HTMLElement;
