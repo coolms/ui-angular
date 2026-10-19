@@ -11,6 +11,15 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Added
+
+- A test of what a refused list shows, read from the rendered page alone
+  (`datagrid-refused-list.spec.ts`): "Not available to you", no error banner and
+  no Retry, for a refused definition and for refused rows. It reads no member of
+  the component, so it also runs against the grid before that state existed, and
+  fails there on what the page showed: "The list could not be loaded" with a
+  Retry.
+
 ### Fixed
 
 - The code editor never saves over a file whose read named no version.
