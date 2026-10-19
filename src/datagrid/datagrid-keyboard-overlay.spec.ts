@@ -6,8 +6,8 @@ import { DataGridComponent } from './datagrid.component';
 import type { DataGridConfig, DataGridRowAction } from './datagrid.types';
 
 /**
- * Regression spec -- the grid's `document:keydown` listener must not fire
- * destructive row actions while a modal surface is open above it.
+ * Regression spec -- the grid's shortcuts (bound through the keyboard scope)
+ * must not fire destructive row actions while a modal surface is open above it.
  *
  * The reported bug: with the BPMN designer open in a CDK dialog over the
  * Definitions list, pressing `Delete` to remove an element from the
@@ -66,12 +66,10 @@ describe('DataGridComponent — keyboard vs. overlays', () => {
             if (e.action === 'delete') fired = true;
         });
 
-        const event = new KeyboardEvent('keydown', { key: 'Delete', cancelable: true });
-        // KeyboardEvent.target is read-only and only set by dispatch; the
-        // handler reads `event.target`, so define it explicitly rather
-        // than dispatching through a detached element.
-        Object.defineProperty(event, 'target', { value: target });
-        component.onKeyDown(event);
+        // Dispatched from `target` and bubbling to the page, as a real key is:
+        // the keyboard scope's one document listener decides who gets it.
+        const event = new KeyboardEvent('keydown', { key: 'Delete', cancelable: true, bubbles: true });
+        target.dispatchEvent(event);
 
         sub.unsubscribe();
         return { fired, defaultPrevented: event.defaultPrevented };
@@ -111,7 +109,7 @@ describe('DataGridComponent — keyboard vs. overlays', () => {
         // converse -- a modal owns the page even if the event target is
         // outside the overlay container (e.g. focus still on <body>).
         const backdrop = document.createElement('div');
-        backdrop.className = 'cdk-overlay-backdrop';
+        backdrop.className = 'cdk-overlay-backdrop cdk-overlay-backdrop-showing';
         document.body.appendChild(backdrop);
 
         expect(pressDeleteFrom(document.body).fired).toBeFalse();
@@ -120,9 +118,7 @@ describe('DataGridComponent — keyboard vs. overlays', () => {
     it('still moves the focused row with ArrowDown when no overlay is open', () => {
         // Guards against over-blocking: the overlay checks sit above
         // every key branch, so a bad predicate would kill navigation too.
-        const event = new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true });
-        Object.defineProperty(event, 'target', { value: document.body });
-        component.onKeyDown(event);
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', cancelable: true, bubbles: true }));
 
         expect(component.focusedRowId()).toBe(ROW.id);
     });

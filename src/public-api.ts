@@ -33,6 +33,7 @@ export * from './ui/dropzone/cms-dropzone.directive';
 export * from './ui/dtmpl-token-input/cms-dtmpl-token-input.component';
 export * from './ui/entity-picker/cms-entity-picker.component';
 export * from './ui/esc-coordinator/esc-coordinator.service';
+export * from './ui/keyboard-scope/keyboard-scope.service';
 export * from './ui/explorer-accordion/explorer-accordion.component';
 export * from './ui/explorer-accordion/space-dto';
 export * from './ui/explorer-accordion/space-selection.store';
@@ -147,6 +148,7 @@ export * from './navi-graph/navi-graph-tree-source';
 
 // -- VFS wire types ------------------------------------------------------------
 export * from './vfs/vfs.types';
+export * from './vfs/vfs-node-watch';
 // The editor-side half of elevation as session state: a node's write flag, re-asked of the
 // server on every change of elevation state so an editor and the listing
 // behind it cannot disagree.

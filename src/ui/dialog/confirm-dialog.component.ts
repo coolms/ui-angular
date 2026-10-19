@@ -37,8 +37,10 @@ export interface ConfirmDialogContentData {
             <p style="margin: 0; white-space: pre-line;">{{ data.message }}</p>
 
             <div footer>
+                <!-- A destructive confirm (danger) opens with Cancel focused (cdkFocusInitial, read by the dialog's focus
+                     trap): Enter, Space or a repeated key never confirms what cannot be undone. -->
                 @if (data.cancelLabel) {
-                    <button type="button" class="cms-btn" (click)="close(false)">
+                    <button type="button" class="cms-btn" [attr.cdkFocusInitial]="data.danger ? '' : null" (click)="close(false)">
                         {{ data.cancelLabel }}
                     </button>
                 }

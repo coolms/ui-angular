@@ -54,8 +54,10 @@ export interface DeleteNodeDialogResult {
                 </label>
             }
 
+            <!-- Cancel takes the focus (cdkFocusInitial, read by the dialog's focus trap): Enter, Space or a second
+                 Del on a delete that cannot be undone never confirms it. -->
             <div footer>
-                <button type="button" class="cms-btn" (click)="cancel()">Cancel</button>
+                <button type="button" class="cms-btn" cdkFocusInitial (click)="cancel()">Cancel</button>
                 <button type="button" class="cms-btn cms-btn-danger" (click)="confirm()">Delete</button>
             </div>
         </app-modal>

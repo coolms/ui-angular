@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ContextMenuService } from './context-menu.service';
 import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.service';
+import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.service';
 
 /**
  * Generic right-click context menu rendered at a fixed screen position.
@@ -145,6 +146,8 @@ import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.ser
 export class ContextMenuComponent {
     protected readonly svc = inject(ContextMenuService);
     private readonly esc = inject(EscCoordinatorService);
+    private readonly keyboardScope = inject(KeyboardScopeService);
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
     @ViewChild('menuEl') menuElRef?: ElementRef<HTMLElement>;
 
@@ -186,7 +189,13 @@ export class ContextMenuComponent {
                 this.svc.close();
                 return true;
             });
-            onCleanup(unregister);
+            // While the menu is open it is the topmost surface: no shortcut of the view under it fires (Del on the
+            // file manager's selection, 2026-10-14). ESC above still reaches it.
+            const dropLayer = this.keyboardScope.pushLayer(this.host.nativeElement);
+            onCleanup(() => {
+                unregister();
+                dropLayer();
+            });
         });
     }
 }

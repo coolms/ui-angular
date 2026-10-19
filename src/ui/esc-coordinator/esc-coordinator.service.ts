@@ -1,4 +1,5 @@
-import { DestroyRef, inject, Injectable, NgZone } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { KeyboardScopeService } from '../keyboard-scope/keyboard-scope.service';
 
 /**
  * Returns `true` when the handler consumed the ESC (the coordinator
@@ -15,39 +16,23 @@ export type EscHandler = () => boolean;
  * first -- matches visual z-index stacking so the topmost overlay
  * closes before any underneath.
  *
+ * The stack is the keyboard scope's ({@link KeyboardScopeService}): an ESC
+ * handler is a binding on any layer, in text fields too, so ESC and every
+ * other shortcut go through one document listener and one stack.
+ *
  * Inline-scope `(keydown.escape)` bindings on inputs (rename fields,
  * search dropdowns) are NOT consumers -- they fire only when their
  * input has focus and don't compete on the global keystroke.
  */
 @Injectable({ providedIn: 'root' })
 export class EscCoordinatorService {
-    private readonly stack: EscHandler[] = [];
-    private readonly listener: (event: KeyboardEvent) => void;
+    private readonly scope = inject(KeyboardScopeService);
+    private readonly unbinds = new Set<() => void>();
 
     constructor() {
-        const zone = inject(NgZone);
-        this.listener = (event: KeyboardEvent) => {
-            if (event.key !== 'Escape') {
-                return;
-            }
-            // Iterate from top of stack (last-registered first). Stop
-            // at the first handler that returns true; coordinator
-            // owns preventDefault + stopPropagation at that point.
-            for (let i = this.stack.length - 1; i >= 0; i -= 1) {
-                let consumed = false;
-                zone.run(() => {
-                    consumed = this.stack[i]();
-                });
-                if (consumed) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    return;
-                }
-            }
-        };
-        document.addEventListener('keydown', this.listener);
         inject(DestroyRef).onDestroy(() => {
-            document.removeEventListener('keydown', this.listener);
+            for (const unbind of this.unbinds) unbind();
+            this.unbinds.clear();
         });
     }
 
@@ -60,17 +45,11 @@ export class EscCoordinatorService {
      * Calling the returned unregister twice is a no-op (idempotent).
      */
     register(handler: EscHandler): () => void {
-        this.stack.push(handler);
-        let unregistered = false;
+        const unbind = this.scope.bindAnyLayer(event => event.key === 'Escape' && handler());
+        this.unbinds.add(unbind);
         return () => {
-            if (unregistered) {
-                return;
-            }
-            unregistered = true;
-            const idx = this.stack.lastIndexOf(handler);
-            if (idx >= 0) {
-                this.stack.splice(idx, 1);
-            }
+            this.unbinds.delete(unbind);
+            unbind();
         };
     }
 }
