@@ -13,12 +13,31 @@ predate this file would be a worse record than not having them.
 
 ### Added
 
+- **One toast stack for what was done and what arrived.** `ToastService` and
+  `app-toast-outlet` now also draw arrivals: a `kind` (`ring`, `message`,
+  `visitor`, `task`, `mail`, `bell`, the platform's notification kinds) gives
+  the toast that kind's icon. A `groupKey` keeps one toast per key: a later
+  `show` with the key updates it where it stands and starts its time again,
+  and `closeGroup(key)` takes it away. Up to two `actions`, the first drawn
+  as primary (`action` still works). A `count` is drawn when more than one
+  arrived. A `persistent` toast stays until closed and is never pushed out;
+  a ringing call (`kind: 'ring'`) is drawn as urgent and announced as an
+  alert. A toast with an `open` has its title and message as a button of
+  their own, so it opens by keyboard as well as by a click. At most four are
+  shown, the oldest that is not persistent leaving first. Hovering a toast,
+  or moving the focus into it, stops its clock. `show` returns the toast's
+  id.
 - A test of what a refused list shows, read from the rendered page alone
   (`datagrid-refused-list.spec.ts`): "Not available to you", no error banner and
   no Retry, for a refused definition and for refused rows. It reads no member of
   the component, so it also runs against the grid before that state existed, and
   fails there on what the page showed: "The list could not be loaded" with a
   Retry.
+
+### Changed
+
+- The toast stack sits at the bottom right (it was at the top right), the
+  same place for every toast.
 
 ### Fixed
 
