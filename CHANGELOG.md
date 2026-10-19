@@ -11,6 +11,26 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Added
+
+- **One toast stack for what was done and what arrived.** `ToastService` and
+  `app-toast-outlet` now also draw arrivals: a `kind` (`ring`, `message`,
+  `visitor`, `task`, `mail`, `bell`, the platform's notification kinds) gives
+  the toast that kind's icon. A `groupKey` keeps one toast per key: a later
+  `show` with the key updates it where it stands and starts its time again,
+  and `closeGroup(key)` takes it away. Up to two `actions`, the first drawn
+  as primary (`action` still works). A `count` is drawn when more than one
+  arrived. A `persistent` toast, such as a ringing call, stays until closed, is
+  drawn as urgent and announced as an alert. Clicking a toast's body runs
+  its `open`. At most four are shown, the oldest that is not persistent
+  leaving first; hovering a toast stops its clock. `show` returns the
+  toast's id.
+
+### Changed
+
+- The toast stack sits at the bottom right (it was at the top right), the
+  same place for every toast.
+
 ### Fixed
 
 - The code editor never saves over a file whose read named no version.
