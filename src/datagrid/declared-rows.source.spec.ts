@@ -192,9 +192,9 @@ describe('declaredRowsSource', () => {
         const req = http.expectOne(r => r.url === '/api/v1/leads');
         expect(req.request.params.get('status')).toBe('handled');
         expect(req.request.params.getAll('filter')).toEqual(['channel eq "web"']);
-        req.flush({ member: [{ id: 'l1', first: 'Ada', last: 'Lovelace' }], totalItems: 1 });
+        req.flush({ member: [{ id: 'l1', first: 'Jane', last: 'Doe' }], totalItems: 1 });
 
-        expect(source.data().items[0]['label']).toBe('Ada Lovelace');
+        expect(source.data().items[0]['label']).toBe('Jane Doe');
     });
 
     it('changes the loaded rows in place for a live event, and the count with them', () => {
