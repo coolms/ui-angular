@@ -173,7 +173,7 @@ const TYPE_ICON: Readonly<Record<Toast['type'], string>> = {
         }
         .cms-toast-count {
             min-width: 18px; padding: 0 5px; border-radius: 9px;
-            background: var(--cms-accent); color: var(--cms-accent-contrast, #fff);
+            background: var(--cms-accent); color: var(--cms-accent-contrast, #1a1a1a);
             font-size: .6875rem; font-weight: 600; line-height: 18px; text-align: center;
         }
         .cms-toast-message {

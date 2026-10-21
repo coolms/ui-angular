@@ -11,6 +11,13 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Fixed
+
+- **The toast count badge's fallback is the token's own value.** The badge
+  draws `var(--cms-accent-contrast, ...)`; the design tokens define that token
+  from 0.3.0 as `accent-fg`, #1a1a1a, and the fallback said `#fff` -- white on
+  the amber, 2.03:1, wherever the theme is absent. It is now #1a1a1a, 8.59:1.
+
 ### Added
 
 - **One toast stack for what was done and what arrived.** `ToastService` and
