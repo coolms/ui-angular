@@ -168,10 +168,10 @@ describe('LazySelectComponent', () => {
         const req = httpMock.expectOne(r => r.url === '/api/v1/identity/users');
         req.flush({
             member: [
-                { id: 'u1', name: 'Ada Lovelace' },                          // name wins
-                { id: 'u2', fullName: 'Grace Hopper' },                      // falls to fullName
-                { id: 'u3', email: 'alan@bletchley.org' },                   // falls to email
-                { id: 'u4', identifier: 'turing' },                           // falls to identifier
+                { id: 'u1', name: 'Jane Doe' },                              // name wins
+                { id: 'u2', fullName: 'Sam Roe' },                           // falls to fullName
+                { id: 'u3', email: 'alex@example.org' },                     // falls to email
+                { id: 'u4', identifier: 'a.sample' },                         // falls to identifier
                 { id: 'u5' },                                                 // falls to id itself
             ],
             totalItems: 5,
@@ -179,10 +179,10 @@ describe('LazySelectComponent', () => {
 
         const labels = component.serverOptions().map(o => o.label);
         expect(labels).toEqual([
-            'Ada Lovelace',
-            'Grace Hopper',
-            'alan@bletchley.org',
-            'turing',
+            'Jane Doe',
+            'Sam Roe',
+            'alex@example.org',
+            'a.sample',
             'u5',
         ]);
     }));
