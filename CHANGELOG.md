@@ -11,6 +11,15 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Security
+
+- **Angular 22.2.3 for development and the tests.** Every `@angular/*`
+  development dependency moves from 22.2.0 to 22.2.3 together, the version the
+  admin already runs. 22.2.0's `@angular/router` carries two high advisories
+  (denial of service in server-side rendering: GHSA-57xq-rjx2-v5xh,
+  GHSA-62vg-58rm-qff7), fixed in 22.2.1. The peer ranges are unchanged
+  (`^22.0.0`): an application still chooses its own Angular 22.
+
 ### Added
 
 - **One toast stack for what was done and what arrived.** `ToastService` and
