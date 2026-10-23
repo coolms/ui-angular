@@ -9,6 +9,13 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Changed
+
+- The LICENSE names its copyright holder in the form decided on 2026-10-23.
+  The licence itself (MIT) is unchanged.
+
 ## 2.0.0-alpha.6 - 2026-10-22
 
 ### Fixed
