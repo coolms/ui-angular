@@ -11,7 +11,6 @@ import {
     output,
     signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import { CmsPageHeaderComponent } from '../cms-page-header.component';
 import { CmsPaneSplitterComponent } from '../pane-splitter/cms-pane-splitter.component';
@@ -46,19 +45,18 @@ interface SectionGroup {
  * selected, and is told when another is picked -- so the route decides the scope, and picking an entry can change
  * only the pane and the URL. A shell that decided anything from the entry picked is how picking another module's
  * setting once turned the global list into that module's.
+ *
+ * **It draws no back link** (decided 2026-10-24: the page header is one shared component, with no page-local back
+ * links). An object's settings open in a modal over the object's own page, whose close button is the way back;
+ * global and module settings are pages, and the breadcrumbs lead back from them.
  */
 @Component({
     selector: 'cms-settings-shell',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CmsPageHeaderComponent, CmsPaneSplitterComponent, RouterLink],
+    imports: [CmsPageHeaderComponent, CmsPaneSplitterComponent],
     template: `
         <div class="cms-settings-shell">
-            @if (backLink(); as back) {
-                <a class="cms-settings-shell__back" [routerLink]="back.routerLink">
-                    <i class="bi bi-arrow-left"></i><span>{{ back.label }}</span>
-                </a>
-            }
             <cms-page-header
                 [title]="title()"
                 [icon]="icon()"
@@ -119,12 +117,6 @@ interface SectionGroup {
         :host { display: flex; flex-direction: column; flex: 1; min-height: 0; }
         .cms-settings-shell { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-        .cms-settings-shell__back {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 20px 0; font-size: .8125rem; color: var(--cms-text-muted); text-decoration: none;
-        }
-        .cms-settings-shell__back:hover { color: var(--cms-text); }
-
         .cms-settings-shell__body { display: flex; flex: 1; min-height: 0; }
 
         /* Left padding is the page header's 20px, so the entries share the title's line. */
@@ -171,8 +163,6 @@ export class CmsSettingsShellComponent {
     /** What this screen covers: every module, one module, or one object. */
     readonly scopeLine = input<string>('');
     readonly actions = input<ToolbarAction[]>([]);
-    /** In the object scope: back to the object the settings belong to. */
-    readonly backLink = input<{ readonly label: string; readonly routerLink: string | readonly unknown[] } | null>(null);
 
     readonly sections = input<readonly CmsSettingsSection[]>([]);
     readonly selectedId = input<string | null>(null);
