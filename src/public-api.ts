@@ -63,6 +63,8 @@ export * from './ui/page-title.service';
 export * from './ui/page-toolbar.component';
 export * from './ui/capability-state';
 export * from './ui/pane-splitter/cms-pane-splitter.component';
+export * from './ui/settings-shell/cms-settings-shell.component';
+export * from './ui/settings-shell/cms-settings-pane.component';
 export * from './ui/range-picker/datetime-field.component';
 export * from './ui/range-picker/datetime-range-picker.component';
 export * from './ui/range-picker/time-of-day-picker.component';
