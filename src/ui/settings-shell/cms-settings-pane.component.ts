@@ -45,11 +45,11 @@ import { CmsSectionHeaderComponent } from '../cms-section-header.component';
                 <ng-content select="[paneActions]" />
                 @if (!danger()) {
                     <button type="button" class="cms-btn" [disabled]="!dirty() || saving()" (click)="discard.emit()">
-                        Discard
+                        {{ discardLabel() }}
                     </button>
                     <button type="button" class="cms-btn cms-btn-primary"
                             [disabled]="!dirty() || saving()" (click)="save.emit()">
-                        {{ saving() ? 'Saving…' : saveLabel() }}
+                        {{ saving() ? savingLabel() : saveLabel() }}
                     </button>
                 }
             </div>
@@ -91,6 +91,8 @@ export class CmsSettingsPaneComponent {
     readonly dirty = input<boolean>(false);
     readonly saving = input<boolean>(false);
     readonly saveLabel = input<string>('Save');
+    readonly savingLabel = input<string>('Saving…');
+    readonly discardLabel = input<string>('Discard');
     /** A destructive pane: no Save or Discard; its action is projected into `[paneActions]`. */
     readonly danger = input<boolean>(false);
 

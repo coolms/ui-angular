@@ -25,7 +25,7 @@ export interface CmsSettingsSection {
     readonly group?: { readonly id: string; readonly label: string; readonly icon?: string };
     /** A marker after the label, e.g. "saved values override the defaults"; the title says what it means. */
     readonly marker?: string;
-    /** A destructive pane (deleting the object), drawn last and in the danger colour. */
+    /** A destructive pane (deleting the object), drawn in the danger colour; the host lists it last. */
     readonly danger?: boolean;
     /** Extra words the filter matches (a setting's key), beyond the label and the group's label. */
     readonly keywords?: string;
@@ -77,7 +77,7 @@ interface SectionGroup {
                                (input)="query.set($any($event.target).value)" />
                     }
                     @if (groups().length === 0) {
-                        <p class="cms-settings-shell__empty">{{ query() ? 'Nothing matches.' : emptyText() }}</p>
+                        <p class="cms-settings-shell__empty">{{ query() ? noMatchText() : emptyText() }}</p>
                     }
                     @for (group of groups(); track group.id) {
                         <div class="cms-settings-shell__group">
@@ -180,12 +180,13 @@ export class CmsSettingsShellComponent {
     readonly filterable = input<boolean>(false);
     readonly filterPlaceholder = input<string>('Filter settings');
     readonly emptyText = input<string>('Nothing to show here.');
+    readonly noMatchText = input<string>('Nothing matches.');
     readonly listLabel = input<string>('Sections');
     /** Where the list's width is remembered, per screen. */
     readonly splitterKey = input<string>('cms.settings.listW');
 
     /** An entry was picked; the host routes to it (and asks about a dirty pane first). */
-    readonly select = output<string>();
+    readonly picked = output<string>();
     readonly actionClick = output<string>();
 
     readonly query = signal('');
@@ -195,9 +196,10 @@ export class CmsSettingsShellComponent {
 
     constructor() {
         // A deep link can open a setting far down a long list; bring its entry into view once it is drawn, without
-        // moving the page when it is already visible.
+        // moving the page when it is already visible. It follows the selection and the list's arrival, never the
+        // filter: typing in the filter does not move the list.
         effect(() => {
-            if (null === this.selectedId() || 0 === this.groups().length) {
+            if (null === this.selectedId() || 0 === this.sections().length) {
                 return;
             }
             afterNextRender(() => this.host.nativeElement
@@ -226,7 +228,7 @@ export class CmsSettingsShellComponent {
 
     pick(section: CmsSettingsSection): void {
         if (section.id !== this.selectedId()) {
-            this.select.emit(section.id);
+            this.picked.emit(section.id);
         }
     }
 }

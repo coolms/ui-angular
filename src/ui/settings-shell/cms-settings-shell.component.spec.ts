@@ -16,7 +16,7 @@ const SECTIONS: CmsSettingsSection[] = [
     imports: [CmsSettingsShellComponent, CmsSettingsPaneComponent],
     template: `
         <cms-settings-shell title="Settings" [sections]="sections" [selectedId]="selected()" [filterable]="true"
-                            (select)="picked.push($event)">
+                            (picked)="picked.push($event)">
             <cms-settings-pane title="Page cache" settingKey="web.page_cache" [dirty]="dirty()"
                                (save)="saved = saved + 1" (discard)="discarded = discarded + 1" />
         </cms-settings-shell>
