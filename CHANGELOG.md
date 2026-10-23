@@ -11,6 +11,13 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Removed
+
+- `cms-settings-shell`'s `backLink` input, and the back link it drew above the page header. The page header is
+  the one shared header; an object's settings now open in a modal over the object's own page, whose close button
+  is the way back, and breadcrumbs lead back from a settings page. A consumer still binding `[backLink]` fails to
+  compile, which is how it is found.
+
 ### Changed
 
 - The LICENSE names its copyright holder in the form decided on 2026-10-23.
