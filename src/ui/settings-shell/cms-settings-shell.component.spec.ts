@@ -17,7 +17,7 @@ const SECTIONS: CmsSettingsSection[] = [
     template: `
         <cms-settings-shell title="Settings" [sections]="sections" [selectedId]="selected()" [filterable]="true"
                             (picked)="picked.push($event)">
-            <cms-settings-pane title="Page cache" settingKey="web.page_cache" [dirty]="dirty()"
+            <cms-settings-pane title="Page cache" settingKey="web.page_cache" [dirty]="dirty()" [editable]="editable()"
                                (save)="saved = saved + 1" (discard)="discarded = discarded + 1" />
         </cms-settings-shell>
     `,
@@ -26,6 +26,7 @@ class HostComponent {
     readonly sections = SECTIONS;
     readonly selected = signal<string | null>('web.page_cache');
     readonly dirty = signal(false);
+    readonly editable = signal(true);
     picked: string[] = [];
     saved = 0;
     discarded = 0;
@@ -92,5 +93,16 @@ describe('CmsSettingsShellComponent and CmsSettingsPaneComponent', () => {
         expect(button('Save').disabled).toBeFalse();
         expect(fixture.componentInstance.saved).toBe(1);
         expect(fixture.componentInstance.discarded).toBe(1);
+    });
+
+    it('a pane that cannot be saved draws no Save and no Discard', () => {
+        const fixture = render();
+        fixture.componentInstance.editable.set(false);
+        fixture.detectChanges();
+        const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('cms-settings-pane button'))
+            .map(b => (b.textContent ?? '').trim());
+
+        expect(labels).not.toContain('Save');
+        expect(labels).not.toContain('Discard');
     });
 });

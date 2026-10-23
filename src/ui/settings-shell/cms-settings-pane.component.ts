@@ -43,7 +43,7 @@ import { CmsSectionHeaderComponent } from '../cms-section-header.component';
             </div>
             <div class="cms-settings-pane__buttons">
                 <ng-content select="[paneActions]" />
-                @if (!danger()) {
+                @if (editable() && !danger()) {
                     <button type="button" class="cms-btn" [disabled]="!dirty() || saving()" (click)="discard.emit()">
                         {{ discardLabel() }}
                     </button>
@@ -95,6 +95,12 @@ export class CmsSettingsPaneComponent {
     readonly discardLabel = input<string>('Discard');
     /** A destructive pane: no Save or Discard; its action is projected into `[paneActions]`. */
     readonly danger = input<boolean>(false);
+    /**
+     * Whether the pane can be saved at all. False for a caller who may only read it, or values read without the
+     * version a save must name: no Save or Discard is drawn, and the body says why. A greyed Save would only invite a
+     * click that cannot succeed.
+     */
+    readonly editable = input<boolean>(true);
 
     readonly save = output<void>();
     readonly discard = output<void>();
