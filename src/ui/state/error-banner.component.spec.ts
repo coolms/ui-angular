@@ -14,14 +14,14 @@ describe('ErrorBannerComponent', () => {
 
     let reloaded: number;
 
-    function setup(error: unknown, withShell = false): void {
+    function setup(error: unknown, withShell = false, granted = true): void {
         reloaded = 0;
         TestBed.configureTestingModule({
             imports: [ErrorBannerComponent],
             providers: [
                 {
                     provide: ElevationService,
-                    useValue: { offerFor: () => of(true), elevated: () => true, available: true },
+                    useValue: { offerFor: () => of(granted), elevated: () => granted, available: true },
                 },
                 ...(withShell ? [{ provide: RELOAD_PAGE, useValue: () => { reloaded++; } }] : []),
             ],
@@ -52,6 +52,17 @@ describe('ErrorBannerComponent', () => {
         (el('[data-test="elevate"]') as HTMLButtonElement).click();
         expect(reloaded).toBe(1);
         expect(retried).toBe(0);
+    });
+
+    it('neither reloads the page nor asks its host when the elevation is cancelled, and keeps the Elevate state', () => {
+        setup(new HttpErrorResponse({ status: 403, error: { type: ELEVATION_REQUIRED_PROBLEM_TYPE } }), true, false);
+
+        (el('[data-test="elevate"]') as HTMLButtonElement).click();
+        fixture.detectChanges();
+
+        expect(reloaded).toBe(0);
+        expect(retried).toBe(0);
+        expect(el('[data-test="error-banner-elevation-required"]')).not.toBeNull();
     });
 
     it('shows the Elevate state for a refusal by its header', () => {
