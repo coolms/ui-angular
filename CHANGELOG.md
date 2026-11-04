@@ -11,6 +11,12 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Changed
+
+- `app-loading` draws the state component's loading state (`cms-state kind="loading"`), its `label` the title:
+  the spinner from the tokens in place of the old mark, seen only after the state delay. Every page that names it
+  changes with no change of its own. Superseded by `cms-state`; it goes once nothing names it.
+
 ### Added
 
 - `cms-state` (`StateComponent`), the UI contract's `state`: one component for every state a page, a card or a line
