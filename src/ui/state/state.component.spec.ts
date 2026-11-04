@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { ELEVATION_REQUIRED_PROBLEM_TYPE, ElevationService } from '@coolms/core-angular';
 import { RELOAD_PAGE } from './error-banner.component';
+import { LoadingComponent } from './loading.component';
 import { StateComponent, StateKind, StatePlacement } from './state.component';
 
 /**
@@ -127,5 +128,24 @@ describe('StateComponent', () => {
         fixture.detectChanges();
         expect(el('[data-test="elevation-unavailable"]')).not.toBeNull();
         expect(elevatedOut).toBe(0);
+    });
+});
+
+/** `app-loading`, kept under its old name, is the state component's loading state: every page that names it draws it. */
+describe('LoadingComponent', () => {
+    it('draws the loading state with its label as the title, and the spinner, never the old mark', () => {
+        TestBed.configureTestingModule({ imports: [LoadingComponent] });
+        const fixture = TestBed.createComponent(LoadingComponent);
+        fixture.componentRef.setInput('label', 'Loading draft…');
+        fixture.detectChanges();
+        const host = fixture.nativeElement as HTMLElement;
+
+        const state = host.querySelector('cms-state .cms-state');
+        expect(state).not.toBeNull();
+        expect(state!.getAttribute('data-kind')).toBe('loading');
+        expect(state!.getAttribute('role')).toBe('status');
+        expect(state!.textContent).toContain('Loading draft…');
+        expect(host.querySelector('[data-test="state-spinner"]')).not.toBeNull();
+        expect(host.querySelector('cms-loader')).toBeNull();
     });
 });
