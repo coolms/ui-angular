@@ -96,6 +96,17 @@ describe('StateComponent', () => {
         expect(elevatedOut).toBe(0);
     });
 
+    it('shows an error that is a plain refusal (403) as denied, with no Retry: retrying would be refused again', () => {
+        setup('error', {
+            error: new HttpErrorResponse({ status: 403, error: { title: 'Forbidden' } }),
+            action: { label: 'Retry', run: () => undefined },
+        });
+
+        expect(el('.cms-state')!.getAttribute('data-kind')).toBe('denied');
+        expect(el('[data-test="state-action"]')).toBeNull();
+        expect(el('[data-test="elevate"]')).toBeNull();
+    });
+
     it('tells its host once elevated where there is no page to load again; a cancelled prompt does neither', () => {
         setup('elevation-required');
         (el('[data-test="elevate"]') as HTMLButtonElement).click();

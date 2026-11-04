@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Injector, input, output, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { ElevationService, isElevationRefusal } from '@coolms/core-angular';
 import { elevateOnce } from './elevate-once';
@@ -33,7 +34,8 @@ const ICON: Readonly<Record<Exclude<StateKind, 'loading'>, string>> = {
  *
  * A loading state shows its spinner only after `--cms-state-delay`, so a read that answers sooner shows nothing; its
  * title is in the live region from the start. Every kind is a polite status. An error whose cause is a refusal for want
- * of elevation is shown as the elevation state, as the error banner shows it, and the Elevate flow is the banner's:
+ * of elevation is shown as the elevation state, as the error banner shows it, and any other refusal (a 403) as
+ * `denied`, with no action -- retrying a refusal is refused again. The Elevate flow is the banner's:
  * once the session is elevated the page is loaded again where the shell provides that, else `elevated` fires.
  */
 @Component({
@@ -63,7 +65,7 @@ const ICON: Readonly<Record<Exclude<StateKind, 'loading'>, string>> = {
                         Elevation isn't available here. Ask an administrator.
                     </span>
                 }
-            } @else if (action(); as act) {
+            } @else if (shownKind() !== 'denied' && action(); as act) {
                 <button type="button" class="cms-btn cms-state__action" data-test="state-action"
                         (click)="act.run()">{{ act.label }}</button>
             }
@@ -137,9 +139,17 @@ export class StateComponent {
     /** The session is elevated and there is no page to load again: the host loads its content again. */
     readonly elevated = output<void>();
 
-    protected readonly shownKind = computed<StateKind>(() =>
-        this.kind() === 'error' && isElevationRefusal(this.error()) ? 'elevation-required' : this.kind(),
-    );
+    protected readonly shownKind = computed<StateKind>(() => {
+        if (this.kind() !== 'error') {
+            return this.kind();
+        }
+        const error = this.error();
+        if (isElevationRefusal(error)) {
+            return 'elevation-required';
+        }
+        // A refusal is the server's last word: Retry would only be refused again, so it is shown as one, with no action.
+        return error instanceof HttpErrorResponse && 403 === error.status ? 'denied' : 'error';
+    });
     protected readonly icon = computed(() => {
         const kind = this.shownKind();
         return kind === 'loading' ? '' : ICON[kind];
