@@ -20,13 +20,14 @@ import { FormsModule } from '@angular/forms';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormsModule],
     template: `
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch"
+        <label class="cms-toggle">
+            <input type="checkbox" role="switch"
                    [disabled]="disabled()"
                    [ngModel]="model()"
                    [ngModelOptions]="{ standalone: true }"
                    (ngModelChange)="emit($event)" />
-        </div>
+            <span class="cms-toggle__slider"></span>
+        </label>
     `,
 })
 export class CheckboxFieldWidgetComponent {
