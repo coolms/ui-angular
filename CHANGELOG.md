@@ -11,6 +11,19 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Added
+
+- `cms-state` (`StateComponent`), the UI contract's `state`: one component for every state a page, a card or a line
+  of text can be in instead of its content. `kind` is loading, empty, error, denied or elevation-required; `title` and
+  `description` are strings; `action` is an optional `{ label, run }` (Retry, or what an empty state suggests);
+  `placement` is page, block or inline. A loading state turns a spinner drawn from the tokens (`--cms-spinner-*`),
+  seen only after `--cms-state-delay`, so a fast read does not flash. Every kind is `role="status"` with
+  `aria-live="polite"`. Given `error`, a refusal for want of elevation is shown as the elevation state, and its
+  Elevate loads the page again where the shell provides `RELOAD_PAGE`, else `elevated` fires. Each token is read with
+  a fallback equal to its value, so the component looks the same before the tokens that name it are installed.
+- `elevateOnce()`, the Elevate flow `cms-elevation-required` and `cms-state` share: the prompt opens from the
+  person's request only, and an elevation granted elsewhere counts.
+
 ### Removed
 
 - `cms-settings-shell`'s `backLink` input, and the back link it drew above the page header. The page header is
