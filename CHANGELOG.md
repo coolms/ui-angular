@@ -11,6 +11,11 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Changed
+
+- `cms-settings-shell` stacks on a phone: below 600px the list sits above the pane, as wide as the screen and at most a
+  third of its height, and the splitter hides. Side by side, the 260px list left the pane a few pixels at 390.
+
 ### Added
 
 - `cms-state`'s action bound the Angular way: `actionLabel` and `(acted)`, so a template writes
