@@ -12,6 +12,7 @@ predate this file would be a worse record than not having them.
 ## Unreleased
 
 ### Changed
+- **The checkbox field widget is the kit's switch** (`.cms-toggle`), where it was Bootstrap's `form-switch`: the kit's global checkbox rules reset that switch's `background-repeat` and remove its knob when checked, so it drew two dots off and a tick on.
 
 - `cms-settings-shell` stacks on a phone: below 600px the list sits above the pane, as wide as the screen and at most a
   third of its height, and the splitter hides. Side by side, the 260px list left the pane a few pixels at 390.
