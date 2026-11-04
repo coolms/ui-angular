@@ -6,20 +6,20 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, ValidatorFn, Validators, A
 import { FormRenderService } from './form-render.service';
 import { ErrorHandlerService, FormRenderDefinition, FieldItem } from '@coolms/core-angular';
 import { DynamicLayoutComponent } from './dynamic-layout.component';
-import { LoadingComponent } from '../ui/state/loading.component';
-import { ErrorBannerComponent } from '../ui/state/error-banner.component';
+import { StateComponent } from '../ui/state/state.component';
 
 @Component({
     selector: 'app-dynamic-form',
     standalone: true,
-    imports: [CmsLoaderComponent, ReactiveFormsModule, DynamicLayoutComponent, LoadingComponent, ErrorBannerComponent],
+    imports: [CmsLoaderComponent, ReactiveFormsModule, DynamicLayoutComponent, StateComponent],
     changeDetection: ChangeDetectionStrategy.Eager,
     template: `
         @if (loading()) {
-            <app-loading label="Loading form…" />
+            <cms-state kind="loading" title="Reading the form" />
         }
         @if (loadError(); as err) {
-            <app-error-banner [message]="err" [showRetry]="true" (retry)="loadDefinition()" />
+            <cms-state kind="error" [title]="err" [error]="loadFailure()" [action]="retryAction"
+                       (elevated)="loadDefinition()" />
         }
         @if (definition(); as def) {
             <form [formGroup]="formGroup()" (ngSubmit)="submit()" autocomplete="off">
@@ -134,6 +134,9 @@ export class DynamicFormComponent implements OnInit {
     // -- State -----------------------------------------------------------------
     loading     = signal(true);
     loadError   = signal<string | null>(null);
+    /** The failure the load error describes: a refusal for want of elevation is shown as the elevation state. */
+    loadFailure = signal<unknown>(null);
+    protected readonly retryAction = { label: 'Retry', run: () => this.loadDefinition() };
     serverError = signal<string | null>(null);
     saving      = signal(false);
     definition  = signal<FormRenderDefinition | null>(null);
@@ -172,6 +175,7 @@ export class DynamicFormComponent implements OnInit {
         this.formRenderService.fetch(this.formId(), this.context()).subscribe({
             next: def => this.applyDefinition(def),
             error: err => {
+                this.loadFailure.set(err);
                 this.loadError.set(this.errors.humanize(err));
                 this.loading.set(false);
             },

@@ -74,6 +74,8 @@ export * from './ui/state/empty-state.component';
 export * from './ui/state/elevation-required.component';
 export * from './ui/state/error-banner.component';
 export * from './ui/state/loading.component';
+export * from './ui/state/state.component';
+export * from './ui/state/elevate-once';
 export * from './ui/tab-strip.component';
 export * from './ui/tag-input.component';
 export * from './ui/toast-outlet.component';

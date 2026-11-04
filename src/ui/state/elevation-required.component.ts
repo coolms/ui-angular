@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { ElevationService } from '@coolms/core-angular';
+import { elevateOnce } from './elevate-once';
 import { EmptyStateComponent } from './empty-state.component';
 
 /**
@@ -47,13 +48,12 @@ export class ElevationRequiredComponent {
 
     elevate(): void {
         this.asking.set(true);
-        this.elevation.offerFor().pipe(
+        elevateOnce(this.elevation).pipe(
             finalize(() => this.asking.set(false)),
-        ).subscribe(granted => {
-            // offerFor() answers false without a prompt when the session is elevated already.
-            if (granted || this.elevation.elevated()) {
+        ).subscribe(outcome => {
+            if (outcome === 'elevated') {
                 this.elevated.emit();
-            } else if (!this.elevation.available) {
+            } else if (outcome === 'unavailable') {
                 this.unavailable.set(true);
             }
         });
