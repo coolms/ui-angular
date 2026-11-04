@@ -11,6 +11,12 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Added
+
+- `cms-state`'s action bound the Angular way: `actionLabel` and `(acted)`, so a template writes
+  `actionLabel="Retry" (acted)="load()"` with no property of its own. The same action as `action` (`{ label, run }`):
+  either form, or both, and a press runs `action` and emits `acted`. A denied state still offers none.
+
 ### Changed
 
 - `app-empty-state` draws the state component's empty state (`cms-state kind="empty"`), its `hint` the description;

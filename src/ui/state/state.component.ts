@@ -65,9 +65,9 @@ const ICON: Readonly<Record<Exclude<StateKind, 'loading'>, string>> = {
                         Elevation isn't available here. Ask an administrator.
                     </span>
                 }
-            } @else if (shownKind() !== 'denied' && action(); as act) {
+            } @else if (shownKind() !== 'denied' && actionShown(); as label) {
                 <button type="button" class="cms-btn cms-state__action" data-test="state-action"
-                        (click)="act.run()">{{ act.label }}</button>
+                        (click)="act()">{{ label }}</button>
             }
         </div>
     `,
@@ -134,6 +134,12 @@ export class StateComponent {
     readonly placement = input<StatePlacement>('block');
     /** Retry for an error, or what an empty state suggests; elevation-required offers Elevate of its own. */
     readonly action = input<StateAction | null>(null);
+    /**
+     * The same action bound the Angular way: its label here, its handler on `(acted)` --
+     * `actionLabel="Retry" (acted)="load()"`. Either form, or both: a press runs `action` and emits `acted`.
+     */
+    readonly actionLabel = input<string>('');
+    readonly acted = output<void>();
     /** The failure an error state describes: a refusal for want of elevation is shown as the elevation state. */
     readonly error = input<unknown>(null);
     /** The session is elevated and there is no page to load again: the host loads its content again. */
@@ -154,6 +160,8 @@ export class StateComponent {
         const kind = this.shownKind();
         return kind === 'loading' ? '' : ICON[kind];
     });
+    /** The action's label, from either form; '' when there is no action. */
+    protected readonly actionShown = computed(() => this.action()?.label ?? this.actionLabel());
     protected readonly asking = signal(false);
     /** The installation cannot elevate: the button opened nothing, and the person is told so. */
     protected readonly unavailable = signal(false);
@@ -161,6 +169,11 @@ export class StateComponent {
     // Resolved when Elevate is pressed: a state that never offers it does not bring the session's elevation along.
     private readonly injector = inject(Injector);
     private readonly reloadPage = inject(RELOAD_PAGE, { optional: true });
+
+    protected act(): void {
+        this.action()?.run();
+        this.acted.emit();
+    }
 
     protected elevate(): void {
         this.asking.set(true);

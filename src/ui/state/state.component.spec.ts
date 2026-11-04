@@ -100,6 +100,17 @@ describe('StateComponent', () => {
         expect(elevatedOut).toBe(0);
     });
 
+    it('offers an action bound the Angular way, its label an input and its press the acted output', () => {
+        setup('error', { actionLabel: 'Retry' });
+        let acted = 0;
+        fixture.componentInstance.acted.subscribe(() => acted++);
+
+        const button = el('[data-test="state-action"]') as HTMLButtonElement;
+        expect(button.textContent?.trim()).toBe('Retry');
+        button.click();
+        expect(acted).toBe(1);
+    });
+
     it('shows an error that is a plain refusal (403) as denied, with no Retry: retrying would be refused again', () => {
         setup('error', {
             error: new HttpErrorResponse({ status: 403, error: { title: 'Forbidden' } }),
