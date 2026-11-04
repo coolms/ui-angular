@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
-import { finalize } from 'rxjs';
-import { ElevationService } from '@coolms/core-angular';
-import { elevateOnce } from './elevate-once';
-import { EmptyStateComponent } from './empty-state.component';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { RELOAD_PAGE } from './reload-page';
+import { StateComponent } from './state.component';
 
 /**
  * What a page or section shows in place of its content when the server refused to load it for want
- * of elevation: a stamped 403 ({@link isElevationRefusal} in core). Never an empty page.
+ * of elevation: a stamped 403 ({@link isElevationRefusal} in core). Never an empty page. It is the state
+ * component's elevation state ({@link StateComponent}), with its Elevate flow, kept under its old name.
  *
  * The elevation prompt opens only from the Elevate button here -- the person's explicit request.
  * `elevated` is emitted once the session is elevated, from this prompt or from one already granted
@@ -19,19 +18,12 @@ import { EmptyStateComponent } from './empty-state.component';
     selector: 'cms-elevation-required',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [EmptyStateComponent],
+    imports: [StateComponent],
+    // The host loads its content again on `elevated`, as this component has always promised: the state inside is
+    // given no page to reload, so it tells this component, and this component tells its host.
+    providers: [{ provide: RELOAD_PAGE, useValue: null }],
     template: `
-        <app-empty-state icon="shield-lock" [title]="title()" [hint]="hint()">
-            <button type="button" class="cms-btn cms-btn-primary" data-test="elevate"
-                    [disabled]="asking()" (click)="elevate()">
-                Elevate
-            </button>
-            @if (unavailable()) {
-                <p class="cms-elevation-required__unavailable" data-test="elevation-unavailable" role="status">
-                    Elevation isn't available here. Ask an administrator.
-                </p>
-            }
-        </app-empty-state>
+        <cms-state kind="elevation-required" [title]="title()" [description]="hint()" (elevated)="elevated.emit()" />
     `,
 })
 export class ElevationRequiredComponent {
@@ -40,22 +32,4 @@ export class ElevationRequiredComponent {
 
     /** The session is elevated: load the content again. */
     readonly elevated = output<void>();
-
-    private readonly elevation = inject(ElevationService);
-    protected readonly asking = signal(false);
-    /** The installation cannot elevate: the button opened nothing, and the person is told so. */
-    protected readonly unavailable = signal(false);
-
-    elevate(): void {
-        this.asking.set(true);
-        elevateOnce(this.elevation).pipe(
-            finalize(() => this.asking.set(false)),
-        ).subscribe(outcome => {
-            if (outcome === 'elevated') {
-                this.elevated.emit();
-            } else if (outcome === 'unavailable') {
-                this.unavailable.set(true);
-            }
-        });
-    }
 }

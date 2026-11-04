@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { ElevationService, isElevationRefusal } from '@coolms/core-angular';
 import { elevateOnce } from './elevate-once';
-import { RELOAD_PAGE } from './error-banner.component';
+import { RELOAD_PAGE } from './reload-page';
 
 /** What a page, a card or a line of text shows instead of its content. */
 export type StateKind = 'loading' | 'empty' | 'error' | 'denied' | 'elevation-required';
