@@ -155,6 +155,18 @@ interface SectionGroup {
         }
 
         .cms-settings-shell__pane { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+        /* A phone stacks the two: the list on top, as wide as the screen and at most a third of its height, then
+           the pane below. Side by side, the 260px list left the pane a few pixels at 390. The splitter has nothing
+           to split, and the width it remembers is the wide screen's. */
+        @media (max-width: 599.98px) {
+            .cms-settings-shell__body { flex-direction: column; }
+            .cms-settings-shell__list {
+                width: auto !important; max-height: 33vh; padding: 4px 12px 12px;
+                border-bottom: 1px solid var(--cms-border);
+            }
+            .cms-settings-shell__body cms-pane-splitter { display: none; }
+        }
     `],
 })
 export class CmsSettingsShellComponent {
