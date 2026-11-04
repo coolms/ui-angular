@@ -3,6 +3,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs';
 import { ELEVATION_REQUIRED_PROBLEM_TYPE, ElevationService } from '@coolms/core-angular';
 import { RELOAD_PAGE } from './error-banner.component';
+import { Component } from '@angular/core';
+import { ElevationRequiredComponent } from './elevation-required.component';
+import { EmptyStateComponent } from './empty-state.component';
 import { LoadingComponent } from './loading.component';
 import { StateComponent, StateKind, StatePlacement } from './state.component';
 
@@ -147,5 +150,56 @@ describe('LoadingComponent', () => {
         expect(state!.textContent).toContain('Loading draft…');
         expect(host.querySelector('[data-test="state-spinner"]')).not.toBeNull();
         expect(host.querySelector('cms-loader')).toBeNull();
+    });
+});
+
+/** `app-empty-state`, kept under its old name, is the state component's empty state; what a page projects follows it. */
+describe('EmptyStateComponent', () => {
+    @Component({
+        standalone: true,
+        imports: [EmptyStateComponent],
+        template: `<app-empty-state icon="search" title="No matches" hint="No messages matched your search.">
+            <button type="button" data-test="add">Add</button>
+        </app-empty-state>`,
+    })
+    class Host {}
+
+    it('draws the empty state with its title and hint, one icon per kind, and keeps what is projected', () => {
+        TestBed.configureTestingModule({ imports: [Host] });
+        const fixture = TestBed.createComponent(Host);
+        fixture.detectChanges();
+        const host = fixture.nativeElement as HTMLElement;
+
+        const state = host.querySelector('cms-state .cms-state')!;
+        expect(state.getAttribute('data-kind')).toBe('empty');
+        expect(state.textContent).toContain('No matches');
+        expect(state.textContent).toContain('No messages matched your search.');
+        expect(host.querySelector('.bi-search')).toBeNull();
+        expect(host.querySelector('.bi-inbox')).not.toBeNull();
+        expect(host.querySelector('[data-test="add"]')).not.toBeNull();
+    });
+});
+
+/** `cms-elevation-required` is the state component's elevation state, and tells its host, as it always has. */
+describe('ElevationRequiredComponent', () => {
+    it('emits elevated to its host even where the shell can reload the page', () => {
+        let reloaded = 0;
+        TestBed.configureTestingModule({
+            imports: [ElevationRequiredComponent],
+            providers: [
+                { provide: ElevationService, useValue: { offerFor: () => of(true), elevated: () => true, available: true } },
+                { provide: RELOAD_PAGE, useValue: () => { reloaded++; } },
+            ],
+        });
+        const fixture = TestBed.createComponent(ElevationRequiredComponent);
+        let told = 0;
+        fixture.componentInstance.elevated.subscribe(() => told++);
+        fixture.detectChanges();
+        const host = fixture.nativeElement as HTMLElement;
+
+        expect(host.querySelector('cms-state .cms-state')!.getAttribute('data-kind')).toBe('elevation-required');
+        (host.querySelector('[data-test="elevate"]') as HTMLButtonElement).click();
+        expect(told).toBe(1);
+        expect(reloaded).toBe(0);
     });
 });

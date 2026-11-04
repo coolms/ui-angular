@@ -13,6 +13,16 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- `app-empty-state` draws the state component's empty state (`cms-state kind="empty"`), its `hint` the description;
+  what a page projects follows it. One icon per kind, as the state contract has it: `icon` is still accepted and no
+  longer drawn. Superseded by `cms-state`.
+- `cms-elevation-required` draws the state component's elevation state, with its Elevate flow. It still emits
+  `elevated` to its host, as it always has, even where the shell can reload the page.
+- `RELOAD_PAGE` lives in its own module (`ui/state/reload-page`), still exported from the error banner's: the error
+  banner, the elevation state and `cms-state` read it without importing each other in a circle.
+
+### Changed
+
 - `app-loading` draws the state component's loading state (`cms-state kind="loading"`), its `label` the title:
   the spinner from the tokens in place of the old mark, seen only after the state delay. Every page that names it
   changes with no change of its own. Superseded by `cms-state`; it goes once nothing names it.

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject, InjectionToken, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { isElevationRefusal } from '@coolms/core-angular';
 import { ElevationRequiredComponent } from './elevation-required.component';
+import { RELOAD_PAGE } from './reload-page';
 
 /**
  * UI-polish A2 -- shared inline error banner. Surfaces a load/action
@@ -16,11 +17,7 @@ import { ElevationRequiredComponent } from './elevation-required.component';
  *
  *   `<app-error-banner [message]="error()!" [error]="failure()" (retry)="load()" />`
  */
-/**
- * How the host shell loads the page in front of the person again: it is made anew, so every read it makes on
- * arrival is made again. Provided by a shell that has pages; absent elsewhere.
- */
-export const RELOAD_PAGE = new InjectionToken<() => void>('RELOAD_PAGE');
+export { RELOAD_PAGE } from './reload-page';
 
 @Component({
     selector: 'app-error-banner',
