@@ -11,6 +11,8 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **`UserCalendarPreferencesService.followDeviceZone(zone)`.** For a person whose time zone follows their device: dates are in that zone whatever the settings section answers, on every later read. Null puts the section's zone back.
+
 ### Changed
 - **The checkbox field widget is the kit's switch** (`.cms-toggle`), where it was Bootstrap's `form-switch`: the kit's global checkbox rules reset that switch's `background-repeat` and remove its knob when checked, so it drew two dots off and a tick on.
 

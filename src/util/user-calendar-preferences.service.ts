@@ -62,6 +62,11 @@ export class UserCalendarPreferencesService {
 
     private loadOnce$?: Observable<CalendarPrefs>;
 
+    /** The zone a person who follows their device is in; null when they chose one. */
+    private deviceZone: string | null = null;
+    /** The zone the section last answered, for when a person stops following their device. */
+    private sectionZone: string | null = null;
+
     // -- Public signals (read-only) --------------------------------------------
 
     /** Whole preferences VO. */
@@ -103,7 +108,11 @@ export class UserCalendarPreferencesService {
         if (this.loadOnce$) return this.loadOnce$;
 
         this.loadOnce$ = this.api.getSettings().pipe(
-            map(all => this.merge((all['calendar'] as Partial<CalendarPrefs> | undefined) ?? {})),
+            map(all => {
+                const calendar = (all['calendar'] as Partial<CalendarPrefs> | undefined) ?? {};
+                this.sectionZone = calendar.tz ?? this.sectionZone;
+                return this.merge(calendar);
+            }),
             tap(prefs => {
                 this._prefs.set(prefs);
                 this.loaded$.next(prefs);
@@ -113,7 +122,7 @@ export class UserCalendarPreferencesService {
                 // /auth/me/settings), expose the platform defaults so
                 // consumers never see null and pre-login rendering uses
                 // the deployment's configured TZ/format.
-                const defaults = this.platformDefaults();
+                const defaults = this.merge(this.platformDefaults());
                 this._prefs.set(defaults);
                 this.loaded$.next(defaults);
                 return of(defaults);
@@ -129,10 +138,21 @@ export class UserCalendarPreferencesService {
      * fire immediately, no GET roundtrip.
      */
     update(partial: Partial<CalendarPrefs>): void {
+        this.sectionZone = partial.tz ?? this.sectionZone;
         this._prefs.update(prev => this.merge({ ...prev, ...partial }));
         // Also push the new value into the loaded$ stream so any
         // observable-based consumers (current or future) see the change
         // without having to re-fetch.
+        this.loaded$.next(this._prefs());
+    }
+
+    /**
+     * A person whose time zone follows their device: dates here are in `zone`, whatever the section answers, on this
+     * read and every later one. Null when they chose a zone, which puts the section's back.
+     */
+    followDeviceZone(zone: string | null): void {
+        this.deviceZone = zone;
+        this._prefs.update(prev => this.merge({ ...prev, tz: this.sectionZone ?? this.platformDefaults().tz }));
         this.loaded$.next(this._prefs());
     }
 
@@ -154,6 +174,8 @@ export class UserCalendarPreferencesService {
 
     /** Reset to defaults -- used by AuthState when the user logs out. */
     reset(): void {
+        this.deviceZone = null;
+        this.sectionZone = null;
         this._prefs.set(this.platformDefaults());
         this.loadOnce$ = undefined;
     }
@@ -165,7 +187,7 @@ export class UserCalendarPreferencesService {
         // platform defaults (F6), not an FE-hardcoded Western default.
         const defaults = this.platformDefaults();
         const out: CalendarPrefs = {
-            tz:                  this.coerceString(overrides.tz,         defaults.tz),
+            tz:                  this.deviceZone ?? this.coerceString(overrides.tz, defaults.tz),
             dateFormat:          this.coerceString(overrides.dateFormat, defaults.dateFormat),
             // Validate the enum: an unrecognised stored value falls to the
             // platform default, not silently through.
