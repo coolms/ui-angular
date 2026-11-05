@@ -108,21 +108,21 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
         }
         .ctx-item:hover { background: var(--cms-border-light, #f0f2f5); }
         .ctx-item:disabled { opacity: .45; cursor: default; }
-        .ctx-item--danger { color: var(--cms-danger, #dc2626); }
+        .ctx-item--danger { color: var(--cms-danger, #b91c1c); }
         .ctx-item--danger:hover { background: var(--cms-danger-light); }
         .ctx-icon {
             width: 16px;
             text-align: center;
             font-size: .875rem;
             flex-shrink: 0;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
         }
         .ctx-item--danger .ctx-icon { color: inherit; }
         /* Allowed once elevated: the lock sits at the item's far end. */
         .ctx-lock {
             margin-left: auto;
             font-size: .75rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
         }
         /* The lock's meaning, for a screen reader only. */
         .ctx-sr {
@@ -139,7 +139,7 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
         .ctx-empty {
             padding: 10px 16px;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
         }
     `],
 })

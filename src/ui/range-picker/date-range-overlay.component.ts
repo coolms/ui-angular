@@ -160,8 +160,8 @@ export interface DateRangeOverlayResult {
             color: var(--cms-accent-text, #7C4D00);
             font-weight: 500;
         }
-        .overlay__placeholder { color: var(--cms-text-muted, #69707c); }
-        .overlay__arrow { color: var(--cms-text-muted, #69707c); }
+        .overlay__placeholder { color: var(--cms-text-muted, #4b5563); }
+        .overlay__arrow { color: var(--cms-text-muted, #4b5563); }
         .overlay__months {
             display: grid;
             grid-template-columns: 1fr 1fr;

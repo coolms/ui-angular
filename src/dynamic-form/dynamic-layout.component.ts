@@ -232,9 +232,9 @@ import { FieldItem, LayoutNode, VisibilityCondition } from '@coolms/core-angular
         .form-wizard__final { font-size: .8125rem; color: var(--cms-text-muted); }
         .form-wizard__error {
             margin-top: 14px; padding: 8px 12px;
-            font-size: .8125rem; color: var(--cms-danger, #dc2626);
+            font-size: .8125rem; color: var(--cms-danger, #b91c1c);
             background: var(--cms-danger-light, #fef2f2);
-            border: 1px solid var(--cms-danger, #dc2626); border-radius: var(--cms-radius, 6px);
+            border: 1px solid var(--cms-danger, #b91c1c); border-radius: var(--cms-radius, 6px);
         }
     `],
 })

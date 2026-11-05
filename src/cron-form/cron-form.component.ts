@@ -275,7 +275,7 @@ import { TimeOfDayPickerComponent } from '../ui/range-picker/time-of-day-picker.
         }
         .summary__text { color: var(--cms-text, #111827); }
         .summary__expr {
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             font-size: .75rem;
             margin-left: auto;
         }

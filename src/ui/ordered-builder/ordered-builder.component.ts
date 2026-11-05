@@ -160,7 +160,7 @@ export type OrderedSaveFn = (elements: OrderedElement[]) => Observable<unknown>;
             display: flex; align-items: center; gap: 6px;
         }
         .ob__card-actions { display: flex; gap: 4px; }
-        .ob__danger { color: var(--cms-danger, #dc2626); }
+        .ob__danger { color: var(--cms-danger, #b91c1c); }
         .ob__body { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; }
         .ob__foot { display: flex; align-items: center; justify-content: flex-end; }
         /* Palette / action bar. Pinned to the top of the scrolling list (the host

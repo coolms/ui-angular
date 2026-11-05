@@ -173,7 +173,7 @@ interface OptionGroup {
             overflow: hidden;
             &:hover { border-color: var(--cms-btn-hover-border, #6b7280); }
         }
-        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #69707c); }
+        .mos-placeholder { flex: 1; color: var(--cms-text-muted, #4b5563); }
         .mos-chips {
             flex: 1; min-width: 0;
             display: flex; flex-wrap: wrap; gap: 3px;
@@ -248,7 +248,7 @@ interface OptionGroup {
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: .04em;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             background: var(--cms-border-light, #f0f2f5);
             border-top: 1px solid var(--cms-border, #e5e7eb);
             border-bottom: 1px solid var(--cms-border, #e5e7eb);
@@ -273,7 +273,7 @@ interface OptionGroup {
             padding: 12px;
             text-align: center;
             font-size: .8125rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .mos-footer {
@@ -283,7 +283,7 @@ interface OptionGroup {
         }
         .mos-clear-all {
             border: 0; background: transparent;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             font-size: .75rem;
             cursor: pointer;
             padding: 2px 4px;

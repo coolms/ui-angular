@@ -210,7 +210,7 @@ type FlatRow =
         }
         .cms-dirpicker__path-error {
             font-size: 0.75rem;
-            color: var(--cms-danger, #dc2626);
+            color: var(--cms-danger, #b91c1c);
         }
         .cms-dirpicker__tree {
             list-style: none;
@@ -237,14 +237,14 @@ type FlatRow =
         }
         .cms-dirpicker__row--unselectable .cms-dirpicker__name { cursor: not-allowed; }
         .cms-dirpicker__row--system .cms-dirpicker__name {
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             font-style: italic;
         }
         .cms-dirpicker__chevron {
             border: none;
             background: transparent;
             cursor: pointer;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             padding: 0 2px;
             line-height: 1;
         }
@@ -256,10 +256,10 @@ type FlatRow =
         .cms-dirpicker__placeholder {
             padding: 3px 8px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
         }
         .cms-dirpicker__placeholder--muted { font-style: italic; }
-        .cms-dirpicker__placeholder--error { color: var(--cms-danger, #dc2626); }
+        .cms-dirpicker__placeholder--error { color: var(--cms-danger, #b91c1c); }
         .cms-dirpicker__retry {
             margin-left: 6px;
             border: 1px solid var(--cms-border, #e5e7eb);
@@ -307,7 +307,7 @@ type FlatRow =
             cursor: pointer;
         }
         .cms-dirpicker__newfolder-error {
-            color: var(--cms-danger, #dc2626);
+            color: var(--cms-danger, #b91c1c);
             font-size: 0.75rem;
             margin-left: 6px;
         }
@@ -316,7 +316,7 @@ type FlatRow =
             align-items: center;
             gap: 4px;
             font-size: 0.8125rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             cursor: pointer;
         }
     `],

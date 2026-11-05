@@ -136,9 +136,9 @@ export interface TimeRangeValue {
             text-overflow: ellipsis;
             text-align: left;
         }
-        .picker__value--placeholder { color: var(--cms-text-muted, #69707c); }
+        .picker__value--placeholder { color: var(--cms-text-muted, #4b5563); }
         .picker__icon {
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             line-height: 1;
             flex-shrink: 0;
         }
@@ -149,7 +149,7 @@ export interface TimeRangeValue {
             width: 18px;
             height: 18px;
             border-radius: 50%;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
             font-size: 1.05rem;
             line-height: 1;
             cursor: pointer;
@@ -179,11 +179,11 @@ export interface TimeRangeValue {
         }
         .picker__label {
             font-size: .85rem;
-            color: var(--cms-text-muted, #69707c);
+            color: var(--cms-text-muted, #4b5563);
         }
         .picker__error {
             margin: 4px 0 8px;
-            color: var(--cms-danger, #dc2626);
+            color: var(--cms-danger, #b91c1c);
             font-size: .75rem;
         }
         .picker__foot {
