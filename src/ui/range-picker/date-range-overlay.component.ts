@@ -186,7 +186,7 @@ export interface DateRangeOverlayResult {
         .overlay__preset {
             background: transparent;
             border: 1px solid var(--cms-border, #e5e7eb);
-            border-radius: 12px;
+            border-radius: var(--cms-radius-card, 12px);
             padding: 2px 10px;
             font-size: .75rem;
             cursor: pointer;

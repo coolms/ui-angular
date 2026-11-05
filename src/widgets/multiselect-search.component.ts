@@ -106,7 +106,7 @@ export interface MultiselectOption {
         .ms-tag {
             display: inline-flex; align-items: center; gap: 4px;
             background: var(--cms-accent-light); color: var(--cms-accent-text);
-            padding: 2px 8px; border-radius: 12px; font-size: .8rem;
+            padding: 2px 8px; border-radius: var(--cms-radius-card, 12px); font-size: .8rem;
         }
         .ms-tag-remove {
             background: none; border: none; cursor: pointer;

@@ -137,7 +137,7 @@ import { FieldWidgetHostComponent } from '../../ui/field-widgets/field-widget-ho
         .relation-tag {
             display: inline-flex; align-items: center; gap: 4px;
             background: var(--cms-info-subtle); color: var(--cms-info-text);
-            padding: 2px 8px; border-radius: 12px; font-size: .8rem;
+            padding: 2px 8px; border-radius: var(--cms-radius-card, 12px); font-size: .8rem;
         }
         .relation-tag-remove {
             background: none; border: none; cursor: pointer;
