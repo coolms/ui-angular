@@ -194,7 +194,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
         .lte__children > .lte__node { flex: 1 0 100%; }
         .lte__chip {
             display: inline-flex; align-items: center; gap: 4px; font-size: .75rem;
-            padding: 2px 4px 2px 8px; border-radius: 12px; border: 1px solid var(--cms-border);
+            padding: 2px 4px 2px 8px; border-radius: var(--cms-radius-card, 12px); border: 1px solid var(--cms-border);
         }
         .lte__chip--avail { background: var(--cms-surface); color: var(--cms-text-secondary); }
         .lte__chip--placed { background: var(--cms-primary, #2563eb); color: var(--cms-text-inverse); border-color: var(--cms-primary, #2563eb); }
