@@ -188,6 +188,18 @@ interface PanelSlotConfig {
 
         /* -- Panels ------------------------------------------------------- */
 
+        /*
+         * On a phone the panels stack above and below the main area: side by side, the left panel's width left the
+         * main area cut off. Dragging a width means nothing here, and a toolbar wider than the screen scrolls.
+         */
+        @media (max-width: 768px) {
+            .explorer-body { flex-direction: column; }
+            .explorer-panel--left,
+            .explorer-panel--right { width: 100% !important; flex: 0 0 auto; max-height: 35%; }
+            .explorer-panel--collapsed { display: none; }
+            .resize-handle { display: none; }
+            .explorer-toolbar { overflow-x: auto; }
+        }
         .explorer-panel {
             flex-shrink: 0;
             display: flex;
