@@ -11,6 +11,8 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **At a phone's width,** a page header puts its actions on their own row instead of over its title, and an explorer stacks its panels above and below the main area.
+
 - **`UserCalendarPreferencesService.followDeviceZone(zone)`.** For a person whose time zone follows their device: dates are in that zone whatever the settings section answers, on every later read. Null puts the section's zone back.
 
 ### Changed

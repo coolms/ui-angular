@@ -140,6 +140,12 @@ import { ToolbarAction } from './page-toolbar.component';
            and subtitle sit side-by-side separated by a soft divider.
            This is the wide-monitor default; narrow viewports / open
            drawers fall back to the stacked layout automatically. */
+        /* On a phone the actions take their own row: beside a title they cover it. */
+        @media (max-width: 768px) {
+            .page-header { flex-wrap: wrap; }
+            .page-header__main { flex: 1 1 100%; }
+            .page-header__actions { flex-wrap: wrap; }
+        }
         @container (min-width: 720px) {
             .page-header--with-subtitle {
                 align-items: center;
