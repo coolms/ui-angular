@@ -199,7 +199,7 @@ interface ShowWhen { field: string; operator: string; value?: unknown }
         .lte__chip--avail { background: var(--cms-surface); color: var(--cms-text-secondary); }
         .lte__chip--placed { background: var(--cms-primary, #2563eb); color: var(--cms-text-inverse); border-color: var(--cms-primary, #2563eb); }
         .lte__chipx { background: transparent; border: none; color: inherit; cursor: pointer; font-size: .85rem; line-height: 1; }
-        .lte__danger { color: var(--cms-danger, #dc2626); }
+        .lte__danger { color: var(--cms-danger, #b91c1c); }
     `],
 })
 export class LayoutTreeEditorComponent {
