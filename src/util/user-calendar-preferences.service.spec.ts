@@ -19,6 +19,68 @@ import { UserCalendarPreferencesService } from './user-calendar-preferences.serv
  * on screen. The service cannot do better -- the values are in the bag, but
  * their names are gone -- which is why the fix had to be the request header.
  */
+describe('UserCalendarPreferencesService.followDeviceZone()', () => {
+    let service: UserCalendarPreferencesService;
+    let answer: Record<string, unknown>;
+
+    beforeEach(() => {
+        answer = { calendar: { tz: 'Europe/Berlin' } };
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: IdentityApiClient, useValue: { getSettings: () => of(answer) } },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+        service = TestBed.inject(UserCalendarPreferencesService);
+    });
+
+    it('holds over a write of the whole section', () => {
+        service.followDeviceZone('Asia/Tokyo');
+
+        service.update({ tz: 'UTC', weekStart: 'sunday' });
+
+        expect(service.tz()).toBe('Asia/Tokyo');
+        expect(service.prefs().weekStart).toBe('sunday');
+    });
+
+    it('holds over a read of the section, first or forced', () => {
+        service.followDeviceZone('Asia/Tokyo');
+
+        service.ensureLoaded().subscribe();
+        expect(service.tz()).toBe('Asia/Tokyo');
+
+        service.refresh().subscribe();
+        expect(service.tz()).toBe('Asia/Tokyo');
+    });
+
+    it('null puts back the zone the section last answered', () => {
+        service.ensureLoaded().subscribe();
+        service.followDeviceZone('Asia/Tokyo');
+
+        service.followDeviceZone(null);
+
+        expect(service.tz()).toBe('Europe/Berlin');
+    });
+
+    it('null also takes a zone written while following', () => {
+        service.followDeviceZone('Asia/Tokyo');
+        service.update({ tz: 'Europe/Paris' });
+
+        service.followDeviceZone(null);
+
+        expect(service.tz()).toBe('Europe/Paris');
+    });
+
+    it('a sign-out ends it: the next person is not on the last one\'s device zone', () => {
+        service.followDeviceZone('Asia/Tokyo');
+
+        service.reset();
+        service.update({ tz: 'Europe/Paris' });
+
+        expect(service.tz()).toBe('Europe/Paris');
+    });
+});
+
 describe('UserCalendarPreferencesService.update()', () => {
     const PLATFORM_DEFAULTS = {
         timezone:   'UTC',
