@@ -257,7 +257,7 @@
   @for (row of visibleRows(); track trackRow($index, row)) {
     @if (groupHeading($index); as group) {
       <tr class="cms-datagrid__group-row" data-test="datagrid-group-row">
-        <th colspan="99" scope="colgroup">
+        <th [attr.colspan]="colCount(cfg)">
           {{ group.label }}
           <span class="cms-datagrid__group-count">{{ group.count }}</span>
         </th>

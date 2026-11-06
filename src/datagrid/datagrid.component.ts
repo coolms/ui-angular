@@ -273,7 +273,8 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     /** Optional: pass data directly to skip the data API call (parent manages paging). */
     readonly externalData   = input<DataGridData | null>(null);
     /**
-     * A column whose value heads a group: a heading row each time it changes from the row before. The rows must already
+     * A column whose raw value heads a group, so one that reads as it is stored, such as a name: a heading row each time
+     * it changes from the row before. Not for a draggable grid or a tree, whose rows move or nest. The rows must already
      * be in that order, which is the data source's to do. A heading is no row: it takes no selection or keyboard focus.
      */
     readonly groupBy        = input<string | null>(null);

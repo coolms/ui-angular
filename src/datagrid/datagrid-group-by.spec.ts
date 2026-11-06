@@ -75,6 +75,31 @@ describe('DataGridComponent — group by a column', () => {
         expect(headings.some(h => h.hasAttribute('data-row-id'))).toBeFalse();
     });
 
+    it('a heading spans the real columns, and leaves their widths alone at a fixed layout', () => {
+        const component = grid('person', ROWS);
+        component.config.update(config => ({
+            ...(config as DataGridConfig),
+            columns: [
+                { field: 'person', label: 'Person', type: 'text' },
+                { field: 'city', label: 'City', type: 'text' },
+                { field: 'phone', label: 'Phone', type: 'text' },
+            ],
+        } as unknown as DataGridConfig));
+        fixture.detectChanges();
+        const root: HTMLElement = fixture.nativeElement;
+        document.body.appendChild(root);
+        const table = root.querySelector('table') as HTMLTableElement;
+        table.style.width = '1000px';
+        table.style.tableLayout = 'fixed';
+
+        const heading = root.querySelector('[data-test="datagrid-group-row"] th') as HTMLTableCellElement;
+        expect(heading.colSpan).toBe(component.colCount(component.config() as DataGridConfig));
+        const firstRow = root.querySelector('tr[data-row-id]') as HTMLTableRowElement;
+        expect(firstRow.cells.length).toBe(heading.colSpan);
+        expect(firstRow.cells[0].getBoundingClientRect().width).toBeGreaterThan(100);
+        root.remove();
+    });
+
     it('draws none when no column is named', () => {
         grid(null, ROWS);
         fixture.detectChanges();
