@@ -255,6 +255,14 @@
   cdkDropList
   (cdkDropListDropped)="onDrop($event, cfg)">
   @for (row of visibleRows(); track trackRow($index, row)) {
+    @if (groupHeading($index); as group) {
+      <tr class="cms-datagrid__group-row" data-test="datagrid-group-row">
+        <th colspan="99" scope="colgroup">
+          {{ group.label }}
+          <span class="cms-datagrid__group-count">{{ group.count }}</span>
+        </th>
+      </tr>
+    }
     <tr cdkDrag [cdkDragDisabled]="!cfg.draggable"
       [class.table-active]="selectedRowIds().has('' + row['id'])"
       [class.table-focus]="focusedRowId() === ('' + row['id'])"
