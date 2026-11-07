@@ -11,6 +11,10 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **`cms-datagrid` draws group headings.** Its `groupBy` input names a column: a heading row with a count each
+  time that value changes from the row before. The rows must already be in that order, which is the data
+  source's to do. A heading takes no selection or keyboard focus.
+
 - **At a phone's width,** a page header puts its actions on their own row instead of over its title, and an explorer stacks its panels above and below the main area.
 
 - **`UserCalendarPreferencesService.followDeviceZone(zone)`.** For a person whose time zone follows their device: dates are in that zone whatever the settings section answers, on every later read. Null puts the section's zone back.

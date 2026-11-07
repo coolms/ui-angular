@@ -176,6 +176,9 @@ const NEUTRAL_ENUM_VALUES  = new Set(['archived', 'cancelled', 'unknown']);
         '.datagrid-embedded table thead tr th { background: transparent; border-bottom: 2px solid var(--cms-border); }',
         // Spacer: expands below the table to fill remaining scroll-container height.
         '.datagrid-spacer { flex: 1; min-height: 40px; }',
+        // A group's heading, across the whole row; `th` already keeps it to one line.
+        '.cms-datagrid__group-row th { background: var(--cms-border-light); color: var(--cms-text); font-weight: 600; }',
+        '.cms-datagrid__group-count { margin-left: 6px; color: var(--cms-text-muted); font-weight: 400; }',
         // FIX 3: column-chooser sticky column.
         // overflow:visible overrides the general th rule so the dropdown panel is never clipped.
         '.col-chooser-th { width: 36px; min-width: 36px; padding: 2px 4px; position: relative; overflow: visible; vertical-align: middle; text-align: center; }',
@@ -269,6 +272,12 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
     readonly externalConfig = input<DataGridConfig | null>(null);
     /** Optional: pass data directly to skip the data API call (parent manages paging). */
     readonly externalData   = input<DataGridData | null>(null);
+    /**
+     * A column whose raw value heads a group, so one that reads as it is stored, such as a name: a heading row each time
+     * it changes from the row before. Not for a draggable grid or a tree, whose rows move or nest. The rows must already
+     * be in that order, which is the data source's to do. A heading is no row: it takes no selection or keyboard focus.
+     */
+    readonly groupBy        = input<string | null>(null);
 
     /**
      * DataGrid live updates -- when set, the component subscribes
@@ -601,6 +610,28 @@ export class DataGridComponent implements OnInit, AfterViewChecked, OnDestroy {
 
     /** True when tree mode is active per config. */
     readonly isTree = computed(() => this.config()?.tree?.enabled === true);
+
+    /** Per row index that starts a group: its heading, and how many rows of those loaded it holds. */
+    private readonly groupHeadings = computed((): ReadonlyMap<number, { label: string; count: number }> => {
+        const column = this.groupBy();
+        const headings = new Map<number, { label: string; count: number }>();
+        if (column === null) return headings;
+        let current: { label: string; count: number } | null = null;
+        this.visibleRows().forEach((row, index) => {
+            const label = String(row[column] ?? '');
+            if (current === null || current.label !== label) {
+                current = { label, count: 0 };
+                headings.set(index, current);
+            }
+            current.count++;
+        });
+        return headings;
+    });
+
+    /** The heading to draw before the row at this index, if it starts a group. */
+    groupHeading(index: number): { label: string; count: number } | null {
+        return this.groupHeadings().get(index) ?? null;
+    }
 
     /** True when drag-move is opted in for this grid. */
     readonly isTreeDragMove = computed(() =>
