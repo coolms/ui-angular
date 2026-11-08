@@ -162,8 +162,8 @@ describe('calendarPrefsFromSettings()', () => {
         });
     });
 
-    it('never takes automatic for a zone: the device or the default applies', () => {
-        expect(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }).tz).toBeUndefined();
+    it('reads automatic as no zone of the person\'s: null, so a reader leaves the zone it had', () => {
+        expect(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }).tz).toBeNull();
     });
 
     it('reads nothing from the keys the calendar section held before region', () => {
@@ -196,5 +196,52 @@ describe('UserCalendarPreferencesService.ensureLoaded()', () => {
 
         expect(service.tz()).toBe('UTC');
         expect(service.weekStart()).toBe('sunday');
+    });
+});
+
+describe('UserCalendarPreferencesService: a zone set back to automatic', () => {
+    let service: UserCalendarPreferencesService;
+
+    beforeEach(() => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: IdentityApiClient, useValue: { getSettings: () => of({}) } },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+        service = TestBed.inject(UserCalendarPreferencesService);
+    });
+
+    it('leaves the explicit zone behind: the default applies, and stays when device following ends', () => {
+        service.update({ tz: 'Europe/Kyiv' });
+
+        service.update(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }));
+
+        expect(service.tz()).toBe('UTC');
+        service.followDeviceZone(null);
+        expect(service.tz()).toBe('UTC');
+    });
+
+    it('update({ tz: null }) clears the explicit zone: the device zone if one is followed, else the default', () => {
+        service.update({ tz: 'Europe/Kyiv' });
+        service.update({ tz: null });
+        expect(service.tz()).toBe('UTC');
+
+        service.update({ tz: 'Europe/Kyiv' });
+        service.followDeviceZone('Asia/Tokyo');
+        service.update({ tz: null });
+        expect(service.tz()).toBe('Asia/Tokyo');
+    });
+
+    it('takes the device zone while one is followed, and the default after, never the explicit zone', () => {
+        service.update({ tz: 'Europe/Kyiv' });
+        service.followDeviceZone('Asia/Tokyo');
+
+        service.update(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }));
+
+        expect(service.tz()).toBe('Asia/Tokyo');
+        service.followDeviceZone(null);
+        expect(service.tz()).toBe('UTC');
     });
 });

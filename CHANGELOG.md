@@ -14,7 +14,9 @@ predate this file would be a worse record than not having them.
 - **Calendar preferences are read from the person's `region` settings.** `UserCalendarPreferencesService` takes the
   time zone, the date and time formats and the week start from `region`, and the default calendar from `calendar`,
   through `calendarPrefsFromSettings(settings)`, which a host can call on a settings answer of its own. A time zone of
-  `automatic` is not a zone: the device's zone or the platform default applies. The keys `calendar` held before are
+  `automatic` is not a zone: it reads as `tz: null`, and `update()` takes a null zone as the person having none of
+  their own, so a zone set back to `automatic` leaves the explicit one behind and the device's zone or the platform
+  default applies. The keys `calendar` held before are
   no longer read.
 
 - **`cms-datagrid` draws group headings.** Its `groupBy` input names a column: a heading row with a count each

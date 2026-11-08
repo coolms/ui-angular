@@ -52,20 +52,28 @@ const HARDCODED_FALLBACK: CalendarPrefs = {
 const AUTOMATIC = 'automatic';
 
 /**
- * The calendar preferences a `GET /auth/me/settings` answer carries: the zone, the formats and the week start from
- * the `region` section, the default calendar from `calendar`. A key the answer does not carry is left out, so the
- * platform's default applies; `automatic` is not a zone, so it is left out too and the device's zone or the default
- * applies.
+ * Calendar preferences as a settings answer carries them: any subset of the keys, and a zone of null where the person
+ * has none of their own -- they follow their device -- so the device's zone or the platform default applies.
  */
-export function calendarPrefsFromSettings(all: Record<string, unknown> | null | undefined): Partial<CalendarPrefs> {
+export type CalendarPrefsRead = Partial<Omit<CalendarPrefs, 'tz'>> & { readonly tz?: string | null };
+
+/**
+ * The calendar preferences a `GET /auth/me/settings` answer carries: the zone, the formats and the week start from
+ * the `region` section, the default calendar from `calendar`. A key the answer does not carry is left out, so what
+ * a reader has stays. `automatic` is not a zone: it reads as a zone of null, so a reader leaves the zone it had and
+ * takes the device's zone, or the platform default.
+ */
+export function calendarPrefsFromSettings(all: Record<string, unknown> | null | undefined): CalendarPrefsRead {
     const section = (name: string): Record<string, unknown> => {
         const value = all?.[name];
         return typeof value === 'object' && value !== null ? value as Record<string, unknown> : {};
     };
     const region = section('region');
     const calendar = section('calendar');
-    const out: { -readonly [K in keyof CalendarPrefs]?: CalendarPrefs[K] } = {};
-    if (typeof region['timezone'] === 'string' && region['timezone'] !== AUTOMATIC) {
+    const out: { -readonly [K in keyof CalendarPrefsRead]?: CalendarPrefsRead[K] } = {};
+    if (region['timezone'] === AUTOMATIC) {
+        out.tz = null;
+    } else if (typeof region['timezone'] === 'string') {
         out.tz = region['timezone'];
     }
     if (typeof region['dateFormat'] === 'string') {
@@ -146,7 +154,7 @@ export class UserCalendarPreferencesService {
         this.loadOnce$ = this.api.getSettings().pipe(
             map(all => {
                 const read = calendarPrefsFromSettings(all);
-                this.sectionZone = read.tz ?? this.sectionZone;
+                this.sectionZone = null === read.tz ? null : read.tz ?? this.sectionZone;
                 return this.merge(read);
             }),
             tap(prefs => {
@@ -173,9 +181,10 @@ export class UserCalendarPreferencesService {
      * Merges the partial response with the existing cache so signals
      * fire immediately, no GET roundtrip.
      */
-    update(partial: Partial<CalendarPrefs>): void {
-        this.sectionZone = partial.tz ?? this.sectionZone;
-        this._prefs.update(prev => this.merge({ ...prev, ...partial }));
+    update(partial: CalendarPrefsRead): void {
+        // A zone of null is none of the person's: the one held before goes, and the device's zone or the default applies.
+        this.sectionZone = null === partial.tz ? null : partial.tz ?? this.sectionZone;
+        this._prefs.update(prev => this.merge({ ...prev, ...partial, tz: null === partial.tz ? null : partial.tz ?? prev.tz }));
         // Also push the new value into the loaded$ stream so any
         // observable-based consumers (current or future) see the change
         // without having to re-fetch.
@@ -218,7 +227,7 @@ export class UserCalendarPreferencesService {
 
     // -- Internals -------------------------------------------------------------
 
-    private merge(overrides: Partial<CalendarPrefs>): CalendarPrefs {
+    private merge(overrides: CalendarPrefsRead): CalendarPrefs {
         // The floor a user's stored overrides sit on: the deployment's
         // platform defaults (F6), not an FE-hardcoded Western default.
         const defaults = this.platformDefaults();
