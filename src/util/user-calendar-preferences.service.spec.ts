@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
 
 import { IdentityApiClient } from '@coolms/core-angular';
-import { UserCalendarPreferencesService } from './user-calendar-preferences.service';
+import { calendarPrefsFromSettings, UserCalendarPreferencesService } from './user-calendar-preferences.service';
 
 /**
  * `update()` is the seam the Profile page saves through, and fed it a
@@ -24,7 +24,7 @@ describe('UserCalendarPreferencesService.followDeviceZone()', () => {
     let answer: Record<string, unknown>;
 
     beforeEach(() => {
-        answer = { calendar: { tz: 'Europe/Berlin' } };
+        answer = { region: { timezone: 'Europe/Berlin' } };
         TestBed.configureTestingModule({
             providers: [
                 { provide: IdentityApiClient, useValue: { getSettings: () => of(answer) } },
@@ -149,5 +149,52 @@ describe('UserCalendarPreferencesService.update()', () => {
         // until something re-fetched /auth/me/settings.
         expect(svc.tz()).toBe('Europe/Berlin');
         expect(svc.firstDay()).toBe(0);
+    });
+});
+
+describe('calendarPrefsFromSettings()', () => {
+    it('reads the zone, the formats and the week start from region, and the default calendar from calendar', () => {
+        expect(calendarPrefsFromSettings({
+            region: { timezone: 'Europe/Kyiv', dateFormat: 'dd/MM/yyyy', timeFormat: '12h', weekStart: 'sunday' },
+            calendar: { defaultCalendarSlug: 'team' },
+        })).toEqual({
+            tz: 'Europe/Kyiv', dateFormat: 'dd/MM/yyyy', timeFormat: '12h', weekStart: 'sunday', defaultCalendarSlug: 'team',
+        });
+    });
+
+    it('never takes automatic for a zone: the device or the default applies', () => {
+        expect(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }).tz).toBeUndefined();
+    });
+
+    it('reads nothing from the keys the calendar section held before region', () => {
+        expect(calendarPrefsFromSettings({
+            calendar: { tz: 'Europe/Berlin', dateFormat: 'dd/MM/yyyy', timeFormat: '12h', weekStart: 'sunday' },
+        })).toEqual({});
+    });
+
+    it('keeps out a value of the wrong kind, and an answer with no sections', () => {
+        expect(calendarPrefsFromSettings({ region: { timeFormat: 'noon', weekStart: 'friday', timezone: 3 } })).toEqual({});
+        expect(calendarPrefsFromSettings(null)).toEqual({});
+    });
+});
+
+describe('UserCalendarPreferencesService.ensureLoaded()', () => {
+    it('takes the zone from region, and a person following their device keeps the default until the device says', () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [
+                {
+                    provide: IdentityApiClient,
+                    useValue: { getSettings: () => of({ region: { timezone: 'automatic', weekStart: 'sunday' } }) },
+                },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+        const service = TestBed.inject(UserCalendarPreferencesService);
+
+        service.ensureLoaded().subscribe();
+
+        expect(service.tz()).toBe('UTC');
+        expect(service.weekStart()).toBe('sunday');
     });
 });
