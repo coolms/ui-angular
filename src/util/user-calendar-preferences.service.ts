@@ -9,9 +9,10 @@ import { AuthState, AppConfigState, IdentityApiClient } from '@coolms/core-angul
  * Calendar preferences (timezone, date/time format, week start,
  * default calendar).
  *
- * The user-stored values live in `IdentityProfile.extras.settings.calendar`
- * and reach the FE through the existing `GET /auth/me/settings`
- * endpoint that already serves the Preferences + Interface tabs. We
+ * The time zone, date and time formats and week start are the person's
+ * `region` settings, and the default calendar is in their `calendar`
+ * section; both reach the FE through `GET /auth/me/settings`, read by
+ * {@link calendarPrefsFromSettings}. We
  * lazily load that response the first time any consumer reads a
  * preference, cache it (ReplaySubject) for the SPA lifetime, and
  * mirror the resolved-by-default values into Angular signals so
@@ -46,6 +47,49 @@ const HARDCODED_FALLBACK: CalendarPrefs = {
     defaultCalendarSlug: null,
     weekStart:           'monday',
 };
+
+/** The word a time zone setting holds when the person follows their device: never a zone. */
+const AUTOMATIC = 'automatic';
+
+/**
+ * Calendar preferences as a settings answer carries them: any subset of the keys, and a zone of null where the person
+ * has none of their own -- they follow their device -- so the device's zone or the platform default applies.
+ */
+export type CalendarPrefsRead = Partial<Omit<CalendarPrefs, 'tz'>> & { readonly tz?: string | null };
+
+/**
+ * The calendar preferences a `GET /auth/me/settings` answer carries: the zone, the formats and the week start from
+ * the `region` section, the default calendar from `calendar`. A key the answer does not carry is left out, so what
+ * a reader has stays. `automatic` is not a zone: it reads as a zone of null, so a reader leaves the zone it had and
+ * takes the device's zone, or the platform default.
+ */
+export function calendarPrefsFromSettings(all: Record<string, unknown> | null | undefined): CalendarPrefsRead {
+    const section = (name: string): Record<string, unknown> => {
+        const value = all?.[name];
+        return typeof value === 'object' && value !== null ? value as Record<string, unknown> : {};
+    };
+    const region = section('region');
+    const calendar = section('calendar');
+    const out: { -readonly [K in keyof CalendarPrefsRead]?: CalendarPrefsRead[K] } = {};
+    if (region['timezone'] === AUTOMATIC) {
+        out.tz = null;
+    } else if (typeof region['timezone'] === 'string') {
+        out.tz = region['timezone'];
+    }
+    if (typeof region['dateFormat'] === 'string') {
+        out.dateFormat = region['dateFormat'];
+    }
+    if (region['timeFormat'] === '12h' || region['timeFormat'] === '24h') {
+        out.timeFormat = region['timeFormat'];
+    }
+    if (region['weekStart'] === 'monday' || region['weekStart'] === 'sunday') {
+        out.weekStart = region['weekStart'];
+    }
+    if (typeof calendar['defaultCalendarSlug'] === 'string') {
+        out.defaultCalendarSlug = calendar['defaultCalendarSlug'];
+    }
+    return out;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UserCalendarPreferencesService {
@@ -109,9 +153,9 @@ export class UserCalendarPreferencesService {
 
         this.loadOnce$ = this.api.getSettings().pipe(
             map(all => {
-                const calendar = (all['calendar'] as Partial<CalendarPrefs> | undefined) ?? {};
-                this.sectionZone = calendar.tz ?? this.sectionZone;
-                return this.merge(calendar);
+                const read = calendarPrefsFromSettings(all);
+                this.sectionZone = null === read.tz ? null : read.tz ?? this.sectionZone;
+                return this.merge(read);
             }),
             tap(prefs => {
                 this._prefs.set(prefs);
@@ -137,9 +181,10 @@ export class UserCalendarPreferencesService {
      * Merges the partial response with the existing cache so signals
      * fire immediately, no GET roundtrip.
      */
-    update(partial: Partial<CalendarPrefs>): void {
-        this.sectionZone = partial.tz ?? this.sectionZone;
-        this._prefs.update(prev => this.merge({ ...prev, ...partial }));
+    update(partial: CalendarPrefsRead): void {
+        // A zone of null is none of the person's: the one held before goes, and the device's zone or the default applies.
+        this.sectionZone = null === partial.tz ? null : partial.tz ?? this.sectionZone;
+        this._prefs.update(prev => this.merge({ ...prev, ...partial, tz: null === partial.tz ? null : partial.tz ?? prev.tz }));
         // Also push the new value into the loaded$ stream so any
         // observable-based consumers (current or future) see the change
         // without having to re-fetch.
@@ -182,7 +227,7 @@ export class UserCalendarPreferencesService {
 
     // -- Internals -------------------------------------------------------------
 
-    private merge(overrides: Partial<CalendarPrefs>): CalendarPrefs {
+    private merge(overrides: CalendarPrefsRead): CalendarPrefs {
         // The floor a user's stored overrides sit on: the deployment's
         // platform defaults (F6), not an FE-hardcoded Western default.
         const defaults = this.platformDefaults();
