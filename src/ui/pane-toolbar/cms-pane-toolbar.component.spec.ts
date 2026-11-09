@@ -10,6 +10,7 @@ import { ContextMenuService } from '../../context-menu/context-menu.service';
 import { CmsPaneToolbarComponent } from './cms-pane-toolbar.component';
 import { type PaneToolbarAction, type PaneToolbarWidths } from './cms-pane-toolbar.types';
 import { actionsWidth, groupsOf, overflowSteps, paneToolbarLayout } from './pane-toolbar-layout';
+import { BOOTSTRAP_ICONS, iconForName } from '../icons/bootstrap-icons';
 
 /**
  * Nodes as a server could send them: three groups, the first two with no overflow number (they never go), the third
@@ -267,7 +268,7 @@ describe('CmsPaneToolbarComponent', () => {
         expect(document.activeElement).toBe(more());
     });
 
-    it('emits a chosen action's id, and nothing for a disabled or a busy one, which stay reachable', async () => {
+    it("emits a chosen action's id, and nothing for a disabled or a busy one, which stay reachable", async () => {
         f.componentInstance.actions.set(nodes({ forward: { disabled: true, reason: 'Not for drafts' }, star: { busy: true } }));
         await settle();
         button('reply').click();
@@ -298,5 +299,61 @@ describe('CmsPaneToolbarComponent', () => {
         await at(40);
         expect(row().getBoundingClientRect().height).toBe(tall);
         expect(tall).toBeGreaterThan(0);
+    });
+
+    /** The separators drawn, as the row reads left to right: '|' a separator, 'g' a group that shows an action. */
+    const reading = () => Array.from(root().querySelector('.cms-pane-toolbar .cms-pane-toolbar__actions')!.children)
+        .filter((k) => !k.classList.contains('cms-pane-toolbar__more'))
+        .map((k) => (k.classList.contains('cms-pane-toolbar__separator') ? '|'
+            : (Array.from(k.querySelectorAll('[data-action]')).some((b) => !(b as HTMLElement).hidden) ? 'g' : '-')))
+        .filter((k) => k !== '-')
+        .join('');
+
+    it('leaves no stray separator when a whole group goes behind More actions: not between, leading or trailing', async () => {
+        const g = (id: string, group: string, overflow?: number): PaneToolbarAction =>
+            ({ id, label: id, icon: 'star', group, ...(overflow === undefined ? {} : { overflow }) });
+        f.componentInstance.actions.set([g('a', 'one'), g('b1', 'two', 1), g('b2', 'two', 1), g('c', 'three')]);
+        await at(40);
+        expect(overflowed()).toEqual(['b1', 'b2']);
+        expect(reading()).toBe('g|g');
+        f.componentInstance.actions.set([g('b1', 'two', 1), g('b2', 'two', 1), g('a', 'one'), g('c', 'three')]);
+        await settle();
+        expect(reading()).toBe('g|g');
+        f.componentInstance.actions.set([g('a', 'one'), g('c', 'three'), g('b1', 'two', 1), g('b2', 'two', 1)]);
+        await settle();
+        expect(reading()).toBe('g|g');
+    });
+
+    it('draws no separator in the More actions menu, leading, trailing or between', async () => {
+        await at(40);
+        more()!.click();
+        await settle();
+        expect(menuItems().length).toBe(3);
+        expect(document.querySelectorAll('.ctx-menu .ctx-sep').length).toBe(0);
+    });
+
+    it('an icon the kit does not have shows the label alone, even while the others hide theirs', async () => {
+        f.componentInstance.actions.set(nodes({ star: { icon: 'no-such-icon', overflow: undefined } }));
+        await settle();
+        const star = button('star');
+        expect(star.querySelector('.bi')).toBeNull();
+        expect(star.querySelector('.cms-pane-toolbar__mark')).toBeNull();
+        expect(star.classList).toContain('cms-pane-toolbar__action--text');
+        const icons = actionsWidth(f.componentInstance.actions(), widths(), false, new Set());
+        await at(Math.ceil(icons));
+        expect(row().classList).toContain('cms-pane-toolbar--labels-hidden');
+        const label = star.querySelector<HTMLElement>('.cms-pane-toolbar__label')!;
+        expect(getComputedStyle(label).display).not.toBe('none');
+        expect(getComputedStyle(button('reply').querySelector('.cms-pane-toolbar__label')!).display).toBe('none');
+        expect(star.getAttribute('aria-label')).toBe('Star');
+    });
+
+    it('maps the Bootstrap Icons names to the kit icons by one table, and an unknown name to none', () => {
+        expect(iconForName('arrow-clockwise')).toBe('arrow-clockwise');
+        expect(iconForName('three-dots')).toBe('three-dots');
+        expect(Object.keys(BOOTSTRAP_ICONS).length).toBe(15);
+        expect(iconForName('no-such-icon')).toBeNull();
+        expect(iconForName('toString')).toBeNull();
+        expect(iconForName(undefined)).toBeNull();
     });
 });

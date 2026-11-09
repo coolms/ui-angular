@@ -16,7 +16,11 @@ predate this file would be a worse record than not having them.
   `{ id, label, icon, group, overflow?, danger?, disabled?, reason?, busy? }[]`, a `label`, an optional `status`, and
   emits the chosen action's id on `(action)`.
   - One height, `--cms-pane-toolbar-height`, so every pane's row lines up.
-  - Groups follow the order of their first action, with a separator between two.
+  - Groups follow the order of their first action. A separator is drawn only between two groups that each still show
+    an action: never leading, trailing or doubled, also when a whole group is behind More actions, and never in the
+    menu.
+  - Icons are Bootstrap Icons names, mapped by one table, `BOOTSTRAP_ICONS` with `iconForName(name)`. A name the
+    table lacks shows the action's label alone, with no empty icon box, even while the other actions hide theirs.
   - Measured on its own width with a ResizeObserver, never the window's: every label hides at once (each action keeps
     its name and shows its label as a tooltip), then actions go behind "More actions" by their `overflow` number, the
     lowest first and those sharing a number together, never one alone. An action with no number never goes.

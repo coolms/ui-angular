@@ -18,6 +18,7 @@ import {
     type PaneToolbarAction,
     type PaneToolbarWidths,
 } from './cms-pane-toolbar.types';
+import { iconForName } from '../icons/bootstrap-icons';
 import { groupsOf, overflowSteps, paneToolbarLayout } from './pane-toolbar-layout';
 
 let nextId = 0;
@@ -42,15 +43,16 @@ let nextId = 0;
              [class.cms-pane-toolbar--labels-hidden]="layout().labelsHidden"
              [attr.aria-label]="label()">
             <div class="cms-pane-toolbar__actions">
-                @for (group of shownGroups(); track $index; let first = $first) {
-                    @if (!first) {
+                @for (group of rowGroups(); track $index) {
+                    @if (group.separator) {
                         <div class="cms-pane-toolbar__separator" role="separator" aria-orientation="vertical"></div>
                     }
                     <div class="cms-pane-toolbar__group">
-                        @for (action of group; track action.id) {
+                        @for (action of group.actions; track action.id) {
                             <button type="button"
                                     class="cms-pane-toolbar__action"
                                     [class.cms-pane-toolbar__action--danger]="action.danger"
+                                    [class.cms-pane-toolbar__action--text]="iconOf(action) === null"
                                     [attr.data-action]="action.id"
                                     [attr.data-pinned]="action.overflow === undefined ? '' : null"
                                     [attr.data-overflowed]="isBehind(action.id) ? '' : null"
@@ -63,12 +65,16 @@ let nextId = 0;
                                     [attr.data-tip-dismissed]="tipDismissed() === action.id ? '' : null"
                                     (click)="choose(action)"
                                     (mouseleave)="tipDismissed.set(null)">
-                                <span class="cms-pane-toolbar__mark" aria-hidden="true">
-                                    <i class="bi" [class]="'bi bi-' + action.icon"></i>
-                                    @if (action.busy) {
-                                        <span class="cms-pane-toolbar__spinner"></span>
-                                    }
-                                </span>
+                                @if (iconOf(action); as icon) {
+                                    <span class="cms-pane-toolbar__mark" aria-hidden="true">
+                                        <i class="bi" [class]="'bi bi-' + icon"></i>
+                                        @if (action.busy) {
+                                            <span class="cms-pane-toolbar__spinner"></span>
+                                        }
+                                    </span>
+                                } @else if (action.busy) {
+                                    <span class="cms-pane-toolbar__mark" aria-hidden="true"><span class="cms-pane-toolbar__spinner"></span></span>
+                                }
                                 <span class="cms-pane-toolbar__label" aria-hidden="true">{{ action.label }}</span>
                                 <span class="cms-pane-toolbar__tip" aria-hidden="true">{{ tipOf(action) }}</span>
                                 @if (action.disabled && action.reason) {
@@ -89,7 +95,7 @@ let nextId = 0;
                             [attr.data-tip-dismissed]="tipDismissed() === 'more' ? '' : null"
                             (click)="openMore(more, 'first')"
                             (mouseleave)="tipDismissed.set(null)">
-                        <i class="bi bi-three-dots" aria-hidden="true"></i>
+                        <i class="bi" [class]="'bi bi-' + moreIcon" aria-hidden="true"></i>
                         <span class="cms-pane-toolbar__tip" aria-hidden="true">{{ moreLabel() }}</span>
                     </button>
                 }
@@ -104,14 +110,22 @@ let nextId = 0;
             <span class="cms-pane-toolbar__actions">
                 @for (action of actions(); track action.id) {
                     <span class="cms-pane-toolbar__action" [attr.data-measure-labelled]="action.id">
-                        <i class="bi" [class]="'bi bi-' + action.icon"></i>
+                        @if (iconOf(action); as icon) {
+                            <i class="bi" [class]="'bi bi-' + icon"></i>
+                        }
                         <span class="cms-pane-toolbar__label">{{ action.label }}</span>
                     </span>
-                    <span class="cms-pane-toolbar__action cms-pane-toolbar__action--icon" [attr.data-measure-icon]="action.id">
-                        <i class="bi" [class]="'bi bi-' + action.icon"></i>
-                    </span>
+                    @if (iconOf(action); as icon) {
+                        <span class="cms-pane-toolbar__action cms-pane-toolbar__action--icon" [attr.data-measure-icon]="action.id">
+                            <i class="bi" [class]="'bi bi-' + icon"></i>
+                        </span>
+                    } @else {
+                        <span class="cms-pane-toolbar__action" [attr.data-measure-icon]="action.id">
+                            <span class="cms-pane-toolbar__label">{{ action.label }}</span>
+                        </span>
+                    }
                 }
-                <span class="cms-pane-toolbar__more" data-measure-more><i class="bi bi-three-dots"></i></span>
+                <span class="cms-pane-toolbar__more" data-measure-more><i class="bi" [class]="'bi bi-' + moreIcon"></i></span>
                 <span class="cms-pane-toolbar__separator" data-measure-separator></span>
             </span>
         </div>
@@ -169,7 +183,7 @@ let nextId = 0;
         }
         .cms-pane-toolbar__more,
         .cms-pane-toolbar__action--icon,
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action { padding: 0; width: var(--cms-row-height, 36px); }
+        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) { padding: 0; width: var(--cms-row-height, 36px); }
         .cms-pane-toolbar__action[hidden] { display: none; }
         .cms-pane-toolbar__action:hover:not([aria-disabled='true']),
         .cms-pane-toolbar__more:hover { background: var(--cms-btn-hover-bg); }
@@ -179,9 +193,10 @@ let nextId = 0;
         .cms-pane-toolbar__action--danger { color: var(--cms-danger); }
         .cms-pane-toolbar__action--danger:hover:not([aria-disabled='true']) { background: var(--cms-danger-light); }
         .cms-pane-toolbar .bi { font-size: 1rem; line-height: 1; }
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__label { display: none; }
+        /* An action whose icon the kit does not have keeps its label, whatever the others do, and needs no tooltip. */
+        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) .cms-pane-toolbar__label { display: none; }
         .cms-pane-toolbar__tip { display: none; }
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip,
+        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text):is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip,
         .cms-pane-toolbar__more:is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip {
             display: block;
             position: absolute;
@@ -264,7 +279,7 @@ let nextId = 0;
             }
             .cms-pane-toolbar__more,
             .cms-pane-toolbar__action--icon,
-            .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action { width: var(--cms-touch-target-min, 44px); }
+            .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) { width: var(--cms-touch-target-min, 44px); }
         }
     `],
 })
@@ -292,13 +307,28 @@ export class CmsPaneToolbarComponent {
     protected readonly tipDismissed = signal<string | null>(null);
 
     readonly layout = computed(() => paneToolbarLayout(this.width(), this.actions(), this.widths()));
-    protected readonly shownGroups = computed(() => groupsOf(this.actions()));
     private readonly behind = computed(() => new Set(this.layout().overflowed));
+    /**
+     * The groups as drawn: a separator only before a group that still shows an action, and only when one before it
+     * does too -- never leading, trailing or doubled, however many groups went behind More actions.
+     */
+    protected readonly rowGroups = computed(() => {
+        let before = false;
+
+        return groupsOf(this.actions()).map((actions) => {
+            const shows = actions.some((a) => !this.behind().has(a.id));
+            const separator = shows && before;
+            before ||= shows;
+
+            return { actions, separator };
+        });
+    });
+    protected readonly moreIcon = iconForName('three-dots') ?? 'three-dots';
     protected readonly menuOpen = computed(() => this.menu.menu()?.owner === this);
 
     /** What Tab reaches, in order: the actions in the row, then More actions. */
     private readonly stops = computed(() => [
-        ...this.shownGroups().flat().filter((a) => !this.behind().has(a.id)).map((a) => a.id),
+        ...groupsOf(this.actions()).flat().filter((a) => !this.behind().has(a.id)).map((a) => a.id),
         ...(this.layout().overflowed.length > 0 ? ['more'] : []),
     ]);
     protected readonly tabStop = computed(() => {
@@ -330,6 +360,11 @@ export class CmsPaneToolbarComponent {
         return this.behind().has(id);
     }
 
+    /** The kit's icon for the node's Bootstrap Icons name; null shows the label alone. */
+    protected iconOf(action: PaneToolbarAction): string | null {
+        return iconForName(action.icon);
+    }
+
     protected reasonId(id: string): string {
         return `${this.uid}-reason-${id}`;
     }
@@ -358,7 +393,7 @@ export class CmsPaneToolbarComponent {
             .map((a) => ({
                 id: a.id,
                 label: a.label,
-                icon: a.icon,
+                icon: iconForName(a.icon) ?? undefined,
                 danger: a.danger ?? false,
                 disabled: (a.disabled ?? false) || (a.busy ?? false),
                 ...(a.disabled === true && a.reason !== undefined && a.reason !== '' ? { refusal: a.reason } : {}),

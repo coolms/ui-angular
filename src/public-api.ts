@@ -70,6 +70,7 @@ export * from './ui/pane-splitter/cms-pane-splitter.component';
 export * from './ui/pane-toolbar/cms-pane-toolbar.component';
 export * from './ui/pane-toolbar/cms-pane-toolbar.types';
 export * from './ui/pane-toolbar/pane-toolbar-layout';
+export * from './ui/icons/bootstrap-icons';
 export * from './ui/settings-shell/cms-settings-shell.component';
 export * from './ui/settings-shell/cms-settings-pane.component';
 export * from './ui/range-picker/datetime-field.component';
