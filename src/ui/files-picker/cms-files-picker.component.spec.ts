@@ -193,6 +193,16 @@ describe('CmsFilesPickerComponent', () => {
         expect(confirm.textContent!.trim()).toBe('Attach 1 files');
     });
 
+    it('names no count on its own confirm label with nothing chosen', () => {
+        const f = create();
+        const confirm = q<HTMLButtonElement>(f, '[data-test="fp-confirm"]')!;
+        expect(confirm.textContent!.trim()).toBe('Choose files');
+        rowNamed(f, 'a.txt').click();
+        rowNamed(f, 'big.bin').click();
+        f.detectChanges();
+        expect(confirm.textContent!.trim()).toBe('Choose 2 files');
+    });
+
     it('moves with Up and Down, opens with Enter, ticks with Space, goes up with Backspace, cancels with Escape', () => {
         const f = create();
         const list = q(f, '[role="listbox"]')!;
