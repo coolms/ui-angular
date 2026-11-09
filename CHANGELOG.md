@@ -15,7 +15,8 @@ predate this file would be a worse record than not having them.
   module: it takes `actions`, the server's NaviGraph nodes the host has a handler for, as
   `{ id, label, icon, group, overflow?, danger?, disabled?, reason?, busy? }[]`, a `label`, an optional `status`, and
   emits the chosen action's id on `(action)`.
-  - One height, `--cms-pane-toolbar-height`, so every pane's row lines up.
+  - One height, so every pane's row lines up: `row-height` with `space-2` above and below, the value of the design
+    tokens' `pane-toolbar-height`, written out until a release of the tokens defines it.
   - Groups follow the order of their first action. A separator is drawn only between two groups that each still show
     an action: never leading, trailing or doubled, also when a whole group is behind More actions, and never in the
     menu.
