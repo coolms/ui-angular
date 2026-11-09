@@ -140,7 +140,8 @@ let nextId = 0;
             gap: var(--cms-space-3, 12px);
             width: 100%;
             min-width: 0;
-            height: var(--cms-pane-toolbar-height, calc(var(--cms-row-height, 36px) + 2 * var(--cms-space-2, 8px)));
+            /* The pane-toolbar row height: row-height with space-2 above and below. */
+            height: calc(var(--cms-row-height) + 2 * var(--cms-space-2));
             padding-block: var(--cms-space-2, 8px);
             overflow: visible;
             white-space: nowrap;
