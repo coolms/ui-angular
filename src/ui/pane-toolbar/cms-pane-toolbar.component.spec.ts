@@ -89,8 +89,14 @@ describe('CmsPaneToolbarComponent', () => {
     const row = () => root().querySelector<HTMLElement>('.cms-pane-toolbar')!;
     const actions = () => Array.from(root().querySelectorAll<HTMLButtonElement>('.cms-pane-toolbar .cms-pane-toolbar__action'));
     const button = (id: string) => root().querySelector<HTMLButtonElement>(`.cms-pane-toolbar [data-action="${id}"]`)!;
-    const overflowed = () => actions().filter((b) => b.hasAttribute('data-overflowed')).map((b) => b.dataset['action']);
-    const more = () => root().querySelector<HTMLButtonElement>('.cms-pane-toolbar__more');
+    /** What is behind More actions, in the order it went; checked against the buttons that say so. */
+    const overflowed = () => {
+        const order = [...toolbar().layout().overflowed];
+        const marked = actions().filter((b) => b.hasAttribute('data-overflowed')).map((b) => b.dataset['action']);
+        expect([...marked].sort()).withContext('data-overflowed').toEqual([...order].sort());
+        return order;
+    };
+    const more = () => root().querySelector<HTMLButtonElement>('.cms-pane-toolbar .cms-pane-toolbar__more');
     const toolbar = () => f.debugElement.children[0].children[0].componentInstance as CmsPaneToolbarComponent;
     /** The widths the toolbar measured: what the thresholds below are computed from, so no pixel is guessed. */
     const widths = () => (toolbar() as unknown as { widths: () => PaneToolbarWidths }).widths();

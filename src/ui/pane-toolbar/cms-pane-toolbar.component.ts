@@ -7,6 +7,7 @@ import {
     effect,
     type ElementRef,
     inject,
+    Injector,
     input,
     output,
     signal,
@@ -295,7 +296,9 @@ export class CmsPaneToolbarComponent {
     /** The id of an action chosen, from the row or from More actions. A disabled or busy action emits nothing. */
     readonly action = output<string>();
 
-    private readonly menu = inject(ContextMenuService);
+    private readonly injector = inject(Injector);
+    /** The kit's menu service, taken the first time More actions opens: a row that never overflows needs none. */
+    private readonly menuService = signal<ContextMenuService | null>(null);
     private readonly row = viewChild.required<ElementRef<HTMLElement>>('row');
     private readonly measure = viewChild.required<ElementRef<HTMLElement>>('measure');
     private readonly uid = `cms-pane-toolbar-${++nextId}`;
@@ -324,7 +327,7 @@ export class CmsPaneToolbarComponent {
         });
     });
     protected readonly moreIcon = iconForName('three-dots') ?? 'three-dots';
-    protected readonly menuOpen = computed(() => this.menu.menu()?.owner === this);
+    protected readonly menuOpen = computed(() => this.menuService()?.menu()?.owner === this);
 
     /** What Tab reaches, in order: the actions in the row, then More actions. */
     private readonly stops = computed(() => [
@@ -352,7 +355,7 @@ export class CmsPaneToolbarComponent {
         });
         // More actions closes its menu when it leaves the row.
         effect(() => {
-            if (this.layout().overflowed.length === 0 && untracked(() => this.menuOpen())) this.menu.close();
+            if (this.layout().overflowed.length === 0 && untracked(() => this.menuOpen())) this.menuService()?.close();
         });
     }
 
@@ -382,8 +385,10 @@ export class CmsPaneToolbarComponent {
     /** More actions: the actions behind it, by their overflow number, each with its icon and label, through the kit's menu. */
     protected openMore(button: HTMLElement, focus: 'first' | 'last'): void {
         this.focused.set('more');
+        const menu = this.menuService() ?? this.injector.get(ContextMenuService);
+        this.menuService.set(menu);
         if (this.menuOpen()) {
-            this.menu.close();
+            menu.close();
             return;
         }
         const byId = new Map(this.actions().map((a) => [a.id, a]));
@@ -398,7 +403,7 @@ export class CmsPaneToolbarComponent {
                 disabled: (a.disabled ?? false) || (a.busy ?? false),
                 ...(a.disabled === true && a.reason !== undefined && a.reason !== '' ? { refusal: a.reason } : {}),
             }));
-        this.menu.openFrom(button, items, (id) => {
+        menu.openFrom(button, items, (id) => {
             // After the menu has closed and focus is back on More actions, so a choice the action opens stays open.
             queueMicrotask(() => this.action.emit(id));
         }, { focus, owner: this });
