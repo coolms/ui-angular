@@ -23,7 +23,35 @@ export class ContextMenuService {
         y:        number;
         items:    ContextMenuItem[];
         onAction: (id: string) => void;
+        /** Opened from a menu button (openFrom): the item focused on opening, and the button focus returns to. */
+        focus?:   'first' | 'last';
+        opener?:  HTMLElement;
+        /** Who opened it, so a menu button can say whether the open menu is its own (aria-expanded). */
+        owner?:   unknown;
     } | null>(null);
+
+    /**
+     * Open as a menu button's menu: under the button, with focus on the first or the last enabled
+     * item; closing it returns focus to the button.
+     */
+    openFrom(
+        opener:   HTMLElement,
+        items:    ContextMenuItem[],
+        onAction: (id: string) => void,
+        options:  { focus?: 'first' | 'last'; owner?: unknown } = {},
+    ): void {
+        if (items.length === 0) { this.close(); return; }
+        const rect = opener.getBoundingClientRect();
+        this.menu.set({
+            x: rect.left,
+            y: rect.bottom + 4,
+            items,
+            onAction,
+            focus: options.focus ?? 'first',
+            opener,
+            owner: options.owner,
+        });
+    }
 
     /**
      * Open with pre-built items -- used by DataGrid for row-action menus.
@@ -85,7 +113,11 @@ export class ContextMenuService {
         });
     }
 
-    close(): void { this.menu.set(null); }
+    close(): void {
+        const opener = this.menu()?.opener;
+        this.menu.set(null);
+        if (opener?.isConnected) opener.focus();
+    }
 
     /**
      * Update only the menu's screen position. Used by the component's

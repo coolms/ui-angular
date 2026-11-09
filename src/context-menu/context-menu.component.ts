@@ -31,15 +31,19 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
                  (contextmenu)="$event.preventDefault(); svc.close()"></div>
 
             <div #menuEl class="ctx-menu"
+                 role="menu"
                  [style.left.px]="ctx.x"
                  [style.top.px]="ctx.y"
-                 (click)="$event.stopPropagation()">
+                 (click)="$event.stopPropagation()"
+                 (keydown)="onKeydown($event)">
 
                 @for (item of ctx.items; track item.id) {
                     @if (item.divider) {
-                        <hr class="ctx-sep">
+                        <hr class="ctx-sep" role="separator">
                     } @else {
                         <button class="ctx-item"
+                                role="menuitem"
+                                tabindex="-1"
                                 [class.ctx-item--danger]="item.danger"
                                 [class.ctx-item--locked]="item.locked"
                                 [disabled]="item.disabled ?? false"
@@ -171,6 +175,7 @@ export class ContextMenuComponent {
                     ? Math.max(0, window.innerHeight - rect.height - margin)
                     : m.y;
                 this.svc.setPosition(newX, newY);
+                if (m.focus) this.items()[m.focus === 'first' ? 0 : this.items().length - 1]?.focus();
             });
         });
 
@@ -197,5 +202,31 @@ export class ContextMenuComponent {
                 dropLayer();
             });
         });
+    }
+
+    /** The menu's enabled items, in order: what Up, Down, Home and End move between. */
+    private items(): HTMLButtonElement[] {
+        const el = this.menuElRef?.nativeElement;
+
+        return el ? Array.from(el.querySelectorAll<HTMLButtonElement>('.ctx-item:not(:disabled)')) : [];
+    }
+
+    /** Up and Down move between the items, Home and End to the first and the last; Tab closes the menu. */
+    protected onKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Tab') {
+            this.svc.close();
+            return;
+        }
+        const items = this.items();
+        if (items.length === 0) return;
+        const at = items.indexOf(document.activeElement as HTMLButtonElement);
+        const next = event.key === 'ArrowDown' ? (at + 1) % items.length
+            : event.key === 'ArrowUp' ? (at <= 0 ? items.length - 1 : at - 1)
+            : event.key === 'Home' ? 0
+            : event.key === 'End' ? items.length - 1
+            : null;
+        if (next === null) return;
+        event.preventDefault();
+        items[next].focus();
     }
 }

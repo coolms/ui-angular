@@ -11,6 +11,32 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **`cms-pane-toolbar`, the row of actions at the top of a pane** (contract component `pane-toolbar`). It knows no
+  module: it takes `actions`, the server's NaviGraph nodes the host has a handler for, as
+  `{ id, label, icon, group, overflow?, danger?, disabled?, reason?, busy? }[]`, a `label`, an optional `status`, and
+  emits the chosen action's id on `(action)`.
+  - One height, `--cms-pane-toolbar-height`, so every pane's row lines up.
+  - Groups follow the order of their first action. A separator is drawn only between two groups that each still show
+    an action: never leading, trailing or doubled, also when a whole group is behind More actions, and never in the
+    menu.
+  - Icons are Bootstrap Icons names, mapped by one table, `BOOTSTRAP_ICONS` with `iconForName(name)`. A name the
+    table lacks shows the action's label alone, with no empty icon box, even while the other actions hide theirs.
+  - Measured on its own width with a ResizeObserver, never the window's: every label hides at once (each action keeps
+    its name and shows its label as a tooltip), then actions go behind "More actions" by their `overflow` number, the
+    lowest first and those sharing a number together, never one alone. An action with no number never goes.
+  - More actions opens the kit's context menu, the actions behind it in overflow order with their icons and labels,
+    danger as the node says.
+  - One Tab stop; Left, Right, Home and End move inside; Down or Up on More actions opens its menu on the first or the
+    last item.
+  - A disabled action stays reachable with its `reason` as its tooltip; a busy one shows a spinner after the state
+    delay. Neither emits.
+  - The row carries `data-action` on each action, `data-pinned` on those with no overflow number, and `data-overflowed`
+    on those behind More actions.
+
+- **The context menu opens as a menu button's menu** (`ContextMenuService.openFrom(button, items, onAction, options)`):
+  under the button, focus on its first or last enabled item, and back on the button when it closes. The menu is now
+  `role="menu"` with `menuitem`s; Up, Down, Home and End move between its items, and Tab closes it.
+
 - **`cms-files-picker`, for choosing files that already exist in the person's spaces** (contract component
   `file-picker`). It knows no API. The host gives the spaces and `list(space, path, cursor?)`, one page of a folder at
   a time, and receives the chosen entries, each with the space and path it was chosen in. `CmsFilesPickerService.open()`
