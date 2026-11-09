@@ -354,6 +354,26 @@ describe('CmsPaneToolbarComponent', () => {
         expect(star.getAttribute('aria-label')).toBe('Star');
     });
 
+    it('keeps a lone action in the row when it is the only one that could go: no More actions, nothing marked', async () => {
+        const g = (id: string, overflow?: number): PaneToolbarAction =>
+            ({ id, label: id, icon: 'star', group: 'one', ...(overflow === undefined ? {} : { overflow }) });
+        f.componentInstance.actions.set([g('a'), g('b'), g('c'), g('x', 1)]);
+        await at(40);
+        expect(row().classList).toContain('cms-pane-toolbar--labels-hidden');
+        expect(toolbar().layout().overflowed).toEqual([]);
+        expect(root().querySelectorAll('[data-overflowed]').length).toBe(0);
+        expect(more()).toBeNull();
+        expect(button('x').hidden).toBeFalse();
+    });
+
+    it('puts data-action on the drawn controls only, never on the measuring copies', async () => {
+        await at(40);
+        const all = Array.from(root().querySelectorAll('[data-action]'));
+        expect(all.every((el) => el.closest('.cms-pane-toolbar') !== null)).toBeTrue();
+        expect(root().querySelectorAll('[data-action="reply"]').length).toBe(1);
+        expect(root().querySelectorAll('[data-measure-action="reply"]').length).toBe(2);
+    });
+
     it('maps the Bootstrap Icons names to the kit icons by one table, and an unknown name to none', () => {
         expect(iconForName('arrow-clockwise')).toBe('arrow-clockwise');
         expect(iconForName('three-dots')).toBe('three-dots');

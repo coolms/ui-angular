@@ -110,18 +110,18 @@ let nextId = 0;
         <div #measure class="cms-pane-toolbar__measure" aria-hidden="true" inert>
             <span class="cms-pane-toolbar__actions">
                 @for (action of actions(); track action.id) {
-                    <span class="cms-pane-toolbar__action" [attr.data-measure-labelled]="action.id">
+                    <span class="cms-pane-toolbar__action" [attr.data-measure-action]="action.id" data-measure-mode="labelled">
                         @if (iconOf(action); as icon) {
                             <i class="bi" [class]="'bi bi-' + icon"></i>
                         }
                         <span class="cms-pane-toolbar__label">{{ action.label }}</span>
                     </span>
                     @if (iconOf(action); as icon) {
-                        <span class="cms-pane-toolbar__action cms-pane-toolbar__action--icon" [attr.data-measure-icon]="action.id">
+                        <span class="cms-pane-toolbar__action cms-pane-toolbar__action--icon" [attr.data-measure-action]="action.id" data-measure-mode="icon">
                             <i class="bi" [class]="'bi bi-' + icon"></i>
                         </span>
                     } @else {
-                        <span class="cms-pane-toolbar__action" [attr.data-measure-icon]="action.id">
+                        <span class="cms-pane-toolbar__action" [attr.data-measure-action]="action.id" data-measure-mode="icon">
                             <span class="cms-pane-toolbar__label">{{ action.label }}</span>
                         </span>
                     }
@@ -452,11 +452,11 @@ export class CmsPaneToolbarComponent {
         const wide = (el: Element | null): number => (el ? el.getBoundingClientRect().width : 0);
         const labelled = new Map<string, number>();
         const icon = new Map<string, number>();
-        for (const el of Array.from(measure.querySelectorAll('[data-measure-labelled]'))) {
-            labelled.set(el.getAttribute('data-measure-labelled')!, wide(el));
+        for (const el of Array.from(measure.querySelectorAll('[data-measure-action][data-measure-mode=labelled]'))) {
+            labelled.set(el.getAttribute('data-measure-action')!, wide(el));
         }
-        for (const el of Array.from(measure.querySelectorAll('[data-measure-icon]'))) {
-            icon.set(el.getAttribute('data-measure-icon')!, wide(el));
+        for (const el of Array.from(measure.querySelectorAll('[data-measure-action][data-measure-mode=icon]'))) {
+            icon.set(el.getAttribute('data-measure-action')!, wide(el));
         }
         const separator = measure.querySelector('[data-measure-separator]');
         const sepStyle = separator ? getComputedStyle(separator) : null;
