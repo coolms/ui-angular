@@ -276,6 +276,55 @@ describe('CmsFilesPickerComponent', () => {
         expect(rowNamed(f, 'p1-0')).toBeTruthy();
     });
 
+    it('keeps the rows and the cursor when a later page fails, shows the failure at the foot, and Retry reads that page', () => {
+        const asked: string[] = [];
+        let failNext = true;
+        const f = create({
+            list: (_space, _path, cursor) => {
+                asked.push(cursor ?? 'first');
+                if (!cursor) return of({ entries: [file('p1-0', 10), file('p1-1', 10)], next: 'page-2' });
+                if (failNext) {
+                    failNext = false;
+
+                    return throwError(() => new FilesPickerFailure('The drive did not answer'));
+                }
+
+                return of({ entries: [file('p2-0', 10)], next: null });
+            },
+        });
+        rowNamed(f, 'p1-0').click();
+        f.componentInstance.loadMore();
+        f.detectChanges();
+
+        // Page 1 is still there, still ticked, with the failure at the foot rather than in place of the list.
+        expect(qa(f, '[data-test="fp-row"]').length).toBe(2);
+        expect(rowNamed(f, 'p1-0').getAttribute('aria-selected')).toBe('true');
+        expect(q(f, '[data-test="fp-page-failed"]')!.textContent).toContain('The drive did not answer');
+
+        q<HTMLElement>(f, '[data-test="fp-page-failed"] [data-test="state-action"]')!.click();
+        f.detectChanges();
+        expect(asked).toEqual(['first', 'page-2', 'page-2']);
+        expect(qa(f, '[data-test="fp-row"]').length).toBe(3);
+        expect(rowNamed(f, 'p2-0')).toBeTruthy();
+        expect(q(f, '[data-test="fp-page-failed"]')).toBeNull();
+    });
+
+    it('goes up a folder on Backspace only from the list: on a focused Cancel it does nothing', () => {
+        const f = create();
+        rowNamed(f, 'Docs').click();
+        f.detectChanges();
+        const cancel = q<HTMLElement>(f, '[data-test="fp-cancel"]')!;
+        const event = new KeyboardEvent('keydown', { key: 'Backspace', bubbles: true, cancelable: true });
+        cancel.dispatchEvent(event);
+        f.detectChanges();
+        expect(event.defaultPrevented).toBeFalse();
+        expect(q(f, '[data-test="fp-crumb"][aria-current]')!.textContent!.trim()).toBe('Docs');
+        expect(cancelled).toBe(0);
+
+        key(f, 'Backspace');
+        expect(q(f, '[data-test="fp-crumb"][aria-current]')!.textContent!.trim()).toBe('My files');
+    });
+
     it('draws no space switch for one space, and an empty folder as the empty state', () => {
         const f = create({ spaces: [{ id: 'empty', name: 'Nothing' }] });
         expect(q(f, '[data-test="fp-space"]')).toBeNull();

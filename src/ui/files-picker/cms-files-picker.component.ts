@@ -30,7 +30,9 @@ type Listing =
     | { readonly status: 'loading' }
     | { readonly status: 'error'; readonly words: string }
     | { readonly status: 'denied' }
-    | { readonly status: 'ready'; readonly entries: readonly FilesPickerEntry[]; readonly next: string | null; readonly paging: boolean };
+    | { readonly status: 'ready'; readonly entries: readonly FilesPickerEntry[]; readonly next: string | null; readonly paging: boolean;
+        /** A later page failed: the rows and the cursor stay, and the failure is shown at the foot with Retry. */
+        readonly pageFailed?: string | null };
 
 /** How near the end of the list, in pixels, the following page is asked for. */
 const PAGE_AHEAD_PX = 48;
@@ -91,7 +93,7 @@ export function formatFilesPickerSize(bytes: number, locale?: string): string {
             @if (opts().spaces.length > 1) {
                 <label class="cms-fp__space">
                     <span class="cms-fp__space-label">{{ t('space', 'Space') }}</span>
-                    <select class="form-select form-select-sm" data-test="fp-space" [value]="space()"
+                    <select class="form-select form-select-sm" data-test="fp-space" [value]="space()" [style.min-width]="spaceMinWidth()"
                             (change)="switchSpace($any($event.target).value)">
                         @for (s of opts().spaces; track s.id) {
                             <option [value]="s.id" [selected]="s.id === space()">{{ s.name }}</option>
@@ -193,6 +195,11 @@ export function formatFilesPickerSize(bytes: number, locale?: string): string {
                                 <div class="cms-fp__paging" data-test="fp-paging">
                                     <cms-state kind="loading" placement="inline" [title]="t('paging', 'Reading more')" />
                                 </div>
+                            } @else if (pageFailed(); as words) {
+                                <div class="cms-fp__paging" data-test="fp-page-failed">
+                                    <cms-state kind="error" placement="inline" [title]="words"
+                                               [action]="{ label: t('retry', 'Retry'), run: retryPage }" />
+                                </div>
                             }
                         </div>
                     }
@@ -263,6 +270,8 @@ export function formatFilesPickerSize(bytes: number, locale?: string): string {
             border-bottom: 1px solid var(--cms-border-light);
         }
         .cms-fp__space { display: flex; align-items: center; gap: var(--cms-space-2, 8px); margin: 0; }
+        /* As wide as its longest space name and the arrow, not Bootstrap's full width shrunk by the bar. */
+        .cms-fp__space select { width: auto; flex: 0 0 auto; max-width: 18rem; padding-right: 2.25rem; }
         .cms-fp__space-label { font-size: var(--cms-font-size-meta, .8125rem); color: var(--cms-text-muted); }
         .cms-fp__crumbs { display: flex; align-items: center; gap: var(--cms-space-1, 4px); flex: 1; min-width: 0; }
         .cms-fp__crumb-list { display: flex; flex-wrap: wrap; align-items: center; margin: 0; padding: 0; list-style: none; min-width: 0; }
@@ -416,6 +425,12 @@ export class CmsFilesPickerComponent implements OnInit {
 
     readonly title = computed(() => this.opts().title ?? this.t('title', 'Choose files'));
     readonly spaceName = computed(() => this.opts().spaces.find((s) => s.id === this.space())?.name ?? '');
+    /** Room for the longest space name, the select's padding and its arrow, so no name runs under the arrow. */
+    readonly spaceMinWidth = computed(() => {
+        const longest = Math.max(0, ...this.opts().spaces.map((s) => s.name.length));
+
+        return 'calc(' + longest + 'ch + 3.25rem)';
+    });
     readonly path = computed(() => this.segments().map((s) => s.name).join('/'));
 
     readonly chosenList = computed(() => [...this.chosen().values()]);
@@ -478,6 +493,14 @@ export class CmsFilesPickerComponent implements OnInit {
     });
 
     readonly retry = (): void => this.load();
+    readonly retryPage = (): void => this.loadMore();
+
+    /** The words of a later page that failed, shown at the foot of the list; null when none did. */
+    readonly pageFailed = computed(() => {
+        const l = this.listing();
+
+        return l.status === 'ready' ? l.pageFailed ?? null : null;
+    });
 
     constructor() {
         inject(DestroyRef).onDestroy(() => this.read?.unsubscribe());
@@ -586,9 +609,9 @@ export class CmsFilesPickerComponent implements OnInit {
             return;
         }
         const target = event.target as HTMLElement | null;
-        const inList = !!target && target.getAttribute('role') === 'listbox';
-        const typing = target instanceof HTMLInputElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement;
-        if (event.key === 'Backspace' && !typing) {
+        // Only from the list (the listbox, or a row in it): a focused button, chip or field keeps its own Backspace.
+        const inList = target?.closest('[role="listbox"]') != null;
+        if (event.key === 'Backspace' && inList) {
             event.preventDefault();
             this.up();
 
@@ -627,7 +650,7 @@ export class CmsFilesPickerComponent implements OnInit {
     loadMore(): void {
         const l = this.listing();
         if (l.status !== 'ready' || !l.next || l.paging) return;
-        this.listing.set({ ...l, paging: true });
+        this.listing.set({ ...l, paging: true, pageFailed: null });
         const token = this.readCount;
         this.subscribe(l.next, (page) => {
             if (token !== this.readCount) return;
@@ -636,7 +659,12 @@ export class CmsFilesPickerComponent implements OnInit {
             this.listing.set({ status: 'ready', entries: [...shown, ...page.entries], next: page.next ?? null, paging: false });
         }, (err) => {
             if (token !== this.readCount) return;
-            this.listing.set(this.failed(err));
+            // What is shown stays, with the same cursor: the next scroll near the end, or Retry, asks again.
+            const now = this.listing();
+            const failure = this.failed(err);
+            const words = failure.status === 'error' ? failure.words
+                : this.t('error', 'The folder could not be read');
+            this.listing.set({ ...(now.status === 'ready' ? now : l), paging: false, pageFailed: words });
         });
     }
 
