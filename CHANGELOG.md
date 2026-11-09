@@ -11,6 +11,22 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **`cms-files-picker`, for choosing files that already exist in the person's spaces** (contract component
+  `file-picker`). It knows no API. The host gives the spaces and `list(space, path, cursor?)`, one page of a folder at
+  a time, and receives the chosen entries, each with the space and path it was chosen in. `CmsFilesPickerService.open()`
+  shows it in a modal dialog and resolves with the choice, or with undefined on cancel.
+  - The selection holds across folders and spaces. A chip lists it, with Remove and Clear.
+  - With a `budget` (`usedBytes`, `limitBytes`, and an optional `cost`), a file that would go over what is left is
+    disabled, with that reason; the host's own `disabledReason` is shown first.
+  - Confirm is disabled with nothing chosen, and while over budget.
+  - The next page is read as the list nears its end.
+  - A folder the person may not open (`FilesPickerDenied`) is shown as denied in place, and a failure shows the
+    host's words (`FilesPickerFailure`) with Retry.
+  - The list is a multi-select listbox: Up, Down, Home and End move; Enter opens a folder; Space ticks a file;
+    Backspace goes up; Escape cancels.
+  - Below the `md` breakpoint it takes the whole screen, with the footer at the foot.
+  - Strings are the host's, through `translate(key, fallback, params)`.
+
 - **Calendar preferences are read from the person's `region` settings.** `UserCalendarPreferencesService` takes the
   time zone, the date and time formats and the week start from `region`, and the default calendar from `calendar`,
   through `calendarPrefsFromSettings(settings)`, which a host can call on a settings answer of its own. A time zone of
