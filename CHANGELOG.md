@@ -22,9 +22,15 @@ predate this file would be a worse record than not having them.
     menu.
   - Icons are Bootstrap Icons names, mapped by one table, `BOOTSTRAP_ICONS` with `iconForName(name)`. A name the
     table lacks shows the action's label alone, with no empty icon box, even while the other actions hide theirs.
-  - Measured on its own width with a ResizeObserver, never the window's: every label hides at once (each action keeps
-    its name and shows its label as a tooltip), then actions go behind "More actions" by their `overflow` number, the
-    lowest first and those sharing a number together, never one alone. An action with no number never goes.
+  - Measured on its own width with a ResizeObserver, never the window's. Labels hide one by one, the fewest that let
+    the row fit: by `overflow` number, the lowest first and those sharing a number together, then those of the
+    actions with no number, from the end of the row back. Each action keeps its name and shows its hidden label as a
+    tooltip. Only once every label is hidden do actions go behind "More actions", by the same numbers, never one
+    alone; an action with no number never goes. As the row widens, everything comes back in the reverse order.
+  - The row is `cms-pane-toolbar--labels-partly-hidden` while some labels are hidden and some show (the contract's
+    `labels-partly-hidden` state), and `cms-pane-toolbar--labels-hidden` once all are. An action whose label is
+    hidden is `cms-pane-toolbar__action--bare`. `paneToolbarLayout()` names them in `bare`, in the order they hid;
+    `labelSteps()` gives that order and `rowWidth()` the width of a row with some labels hidden.
   - More actions opens the kit's context menu, the actions behind it in overflow order with their icons and labels,
     danger as the node says.
   - One Tab stop; Left, Right, Home and End move inside; Down or Up on More actions opens its menu on the first or the

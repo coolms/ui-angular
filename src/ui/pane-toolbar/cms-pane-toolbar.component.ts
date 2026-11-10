@@ -28,9 +28,11 @@ let nextId = 0;
  * The row of actions at the top of a pane (contract component `pane-toolbar`): one height in every pane, so the rows
  * line up across a screen. Actions in ordered groups with separators, a trailing status, and More actions.
  *
- * Measured on its own width (a ResizeObserver on the row), never the window's: as it narrows every label hides at
- * once, each action keeping its name and showing its label as a tooltip; then actions go behind More actions by their
- * overflow number, never one alone; one with no number never goes. One Tab stop: Left, Right, Home and End move inside.
+ * Measured on its own width (a ResizeObserver on the row), never the window's: as it narrows labels hide one by one,
+ * by overflow number, the lowest first and those sharing a number together, then those of the actions with no number
+ * from the end of the row back; each action keeps its name and shows its label as a tooltip. Only once every label is
+ * hidden do actions go behind More actions by their overflow number, never one alone; one with no number never goes.
+ * Widening undoes it in the reverse order. One Tab stop: Left, Right, Home and End move inside.
  *
  * The actions are the server's NaviGraph nodes, those the host has a handler for; the row knows nothing of what they do.
  */
@@ -42,6 +44,7 @@ let nextId = 0;
     template: `
         <div #row class="cms-pane-toolbar" role="toolbar"
              [class.cms-pane-toolbar--labels-hidden]="layout().labelsHidden"
+             [class.cms-pane-toolbar--labels-partly-hidden]="!layout().labelsHidden && layout().bare.length > 0"
              [attr.aria-label]="label()">
             <div class="cms-pane-toolbar__actions">
                 @for (group of rowGroups(); track $index) {
@@ -54,6 +57,7 @@ let nextId = 0;
                                     class="cms-pane-toolbar__action"
                                     [class.cms-pane-toolbar__action--danger]="action.danger"
                                     [class.cms-pane-toolbar__action--text]="iconOf(action) === null"
+                                    [class.cms-pane-toolbar__action--bare]="iconOf(action) !== null && isBare(action.id)"
                                     [attr.data-action]="action.id"
                                     [attr.data-pinned]="action.overflow === undefined ? '' : null"
                                     [attr.data-overflowed]="isBehind(action.id) ? '' : null"
@@ -185,7 +189,7 @@ let nextId = 0;
         }
         .cms-pane-toolbar__more,
         .cms-pane-toolbar__action--icon,
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) { padding: 0; width: var(--cms-row-height, 36px); }
+        .cms-pane-toolbar__action--bare { padding: 0; width: var(--cms-row-height, 36px); }
         .cms-pane-toolbar__action[hidden] { display: none; }
         .cms-pane-toolbar__action:hover:not([aria-disabled='true']),
         .cms-pane-toolbar__more:hover { background: var(--cms-btn-hover-bg); }
@@ -195,10 +199,10 @@ let nextId = 0;
         .cms-pane-toolbar__action--danger { color: var(--cms-danger); }
         .cms-pane-toolbar__action--danger:hover:not([aria-disabled='true']) { background: var(--cms-danger-light); }
         .cms-pane-toolbar .bi { font-size: 1rem; line-height: 1; }
-        /* An action whose icon the kit does not have keeps its label, whatever the others do, and needs no tooltip. */
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) .cms-pane-toolbar__label { display: none; }
+        /* An action whose icon the kit does not have is never bare: it keeps its label and needs no tooltip. */
+        .cms-pane-toolbar__action--bare .cms-pane-toolbar__label { display: none; }
         .cms-pane-toolbar__tip { display: none; }
-        .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text):is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip,
+        .cms-pane-toolbar__action--bare:is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip,
         .cms-pane-toolbar__more:is(:hover, :focus-visible):not([data-tip-dismissed]) .cms-pane-toolbar__tip {
             display: block;
             position: absolute;
@@ -281,7 +285,7 @@ let nextId = 0;
             }
             .cms-pane-toolbar__more,
             .cms-pane-toolbar__action--icon,
-            .cms-pane-toolbar--labels-hidden .cms-pane-toolbar__action:not(.cms-pane-toolbar__action--text) { width: var(--cms-touch-target-min, 44px); }
+            .cms-pane-toolbar__action--bare { width: var(--cms-touch-target-min, 44px); }
         }
     `],
 })
@@ -312,6 +316,7 @@ export class CmsPaneToolbarComponent {
 
     readonly layout = computed(() => paneToolbarLayout(this.width(), this.actions(), this.widths()));
     private readonly behind = computed(() => new Set(this.layout().overflowed));
+    private readonly bare = computed(() => new Set(this.layout().bare));
     /**
      * The groups as drawn: a separator only before a group that still shows an action, and only when one before it
      * does too -- never leading, trailing or doubled, however many groups went behind More actions.
@@ -362,6 +367,10 @@ export class CmsPaneToolbarComponent {
 
     protected isBehind(id: string): boolean {
         return this.behind().has(id);
+    }
+
+    protected isBare(id: string): boolean {
+        return this.bare().has(id);
     }
 
     /** The kit's icon for the node's Bootstrap Icons name; null shows the label alone. */
