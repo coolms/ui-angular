@@ -12,7 +12,7 @@ export interface PaneToolbarAction {
     readonly group: string | number;
     /**
      * Where it stands in going behind More actions: the lowest goes first, and actions sharing a number go together
-     * (a toggle's two states). No number: it never goes.
+     * (a toggle's two states). No number: it never goes. 0: menu only, behind More actions at every width.
      */
     readonly overflow?: number;
     /** Drawn as danger, in the row and in the menu. */

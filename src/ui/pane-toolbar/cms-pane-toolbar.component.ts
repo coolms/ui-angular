@@ -32,7 +32,8 @@ let nextId = 0;
  * by overflow number, the lowest first and those sharing a number together, then those of the actions with no number
  * from the end of the row back; each action keeps its name and shows its label as a tooltip. Only once every label is
  * hidden do actions go behind More actions by their overflow number, never one alone; one with no number never goes.
- * Widening undoes it in the reverse order. One Tab stop: Left, Right, Home and End move inside.
+ * Widening undoes it in the reverse order. An action with overflow 0 is menu only: never in the row, always behind
+ * More actions, which is drawn for it even alone. One Tab stop: Left, Right, Home and End move inside.
  *
  * The actions are the server's NaviGraph nodes, those the host has a handler for; the row knows nothing of what they do.
  */

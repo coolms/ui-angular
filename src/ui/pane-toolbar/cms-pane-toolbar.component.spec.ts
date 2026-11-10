@@ -485,6 +485,70 @@ describe('CmsPaneToolbarComponent', () => {
         expect(button('x').hidden).toBeFalse();
     });
 
+    it('never draws a menu-only action (overflow 0) in the row, at any width: it is behind More actions, first', async () => {
+        f.componentInstance.actions.set([
+            ...nodes(), { id: 'show-original', label: 'Show original', icon: 'file-earmark-code', group: 'view', overflow: 0 }]);
+        await at(1400);
+        const w = widths();
+        const all = f.componentInstance.actions();
+        const labelled = actionsWidth(all, w, true, new Set(['show-original']));
+        const icons = actionsWidth(all, w, false, new Set(['show-original']));
+        for (const width of [1400, Math.ceil(labelled), Math.ceil(labelled) - 1, Math.ceil(icons), 40]) {
+            await at(width);
+            expect(button('show-original').hidden).withContext(`hidden at ${width}`).toBeTrue();
+            expect(button('show-original').hasAttribute('data-overflowed')).withContext(`marked at ${width}`).toBeTrue();
+            expect(more()).withContext(`More actions at ${width}`).not.toBeNull();
+            expect(overflowed()[0]).withContext(`first behind at ${width}`).toBe('show-original');
+        }
+        await at(Math.ceil(labelled));
+        expect(overflowed()).toEqual(['show-original']);
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-partly-hidden');
+        expect(button('reply').querySelector<HTMLElement>('.cms-pane-toolbar__label')!.offsetWidth).toBeGreaterThan(0);
+        more()!.click();
+        await settle();
+        expect(menuItems().map((i) => i.textContent!.trim())).toEqual(['Show original']);
+        expect(menuItems()[0].querySelector('.bi-file-earmark-code')).not.toBeNull();
+    });
+
+    it('draws More actions for a menu-only action alone, and lists it', async () => {
+        f.componentInstance.actions.set([
+            { id: 'reply', label: 'Reply', icon: 'reply', group: 'respond' },
+            { id: 'show-original', label: 'Show original', icon: 'file-earmark-code', group: 'view', overflow: 0 }]);
+        await at(1400);
+        expect(button('reply').hidden).toBeFalse();
+        expect(button('show-original').hidden).toBeTrue();
+        expect(more()).not.toBeNull();
+        expect(actions().concat(more()!).filter((b) => b.getAttribute('tabindex') === '0').map((b) => b.dataset['action'])).toEqual(['reply']);
+        more()!.click();
+        await settle();
+        expect(menuItems().map((i) => i.textContent!.trim())).toEqual(['Show original']);
+        menuItems()[0].click();
+        await settle();
+        expect(f.componentInstance.chosen).toEqual(['show-original']);
+
+        f.componentInstance.actions.set([{ id: 'show-original', label: 'Show original', icon: 'file-earmark-code', group: 'view', overflow: 0 }]);
+        await settle();
+        expect(actions().filter((b) => !b.hidden).length).toBe(0);
+        expect(more()).not.toBeNull();
+    });
+
+    it('leaves menu-only actions out of the giving way: their labels, and the rule that one never goes alone', () => {
+        const row: PaneToolbarAction[] = [
+            { id: 'a', label: 'A', icon: 'a', group: 1 }, { id: 'b', label: 'B', icon: 'b', group: 1, overflow: 1 },
+            { id: 'c', label: 'C', icon: 'c', group: 1, overflow: 2 }, { id: 'm', label: 'M', icon: 'm', group: 1, overflow: 0 }];
+        const w: PaneToolbarWidths = {
+            labelled: new Map(row.map((a) => [a.id, 80])), icon: new Map(row.map((a) => [a.id, 36])), more: 36, separator: 9, gap: 4,
+        };
+        expect(paneToolbarLayout(null, row, w)).toEqual({ labelsHidden: false, bare: [], overflowed: ['m'] });
+        // Three labelled actions and More actions: 3 * 80 + 36 + 3 * 4. The menu-only label is not in the row.
+        expect(paneToolbarLayout(3 * 80 + 36 + 3 * 4, row, w)).toEqual({ labelsHidden: false, bare: [], overflowed: ['m'] });
+        expect(paneToolbarLayout(3 * 80 + 36 + 3 * 4 - 1, row, w)).toEqual({ labelsHidden: false, bare: ['b'], overflowed: ['m'] });
+        // Every label of the row hidden is labels-hidden, though the menu-only action's label was never part of it.
+        expect(paneToolbarLayout(4 * 36 + 3 * 4, row, w)).toEqual({ labelsHidden: true, bare: ['b', 'c', 'a'], overflowed: ['m'] });
+        // B alone would fit (A, C and More: 3 * 36 + 2 * 4) but never goes alone; M behind does not make it two.
+        expect(paneToolbarLayout(3 * 36 + 2 * 4, row, w)).toEqual({ labelsHidden: true, bare: ['b', 'c', 'a'], overflowed: ['m', 'b', 'c'] });
+    });
+
     it('puts data-action on the drawn controls only, never on the measuring copies', async () => {
         await at(40);
         const all = Array.from(root().querySelectorAll('[data-action]'));
@@ -496,7 +560,7 @@ describe('CmsPaneToolbarComponent', () => {
     it('maps the Bootstrap Icons names to the kit icons by one table, and an unknown name to none', () => {
         expect(iconForName('arrow-clockwise')).toBe('arrow-clockwise');
         expect(iconForName('three-dots')).toBe('three-dots');
-        expect(Object.keys(BOOTSTRAP_ICONS).length).toBe(15);
+        expect(Object.keys(BOOTSTRAP_ICONS).length).toBe(16);
         expect(iconForName('no-such-icon')).toBeNull();
         expect(iconForName('toString')).toBeNull();
         expect(iconForName(undefined)).toBeNull();
