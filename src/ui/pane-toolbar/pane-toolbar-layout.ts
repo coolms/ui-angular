@@ -1,7 +1,5 @@
 import { type PaneToolbarAction, type PaneToolbarLayout, type PaneToolbarWidths } from './cms-pane-toolbar.types';
 
-const ALL_SHOWN: PaneToolbarLayout = { labelsHidden: false, bare: [], overflowed: [] };
-
 /** The actions in their groups: groups in the order of their first action, each keeping its actions' order. */
 export function groupsOf(actions: readonly PaneToolbarAction[]): PaneToolbarAction[][] {
     const groups = new Map<string | number, PaneToolbarAction[]>();
@@ -28,6 +26,11 @@ export function overflowSteps(actions: readonly PaneToolbarAction[]): string[][]
     }
 
     return [...steps.entries()].sort(([a], [b]) => a - b).map(([, ids]) => ids);
+}
+
+/** The actions behind More actions at every width (overflow 0): menu only, never drawn in the row. */
+export function menuOnly(actions: readonly PaneToolbarAction[]): string[] {
+    return actions.filter((a) => a.overflow === 0).map((a) => a.id);
 }
 
 /**
@@ -83,29 +86,38 @@ export function actionsWidth(
  * that let the rest and More actions fit, and never one action alone -- More actions takes an icon's width itself, so
  * a menu of one saves no room. An action with no number never goes. Each width gives one answer from the measured
  * widths alone, so widening undoes the steps in the reverse order. A width not yet measured shows all.
+ *
+ * Menu-only actions (overflow 0) are behind More actions at every width, first, and take no part in the giving way:
+ * their labels are not counted, and the rule that one action never goes alone counts only the actions that could have
+ * stayed in the row. More actions is drawn for them even when one is alone.
  */
 export function paneToolbarLayout(
     width: number | null,
     actions: readonly PaneToolbarAction[],
     widths: PaneToolbarWidths | null,
 ): PaneToolbarLayout {
-    if (width === null || widths === null) return ALL_SHOWN;
-    const none = new Set<string>();
-    if (rowWidth(actions, widths, none, none) <= width) return ALL_SHOWN;
+    const menu = menuOnly(actions);
+    const inRow = actions.filter((a) => a.overflow !== 0);
+    const allShown: PaneToolbarLayout = { labelsHidden: false, bare: [], overflowed: menu };
+    if (width === null || widths === null) return allShown;
+    const always = new Set(menu);
+    if (rowWidth(actions, widths, new Set(), always) <= width) return allShown;
     let bare: string[] = [];
-    for (const step of labelSteps(actions)) {
+    for (const step of labelSteps(inRow)) {
         bare = [...bare, ...step];
-        if (rowWidth(actions, widths, new Set(bare), none) <= width) {
-            return { labelsHidden: bare.length >= actions.length, bare, overflowed: [] };
+        if (rowWidth(actions, widths, new Set(bare), always) <= width) {
+            return { labelsHidden: bare.length >= inRow.length, bare, overflowed: menu };
         }
     }
     const all = new Set(bare);
     let behind: string[] = [];
-    for (const step of overflowSteps(actions)) {
+    for (const step of overflowSteps(inRow)) {
         behind = [...behind, ...step];
         if (behind.length < 2) continue;
-        if (rowWidth(actions, widths, all, new Set(behind)) <= width) return { labelsHidden: true, bare, overflowed: behind };
+        if (rowWidth(actions, widths, all, new Set([...menu, ...behind])) <= width) {
+            return { labelsHidden: true, bare, overflowed: [...menu, ...behind] };
+        }
     }
 
-    return { labelsHidden: true, bare, overflowed: behind.length >= 2 ? behind : [] };
+    return { labelsHidden: true, bare, overflowed: [...menu, ...(behind.length >= 2 ? behind : [])] };
 }

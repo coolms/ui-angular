@@ -27,6 +27,11 @@ predate this file would be a worse record than not having them.
     actions with no number, from the end of the row back. Each action keeps its name and shows its hidden label as a
     tooltip. Only once every label is hidden do actions go behind "More actions", by the same numbers, never one
     alone; an action with no number never goes. As the row widens, everything comes back in the reverse order.
+  - `overflow: 0` means menu only: the action is never drawn in the row, only behind More actions, first, at any
+    width. More actions is drawn for it even when it is alone, its label takes no part in the giving way, and the
+    rule that one action never goes behind More actions alone counts only the actions that could have stayed in the
+    row. `menuOnly()` names them.
+  - The icon table holds `file-earmark-code`.
   - The row is `cms-pane-toolbar--labels-partly-hidden` while some labels are hidden and some show (the contract's
     `labels-partly-hidden` state), and `cms-pane-toolbar--labels-hidden` once all are. An action whose label is
     hidden is `cms-pane-toolbar__action--bare`. `paneToolbarLayout()` names them in `bare`, in the order they hid;

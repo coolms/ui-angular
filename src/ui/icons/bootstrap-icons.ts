@@ -18,6 +18,7 @@ export const BOOTSTRAP_ICONS: Readonly<Record<string, string>> = {
     'arrow-clockwise': 'arrow-clockwise',
     'download': 'download',
     'printer': 'printer',
+    'file-earmark-code': 'file-earmark-code',
     'three-dots': 'three-dots',
 };
 
