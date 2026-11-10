@@ -9,7 +9,7 @@ import { ContextMenuComponent } from '../../context-menu/context-menu.component'
 import { ContextMenuService } from '../../context-menu/context-menu.service';
 import { CmsPaneToolbarComponent } from './cms-pane-toolbar.component';
 import { type PaneToolbarAction, type PaneToolbarWidths } from './cms-pane-toolbar.types';
-import { actionsWidth, groupsOf, overflowSteps, paneToolbarLayout } from './pane-toolbar-layout';
+import { actionsWidth, groupsOf, labelSteps, overflowSteps, paneToolbarLayout, rowWidth } from './pane-toolbar-layout';
 import { BOOTSTRAP_ICONS, iconForName } from '../icons/bootstrap-icons';
 
 /**
@@ -140,13 +140,130 @@ describe('CmsPaneToolbarComponent', () => {
         const labelled = actionsWidth(nodes(), widths(), true, new Set());
         const icons = actionsWidth(nodes(), widths(), false, new Set());
         expect(icons).toBeLessThan(labelled - 1);
-        await at(Math.floor(labelled) - 1);
+        await at(Math.ceil(icons));
         expect(row().classList).toContain('cms-pane-toolbar--labels-hidden');
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-partly-hidden');
         expect(overflowed()).toEqual([]);
         expect(more()).toBeNull();
         expect(actions().map((b) => b.getAttribute('aria-label'))).toEqual(['Reply', 'Forward', 'Archive', 'Delete', 'Mark unread', 'Star', 'Move']);
-        await at(Math.ceil(icons));
-        expect(overflowed()).toEqual([]);
+    });
+
+    /** The ids whose label is drawn, in the row's order. */
+    const labelsShown = () => actions()
+        .filter((b) => getComputedStyle(b.querySelector('.cms-pane-toolbar__label')!).display !== 'none')
+        .map((b) => b.dataset['action']);
+    /** The order labels hide in for nodes(): Star (1), Move (2), Mark unread (3), then the pinned from the end back. */
+    const HIDE_ORDER = ['star', 'move', 'mark-unread', 'delete', 'archive', 'forward', 'reply'];
+    /** The narrowest whole width at which the row fits with these labels hidden and nothing behind More actions. */
+    const fitting = (hidden: readonly string[]) => Math.ceil(rowWidth(f.componentInstance.actions(), widths(), new Set(hidden), new Set()));
+
+    it('hides labels one by one: by overflow number, the lowest first, then the pinned from the end of the row back', async () => {
+        expect(labelSteps(nodes())).toEqual(HIDE_ORDER.map((id) => [id]));
+        await settle();
+        for (let k = 1; k <= HIDE_ORDER.length; k++) {
+            const hidden = HIDE_ORDER.slice(0, k);
+            await at(fitting(hidden));
+            expect(toolbar().layout().bare).withContext(`step ${k}`).toEqual(hidden);
+            expect(labelsShown()).withContext(`step ${k}`).toEqual(ORDER.filter((id) => !hidden.includes(id)));
+            expect(overflowed()).withContext(`step ${k}`).toEqual([]);
+        }
+    });
+
+    it('hides the labels of actions sharing an overflow number together, the fewest steps that fit', () => {
+        const pair: PaneToolbarAction[] = [
+            { id: 'p', label: 'P', icon: 'p', group: 1 }, { id: 'q', label: 'Q', icon: 'q', group: 1 },
+            { id: 'on', label: 'On', icon: 'on', group: 2, overflow: 1 }, { id: 'off', label: 'Off', icon: 'off', group: 2, overflow: 1 },
+            { id: 'x', label: 'X', icon: 'x', group: 2, overflow: 2 }];
+        const w: PaneToolbarWidths = {
+            labelled: new Map(pair.map((a) => [a.id, 80])), icon: new Map(pair.map((a) => [a.id, 36])), more: 36, separator: 9, gap: 4,
+        };
+        expect(labelSteps(pair)).toEqual([['on', 'off'], ['x'], ['q'], ['p']]);
+        // All labelled: 5 * 80 + 9 + 5 * 4 = 429. One pixel less, and the pair hides its labels together, nothing else.
+        expect(paneToolbarLayout(428, pair, w)).toEqual({ labelsHidden: false, bare: ['on', 'off'], overflowed: [] });
+        expect(paneToolbarLayout(429 - 88, pair, w)).toEqual({ labelsHidden: false, bare: ['on', 'off'], overflowed: [] });
+        expect(paneToolbarLayout(429 - 88 - 1, pair, w)).toEqual({ labelsHidden: false, bare: ['on', 'off', 'x'], overflowed: [] });
+    });
+
+    it('marks the row labels-partly-hidden while some labels show, and labels-hidden only once none does', async () => {
+        await settle();
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-partly-hidden');
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-hidden');
+        await at(fitting(['star']));
+        expect(row().classList).toContain('cms-pane-toolbar--labels-partly-hidden');
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-hidden');
+        expect(button('star').classList).toContain('cms-pane-toolbar__action--bare');
+        expect(button('reply').classList).not.toContain('cms-pane-toolbar__action--bare');
+        expect(button('star').querySelector('.cms-pane-toolbar__tip')!.textContent!.trim()).toBe('Star');
+        expect(actions().map((b) => b.getAttribute('aria-label'))).toEqual(['Reply', 'Forward', 'Archive', 'Delete', 'Mark unread', 'Star', 'Move']);
+        await at(fitting(HIDE_ORDER));
+        expect(row().classList).not.toContain('cms-pane-toolbar--labels-partly-hidden');
+        expect(row().classList).toContain('cms-pane-toolbar--labels-hidden');
+        expect(actions().map((b) => b.getAttribute('aria-label'))).toEqual(['Reply', 'Forward', 'Archive', 'Delete', 'Mark unread', 'Star', 'Move']);
+    });
+
+    it('sends nothing behind More actions while any label shows, at any width', async () => {
+        await settle();
+        const acts = nodes();
+        const full = Math.ceil(actionsWidth(acts, widths(), true, new Set()));
+        let checked = 0;
+        for (let w = full + 1; w >= 0; w--) {
+            const layout = paneToolbarLayout(w, acts, widths());
+            if (layout.overflowed.length > 0) {
+                expect(layout.bare.length).withContext(`at ${w}`).toBe(acts.length);
+                expect(layout.labelsHidden).withContext(`at ${w}`).toBeTrue();
+                checked++;
+            }
+        }
+        expect(checked).toBeGreaterThan(0);
+        await at(Math.floor(actionsWidth(acts, widths(), false, new Set())) - 1);
+        expect(overflowed()).toEqual(['star', 'move']);
+        expect(labelsShown()).toEqual([]);
+    });
+
+    it('brings everything back in the reverse order as the row widens: actions from More actions, then labels, the last hidden first', async () => {
+        await settle();
+        const acts = nodes();
+        const full = Math.ceil(actionsWidth(acts, widths(), true, new Set()));
+        // Over every width, each pixel wider undoes at most what the pixel narrower did, last first.
+        const key = (w: number) => {
+            const l = paneToolbarLayout(w, acts, widths());
+            return [...l.bare.map((id) => 'label:' + id), ...l.overflowed.map((id) => 'more:' + id)];
+        };
+        for (let w = 0; w < full + 1; w++) {
+            const narrow = key(w);
+            const wide = key(w + 1);
+            expect(narrow.slice(0, wide.length)).withContext(`${w} -> ${w + 1}`).toEqual(wide);
+        }
+        // And in the page: narrowing through every step, then widening through them back.
+        const steps = [...HIDE_ORDER.map((_, k) => fitting(HIDE_ORDER.slice(0, k + 1))),
+            Math.floor(actionsWidth(acts, widths(), false, new Set())) - 1,
+            Math.floor(actionsWidth(acts, widths(), false, new Set(['star', 'move']))) - 1];
+        const seen: string[] = [];
+        for (const w of steps) {
+            await at(w);
+            seen.push(JSON.stringify(toolbar().layout()));
+        }
+        expect(JSON.parse(seen[seen.length - 1]).overflowed).toEqual(['star', 'move', 'mark-unread']);
+        for (let i = steps.length - 1; i >= 0; i--) {
+            await at(steps[i]);
+            expect(JSON.stringify(toolbar().layout())).withContext(`back at ${steps[i]}`).toBe(seen[i]);
+        }
+        await at(fitting(['star', 'move']));
+        expect(labelsShown()).toEqual(['reply', 'forward', 'archive', 'delete', 'mark-unread']);
+        await at(full);
+        expect(labelsShown()).toEqual(ORDER);
+        expect(toolbar().layout().bare).toEqual([]);
+    });
+
+    it('an icon the kit does not have keeps its label while the labels around it hide one by one', async () => {
+        f.componentInstance.actions.set(nodes({ move: { icon: 'no-such-icon' } }));
+        await settle();
+        await at(fitting(['star', 'move', 'mark-unread']));
+        expect(toolbar().layout().bare).toEqual(['star', 'move', 'mark-unread']);
+        expect(labelsShown()).toEqual(['reply', 'forward', 'archive', 'delete', 'move']);
+        expect(button('move').classList).not.toContain('cms-pane-toolbar__action--bare');
+        expect(button('move').classList).toContain('cms-pane-toolbar__action--text');
+        expect(row().classList).toContain('cms-pane-toolbar--labels-partly-hidden');
     });
 
     it('then sends Star and Move behind More actions together, then Mark unread: never one alone', async () => {
@@ -180,11 +297,12 @@ describe('CmsPaneToolbarComponent', () => {
             icon: new Map([['a', 36], ['b', 36], ['p', 36], ['s', 36], ['c', 36]]),
             more: 36, separator: 9, gap: 4,
         };
-        expect(paneToolbarLayout(null, groups, w)).toEqual({ labelsHidden: false, overflowed: [] });
-        expect(paneToolbarLayout(5 * 80 + 4 * 4, groups, w)).toEqual({ labelsHidden: false, overflowed: [] });
-        expect(paneToolbarLayout(5 * 36 + 4 * 4, groups, w)).toEqual({ labelsHidden: true, overflowed: [] });
-        expect(paneToolbarLayout(5 * 36 + 4 * 4 - 1, groups, w)).toEqual({ labelsHidden: true, overflowed: ['b', 'a'] });
-        expect(paneToolbarLayout(10, groups, w)).toEqual({ labelsHidden: true, overflowed: ['b', 'a', 'c'] });
+        const all = ['b', 'a', 'c', 's', 'p'];
+        expect(paneToolbarLayout(null, groups, w)).toEqual({ labelsHidden: false, bare: [], overflowed: [] });
+        expect(paneToolbarLayout(5 * 80 + 4 * 4, groups, w)).toEqual({ labelsHidden: false, bare: [], overflowed: [] });
+        expect(paneToolbarLayout(5 * 36 + 4 * 4, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: [] });
+        expect(paneToolbarLayout(5 * 36 + 4 * 4 - 1, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a'] });
+        expect(paneToolbarLayout(10, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a', 'c'] });
     });
 
     it('takes a toggle pair, two actions sharing a number, behind More actions in one step', () => {
@@ -196,7 +314,8 @@ describe('CmsPaneToolbarComponent', () => {
             labelled: new Map(pair.map((a) => [a.id, 80])), icon: new Map(pair.map((a) => [a.id, 36])), more: 36, separator: 9, gap: 4,
         };
         // Five icons, one separator: 5 * 36 + 9 + 5 * 4. One pixel less, and the pair goes together, nothing else.
-        expect(paneToolbarLayout(5 * 36 + 9 + 5 * 4 - 1, pair, w)).toEqual({ labelsHidden: true, overflowed: ['on', 'off'] });
+        expect(paneToolbarLayout(5 * 36 + 9 + 5 * 4 - 1, pair, w))
+            .toEqual({ labelsHidden: true, bare: ['on', 'off', 'x', 'q', 'p'], overflowed: ['on', 'off'] });
     });
 
     it('groups follow the order of their first action, each keeping its actions in order', () => {

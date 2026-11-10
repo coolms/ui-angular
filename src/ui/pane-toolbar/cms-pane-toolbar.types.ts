@@ -33,8 +33,11 @@ export interface PaneToolbarWidths {
     readonly gap: number;
 }
 
-/** How the row is drawn at a width: whether labels are hidden, and which actions are behind More actions. */
+/** How the row is drawn at a width: whose labels are hidden, and which actions are behind More actions. */
 export interface PaneToolbarLayout {
+    /** Every action's label is hidden. */
     readonly labelsHidden: boolean;
+    /** The actions whose labels are hidden, in the order they hid. */
+    readonly bare: readonly string[];
     readonly overflowed: readonly string[];
 }
