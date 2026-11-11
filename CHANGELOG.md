@@ -11,6 +11,18 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **`cms-pane-splitter` is a focusable separator with keys.** The host takes focus (`tabindex` 0) as
+  `role="separator"`, `aria-orientation="vertical"`, with `aria-valuenow` the pane's width in px and
+  `aria-valuemin`/`aria-valuemax` its limits; a new `ariaLabel` input names it.
+  - ArrowLeft and ArrowRight move it by 16px (inverted for `side="end"`, as the drag is), Home and End take the pane
+    to its limits, and Enter resets it like a double-click. Home and End no longer scroll the page.
+  - A visible focus ring from `--cms-focus-ring`; the line shows as on hover while focused.
+  - `widthChange` now also emits when a key that moved the splitter is released and after a reset (double-click or
+    Enter), with the pane's width, so a host can save it. A held arrow emits once, on release.
+  - A new `width` input sets the pane's width from outside (clamped to the limits), applied whenever it changes and
+    winning over the `storageKey` width; null (the default) keeps today's behaviour.
+  - A cancelled pointer (`pointercancel`) ends a drag like a release.
+
 - **`cms-pane-toolbar`, the row of actions at the top of a pane** (contract component `pane-toolbar`). It knows no
   module: it takes `actions`, the server's NaviGraph nodes the host has a handler for, as
   `{ id, label, icon, group, overflow?, danger?, disabled?, reason?, busy? }[]`, a `label`, an optional `status`, and
