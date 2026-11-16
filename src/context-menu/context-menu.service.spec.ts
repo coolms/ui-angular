@@ -97,7 +97,7 @@ describe('ContextMenuService capability state', () => {
 });
 
 describe('ContextMenuService disabled for a reason', () => {
-    function itemsFor(meta: Record<string, unknown>, record: Record<string, unknown>, words?: (code: string) => string | null): ContextMenuItem[] {
+    function itemsFor(meta: Record<string, unknown>, record: Record<string, unknown>): ContextMenuItem[] {
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({
             providers: [
@@ -108,25 +108,25 @@ describe('ContextMenuService disabled for a reason', () => {
             ],
         });
         const svc = TestBed.inject(ContextMenuService);
-        svc.openFromNodes(new MouseEvent('contextmenu', { clientX: 10, clientY: 20 }), [node('archive', { action: 'archive', ...meta })], record, () => undefined, words);
+        svc.openFromNodes(new MouseEvent('contextmenu', { clientX: 10, clientY: 20 }), [node('archive', { action: 'archive', ...meta })], record, () => undefined);
         return svc.menu()?.items ?? [];
     }
-    const ARCHIVE = { disabledWhen: { field: '_archive', op: 'eq', value: 'blocked' }, disabledReason: 'all-mail-hidden' };
-    const words = (code: string): string | null => (code === 'all-mail-hidden' ? 'Archive needs All Mail shown over IMAP.' : null);
+    const SENTENCE = 'Archive needs All Mail shown over IMAP.';
+    const ARCHIVE = { disabledWhen: { field: '_archive', op: 'eq', value: 'blocked' }, disabledReason: 'all-mail-hidden', disabledReasonText: SENTENCE };
 
-    it('draws an item whose disabledWhen holds disabled, kept, with the host\'s words for its reason', () => {
-        const [item] = itemsFor(ARCHIVE, { _archive: 'blocked' }, words);
+    it('draws an item whose disabledWhen holds disabled, kept, saying the server\'s sentence as given', () => {
+        const [item] = itemsFor(ARCHIVE, { _archive: 'blocked' });
         expect(item.disabled).toBeTrue();
-        expect(item.refusal).toBe('Archive needs All Mail shown over IMAP.');
+        expect(item.refusal).toBe(SENTENCE);
     });
 
-    it('a reason the host has no words for says it is not available now', () => {
-        expect(itemsFor(ARCHIVE, { _archive: 'blocked' })[0].refusal).toBe(UNWORDED_REASON);
-        expect(itemsFor({ ...ARCHIVE, disabledReason: 'other' }, { _archive: 'blocked' }, words)[0].refusal).toBe(UNWORDED_REASON);
+    it('a node that gives no sentence says the one generic reason, whatever its code', () => {
+        expect(itemsFor({ ...ARCHIVE, disabledReasonText: undefined }, { _archive: 'blocked' })[0].refusal).toBe(UNWORDED_REASON);
+        expect(itemsFor({ ...ARCHIVE, disabledReasonText: '  ' }, { _archive: 'blocked' })[0].refusal).toBe('Not available right now');
     });
 
     it('leaves the item as it was while its disabledWhen does not hold', () => {
-        const [item] = itemsFor(ARCHIVE, { _archive: 'can' }, words);
+        const [item] = itemsFor(ARCHIVE, { _archive: 'can' });
         expect(item.disabled).toBeFalse();
         expect(item.refusal).toBeUndefined();
     });

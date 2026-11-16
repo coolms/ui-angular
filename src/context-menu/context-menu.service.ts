@@ -14,11 +14,8 @@ export interface ContextMenuItem {
     refusal?:  string;
 }
 
-/** The words for a reason a node gives (`disabledReason`), by its code; null for a code the host has no words for. */
-export type DisabledReasonWords = (code: string) => string | null;
-
-/** What an item disabled for a reason the host has no words for says. */
-export const UNWORDED_REASON = 'not available now';
+/** What an item disabled by its node says when the node gives no sentence for it (a server older than the field). */
+export const UNWORDED_REASON = 'Not available right now';
 
 const conditionOf = (value: unknown): Record<string, unknown> | null =>
     value !== null && typeof value === 'object' ? value as Record<string, unknown> : null;
@@ -92,16 +89,15 @@ export class ContextMenuService {
      *
      * Closes without showing if no items remain after filtering.
      *
-     * A node whose `disabledWhen` holds for the record is drawn disabled and kept, as on the toolbar; its
-     * `disabledReason` code is worded by `reasonWords`, and an item disabled for a code without words says
-     * UNWORDED_REASON.
+     * A node whose `disabledWhen` holds for the record is drawn disabled and kept, as on the toolbar, and says the
+     * server's sentence for it (`disabledReasonText`) as given; a node that gives none says UNWORDED_REASON. The
+     * reason's code (`disabledReason`) is never turned into words here.
      */
     openFromNodes(
         event:    MouseEvent,
         nodes:    NaviGraphNode[],
         record:   Record<string, unknown>,
         onAction: (id: string) => void,
-        reasonWords?: DisabledReasonWords,
     ): void {
         event.preventDefault();
         event.stopPropagation();
@@ -117,7 +113,7 @@ export class ContextMenuService {
 
         if (visible.length === 0) { this.close(); return; }
 
-        const items = this.buildItems(visible, record, reasonWords);
+        const items = this.buildItems(visible, record);
         if (items.length === 0) { this.close(); return; }
         this.menu.set({
             x: event.clientX,
@@ -148,7 +144,7 @@ export class ContextMenuService {
      * A node naming a `capability` takes its state from the record's subjects, as on the toolbar
      * (capability-state.ts): `denied` disables the item, `elevate` locks it, no answer leaves it as it was.
      */
-    private buildItems(nodes: NaviGraphNode[], record: Record<string, unknown>, reasonWords?: DisabledReasonWords): ContextMenuItem[] {
+    private buildItems(nodes: NaviGraphNode[], record: Record<string, unknown>): ContextMenuItem[] {
         const result: ContextMenuItem[] = [];
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
@@ -162,9 +158,8 @@ export class ContextMenuService {
             const capability = capabilityStateOf(n.meta, record);
             const unavailable = conditionOf(n.meta['disabledWhen']);
             const off = unavailable !== null && this.naviGraph.matchesShowWhen(unavailable, record);
-            const code = n.meta['disabledReason'];
-            const worded = off && typeof code === 'string' && code !== '' && reasonWords !== undefined ? reasonWords(code) : null;
-            const why = off ? worded ?? UNWORDED_REASON : null;
+            const sentence = n.meta['disabledReasonText'];
+            const why = off ? (typeof sentence === 'string' && sentence.trim() !== '' ? sentence : UNWORDED_REASON) : null;
             result.push({
                 id:       String(n.meta['action'] ?? n.path),
                 label:    n.title,
