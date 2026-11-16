@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { NaviGraphNode, ErrorHandlerService } from '@coolms/core-angular';
-import { ContextMenuItem, ContextMenuService } from './context-menu.service';
+import { ContextMenuItem, ContextMenuService, UNWORDED_REASON } from './context-menu.service';
 
 /**
  * The right-click menu reads a node's `capability` as the toolbar does (capability-state.ts):
@@ -93,5 +93,41 @@ describe('ContextMenuService capability state', () => {
             expect(chmod.disabled).toBe(false);
             expect(chmod.locked).toBeUndefined();
         }
+    });
+});
+
+describe('ContextMenuService disabled for a reason', () => {
+    function itemsFor(meta: Record<string, unknown>, record: Record<string, unknown>, words?: (code: string) => string | null): ContextMenuItem[] {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: HttpClient, useValue: {} },
+                { provide: Router, useValue: {} },
+                { provide: ErrorHandlerService, useValue: {} },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+        const svc = TestBed.inject(ContextMenuService);
+        svc.openFromNodes(new MouseEvent('contextmenu', { clientX: 10, clientY: 20 }), [node('archive', { action: 'archive', ...meta })], record, () => undefined, words);
+        return svc.menu()?.items ?? [];
+    }
+    const ARCHIVE = { disabledWhen: { field: '_archive', op: 'eq', value: 'blocked' }, disabledReason: 'all-mail-hidden' };
+    const words = (code: string): string | null => (code === 'all-mail-hidden' ? 'Archive needs All Mail shown over IMAP.' : null);
+
+    it('draws an item whose disabledWhen holds disabled, kept, with the host\'s words for its reason', () => {
+        const [item] = itemsFor(ARCHIVE, { _archive: 'blocked' }, words);
+        expect(item.disabled).toBeTrue();
+        expect(item.refusal).toBe('Archive needs All Mail shown over IMAP.');
+    });
+
+    it('a reason the host has no words for says it is not available now', () => {
+        expect(itemsFor(ARCHIVE, { _archive: 'blocked' })[0].refusal).toBe(UNWORDED_REASON);
+        expect(itemsFor({ ...ARCHIVE, disabledReason: 'other' }, { _archive: 'blocked' }, words)[0].refusal).toBe(UNWORDED_REASON);
+    });
+
+    it('leaves the item as it was while its disabledWhen does not hold', () => {
+        const [item] = itemsFor(ARCHIVE, { _archive: 'can' }, words);
+        expect(item.disabled).toBeFalse();
+        expect(item.refusal).toBeUndefined();
     });
 });
