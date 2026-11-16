@@ -11,10 +11,10 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
-- **A context menu item a node disables for a reason is drawn disabled with its reason.** `openFromNodes` reads a
-  node's `disabledWhen` against the record, as the toolbar does: when it holds, the item is disabled and kept, and its
-  refusal is the host's words for the node's `disabledReason` code (the new optional `reasonWords` argument), or
-  `UNWORDED_REASON` ("not available now") when there are none. Never silently disabled.
+- **A context menu item a node disables for a reason is drawn disabled with the server's sentence.** `openFromNodes`
+  reads a node's `disabledWhen` against the record, as the toolbar does: when it holds, the item is disabled and kept,
+  and its refusal is the node's `disabledReasonText` as given, or `UNWORDED_REASON` ("Not available right now") when
+  the node gives none. The reason's code is never turned into words here; never silently disabled.
 - **`cms-pane-splitter` is a focusable separator with keys.** The host takes focus (`tabindex` 0) as
   `role="separator"`, `aria-orientation="vertical"`, with `aria-valuenow` the pane's width in px and
   `aria-valuemin`/`aria-valuemax` its limits; a new `ariaLabel` input names it.
