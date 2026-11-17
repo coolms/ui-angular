@@ -40,7 +40,7 @@ import type * as CmCss from '@codemirror/lang-css';
 import type * as CmJavascript from '@codemirror/lang-javascript';
 import type * as CmJson from '@codemirror/lang-json';
 import type * as CmMarkdown from '@codemirror/lang-markdown';
-import { AppConfigState, ThemeService, type ResolvedTheme } from '@coolms/core-angular';
+import { AppConfigState, refusalWords, ThemeService, type ResolvedTheme } from '@coolms/core-angular';
 import { ToastService } from '../toast.service';
 import { ConfirmDialogService } from '../confirm-dialog.service';
 import { UnsavedChangesService } from '../unsaved-changes.service';
@@ -466,8 +466,7 @@ export class CodeEditorComponent implements OnDestroy, AfterViewInit {
                 this.toast.success('Saved as a copy', chosen.trim());
             },
             error: (err: unknown) => {
-                const status = err instanceof HttpErrorResponse ? err.status : 0;
-                this.toast.error(status === 409 ? 'A file with that name exists' : 'The copy could not be saved', chosen.trim());
+                this.toast.error(refusalWords(err), chosen.trim());
             },
         });
     }

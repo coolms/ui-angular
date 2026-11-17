@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { refusalWords } from '@coolms/core-angular';
 
 import type { VfsNodeDto } from '../../vfs/vfs.types';
 import { VfsTreeService } from './vfs-tree.service';
@@ -552,14 +553,7 @@ export class CmsDirectoryPickerComponent {
                     this.onSelectNode(node);
                 },
                 error: (err: unknown) => {
-                    const status = (err as { status?: number } | null)?.status;
-                    if (status === 403) {
-                        this.newFolderError.set('Permission denied.');
-                    } else if (status === 409) {
-                        this.newFolderError.set('A folder with that name already exists.');
-                    } else {
-                        this.newFolderError.set('Failed to create folder.');
-                    }
+                    this.newFolderError.set(refusalWords(err));
                 },
             });
     }

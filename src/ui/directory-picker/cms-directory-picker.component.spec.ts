@@ -21,8 +21,8 @@ import type { VfsNodeDto } from '../../vfs/vfs.types';
  *   6. Path-input + Enter resolves via `resolvePath`; invalid paths
  *      surface an inline error.
  *   7. Create-folder happy path appends to the parent and selects.
- *   8. Create-folder 409 surfaces "already exists" without losing
- *      the typed name.
+ *   8. A refused create-folder says the server's declared words, or the
+ *      generic sentence for an undeclared problem, and keeps the typed name.
  */
 describe('CmsDirectoryPickerComponent', () => {
     let fixture: ReturnType<typeof TestBed.createComponent<CmsDirectoryPickerComponent>>;
@@ -194,6 +194,41 @@ describe('CmsDirectoryPickerComponent', () => {
 
         const err = (component as unknown as { pathInputError(): string | null }).pathInputError();
         expect(err).toMatch(/not found/i);
+    });
+
+    function refuseNewFolder(name: string, body: object, status: number): { error: string | null; name: string } {
+        fixture.detectChanges();
+        answerListChildren('/', []);
+        const picker = component as unknown as {
+            beginNewFolder(): void;
+            newFolderName: { set(v: string): void; (): string };
+            onCreateFolderConfirm(): void;
+            newFolderError(): string | null;
+        };
+        picker.beginNewFolder();
+        picker.newFolderName.set(name);
+        picker.onCreateFolderConfirm();
+        httpMock.expectOne((r) => r.method === 'POST' && r.url === '/api/v1/vfs/directories')
+            .flush(body, { status, statusText: 'Refused' });
+
+        return { error: picker.newFolderError(), name: picker.newFolderName() };
+    }
+
+    it('says the server\'s declared words when a new folder is refused, keeping the typed name', () => {
+        const said = refuseNewFolder('reports', {
+            type: '/errors/files/already-exists',
+            title: 'Already exists',
+            status: 409,
+            detail: 'A folder named reports is already here.',
+        }, 409);
+
+        expect(said).toEqual({ error: 'A folder named reports is already here.', name: 'reports' });
+    });
+
+    it('says the generic sentence when the refusal of a new folder is not declared', () => {
+        const said = refuseNewFolder('reports', { type: 'about:blank', title: 'Forbidden', status: 403 }, 403);
+
+        expect(said).toEqual({ error: 'Something went wrong. Try again.', name: 'reports' });
     });
 
     it('emits nodeChange alongside valueChange so callers get the backend id', () => {
