@@ -91,6 +91,17 @@ describe('CodeEditorComponent -- a save names the version it opened', () => {
         expect(editor.notice()).toBeNull();
     });
 
+    it('a refused copy says the server\'s declared words, naming the copy', async () => {
+        opened('h1');
+        editor.save();
+        http.expectOne({ method: 'PUT', url: CONTENT }).flush({ detail: 'changed' }, { status: 412, statusText: 'Precondition Failed' });
+        await Promise.resolve();
+        await Promise.resolve();
+        http.expectOne({ method: 'POST', url: BINARY })
+            .flush({ type: '/errors/files/already-exists', title: 'Already exists', status: 409, detail: 'A file named a (copy).txt is already here.' }, { status: 409, statusText: 'Conflict' });
+        expect(toast.error).toHaveBeenCalledOnceWith('A file named a (copy).txt is already here.', 'a (copy).txt');
+    });
+
     it('a 404 says the file was deleted and offers a copy; declined, nothing is written and the edits stay', async () => {
         input.and.resolveTo(null);
         opened('h1');

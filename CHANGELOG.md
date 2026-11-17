@@ -11,6 +11,11 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **A refused new folder and a refused copy say the server's words.** The directory picker's new-folder refusal and
+  the code editor's save-as-copy refusal read `refusalWords` from `@coolms/core-angular`: a declared problem says its
+  `detail`, anything else "Something went wrong. Try again." The picker's "Permission denied." and "A folder with
+  that name already exists." and the editor's "A file with that name exists" are gone; the picker keeps the typed
+  name. The peer dependency on `@coolms/core-angular` is now `^2.0.0-alpha.7`, the first release with the rule.
 - **A context menu item a node disables for a reason is drawn disabled with the server's sentence.** `openFromNodes`
   reads a node's `disabledWhen` against the record, as the toolbar does: when it holds, the item is disabled and kept,
   and its refusal is the node's `disabledReasonText` as given, or `UNWORDED_REASON` ("Not available right now") when
