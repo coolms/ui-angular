@@ -175,13 +175,20 @@ export class StateComponent {
         this.acted.emit();
     }
 
+    /**
+     * Elevate, then what was refused runs again, once: the state's own action (its Retry) where it offers one, so a
+     * screen in a dialog loads again in place; else the page, where the shell can load it again; else the host is told.
+     * A cancelled or failed prompt runs nothing.
+     */
     protected elevate(): void {
         this.asking.set(true);
         elevateOnce(this.injector.get(ElevationService)).pipe(
             finalize(() => this.asking.set(false)),
         ).subscribe(outcome => {
             if (outcome === 'elevated') {
-                if (this.reloadPage) {
+                if (this.actionShown() !== '') {
+                    this.act();
+                } else if (this.reloadPage) {
                     this.reloadPage();
                 } else {
                     this.elevated.emit();

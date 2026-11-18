@@ -90,14 +90,35 @@ describe('StateComponent', () => {
         expect(el('[data-test="elevate"]')).toBeNull();
     });
 
-    it('shows an error refused for want of elevation as the elevation state, and loads the page again after Elevate', () => {
-        setup('error', { error: refusal(), action: { label: 'Retry', run: () => undefined } }, { withShell: true });
+    it('shows an error refused for want of elevation as the elevation state; after Elevate its Retry runs once, in place', () => {
+        let ran = 0;
+        setup('error', { error: refusal(), action: { label: 'Retry', run: () => { ran++; } } }, { withShell: true });
 
         expect(el('.cms-state')!.getAttribute('data-kind')).toBe('elevation-required');
         expect(el('[data-test="state-action"]')).toBeNull();
         (el('[data-test="elevate"]') as HTMLButtonElement).click();
-        expect(reloaded).toBe(1);
-        expect(elevatedOut).toBe(0);
+        expect([ran, reloaded, elevatedOut]).withContext('retried, page reloaded, host told').toEqual([1, 0, 0]);
+    });
+
+    it('a refused load in a dialog, its Retry bound the Angular way: retried once after Elevate, never after a cancel', () => {
+        setup('error', { error: refusal(), actionLabel: 'Retry' });
+        let acted = 0;
+        fixture.componentInstance.acted.subscribe(() => acted++);
+        (el('[data-test="elevate"]') as HTMLButtonElement).click();
+        expect([acted, elevatedOut]).withContext('granted: retried once').toEqual([1, 0]);
+
+        TestBed.resetTestingModule();
+        setup('error', { error: refusal(), actionLabel: 'Retry' }, { granted: false });
+        let actedAfterCancel = 0;
+        fixture.componentInstance.acted.subscribe(() => actedAfterCancel++);
+        (el('[data-test="elevate"]') as HTMLButtonElement).click();
+        expect([actedAfterCancel, elevatedOut]).withContext('cancelled: nothing runs').toEqual([0, 0]);
+    });
+
+    it('a refused load with no Retry of its own loads the page again after Elevate, where the shell can', () => {
+        setup('error', { error: refusal() }, { withShell: true });
+        (el('[data-test="elevate"]') as HTMLButtonElement).click();
+        expect([reloaded, elevatedOut]).toEqual([1, 0]);
     });
 
     it('offers an action bound the Angular way, its label an input and its press the acted output', () => {
