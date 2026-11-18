@@ -11,6 +11,10 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **What was refused for want of elevation runs again, once, after Elevate.** The state component's Elevate, once
+  granted, runs the state's own action (its Retry) once, in place, so a screen in a dialog loads again where it is.
+  Where the state offers no action, the page loads again where the shell can (`RELOAD_PAGE`), else the host is told
+  (`elevated`), as before. A cancelled or failed prompt runs nothing.
 - **A refused new folder and a refused copy say the server's words.** The directory picker's new-folder refusal and
   the code editor's save-as-copy refusal read `refusalWords` from `@coolms/core-angular`: a declared problem says its
   `detail`, anything else "Something went wrong. Try again." The picker's "Permission denied." and "A folder with
