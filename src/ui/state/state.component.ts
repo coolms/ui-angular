@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Injector, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, Injector, input, output, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { ElevationService, isElevationRefusal } from '@coolms/core-angular';
 import { elevateOnce } from './elevate-once';
+import { PAGE_CLOSURE } from './page-closure';
 import { RELOAD_PAGE } from './reload-page';
 
 /** What a page, a card or a line of text shows instead of its content. */
@@ -169,6 +170,17 @@ export class StateComponent {
     // Resolved when Elevate is pressed: a state that never offers it does not bring the session's elevation along.
     private readonly injector = inject(Injector);
     private readonly reloadPage = inject(RELOAD_PAGE, { optional: true });
+
+    constructor() {
+        // While this state asks for elevation in place of content -- as drawn, so an error holding an elevation
+        // refusal counts -- the page is closed to the person. A state beside text (inline) closes nothing.
+        const closure = inject(PAGE_CLOSURE, { optional: true });
+        if (closure) {
+            effect(() => (this.shownKind() === 'elevation-required' && this.placement() !== 'inline'
+                ? closure.close(this) : closure.open(this)));
+            inject(DestroyRef).onDestroy(() => closure.open(this));
+        }
+    }
 
     protected act(): void {
         this.action()?.run();

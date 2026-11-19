@@ -2,12 +2,14 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    inject,
     input,
     output,
     signal,
 } from '@angular/core';
 import { CmsPageHeaderComponent } from './cms-page-header.component';
 import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.component';
+import { PAGE_CLOSURE } from './state/page-closure';
 
 /**
  * `<cms-list-page>` -- the single, blessed shell for admin list pages.
@@ -105,7 +107,7 @@ import { PageToolbarComponent, type ToolbarAction } from './page-toolbar.compone
             <ng-content />
         </div>
 
-        @if (footerCount()) {
+        @if (footerCount() && !closed()) {
             <div class="cms-list-page__footer">{{ footerCount() }}</div>
         }
     `,
@@ -155,6 +157,11 @@ export class CmsListPageComponent {
      * blank to omit the footer entirely (the self-contained pages had none).
      */
     readonly footerCount = input<string>('');
+
+    private readonly closure = inject(PAGE_CLOSURE, { optional: true });
+
+    /** The page is closed to the person (its content asks for elevation): a count of what was not read is left out. */
+    protected readonly closed = computed(() => this.closure?.closed() ?? false);
 
     /**
      * Header action buttons supplied directly by the page (the simple path).
