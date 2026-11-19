@@ -20,7 +20,7 @@ import {
     type PaneToolbarWidths,
 } from './cms-pane-toolbar.types';
 import { iconForName } from '../icons/bootstrap-icons';
-import { groupsOf, overflowSteps, paneToolbarLayout } from './pane-toolbar-layout';
+import { groupsOf, overflowSteps, paneToolbarLayout, pinnedFromEnd } from './pane-toolbar-layout';
 
 let nextId = 0;
 
@@ -31,7 +31,8 @@ let nextId = 0;
  * Measured on its own width (a ResizeObserver on the row), never the window's: as it narrows labels hide one by one,
  * by overflow number, the lowest first and those sharing a number together, then those of the actions with no number
  * from the end of the row back; each action keeps its name and shows its label as a tooltip. Only once every label is
- * hidden do actions go behind More actions by their overflow number, never one alone; one with no number never goes.
+ * hidden do actions go behind More actions by their overflow number, never one alone while another can go with it;
+ * those with no number go only where the row cannot hold them even so, from the end back, so nothing is cut off.
  * Widening undoes it in the reverse order. An action with overflow 0 is menu only: never in the row, always behind
  * More actions, which is drawn for it even alone. One Tab stop: Left, Right, Home and End move inside.
  *
@@ -403,7 +404,8 @@ export class CmsPaneToolbarComponent {
             return;
         }
         const byId = new Map(this.actions().map((a) => [a.id, a]));
-        const items = overflowSteps(this.actions()).flat()
+        // By overflow number, then those with no number that a row too narrow for them sent here, in the row's order.
+        const items = [...overflowSteps(this.actions()).flat(), ...pinnedFromEnd(this.actions()).reverse()]
             .filter((id) => this.behind().has(id))
             .map((id) => byId.get(id)!)
             .map((a) => ({
