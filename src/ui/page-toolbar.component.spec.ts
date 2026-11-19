@@ -370,7 +370,7 @@ describe('PageToolbarComponent capability state', () => {
 
         expect(action.refusal).toBe('not allowed for 2 of 3 selected items');
         expect(button.disabled).toBe(true);
-        expect(button.title).toBe('Title for /chmod -- not allowed for 2 of 3 selected items');
+        expect(button.title).toBe('Title for /chmod \u2014 not allowed for 2 of 3 selected items');
         expect(button.querySelector('.toolbar-btn__lock')).toBeNull();
         expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Permissions (not allowed for 2 of 3 selected items)');
     });

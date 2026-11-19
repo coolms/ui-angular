@@ -172,10 +172,12 @@ export class StateComponent {
     private readonly reloadPage = inject(RELOAD_PAGE, { optional: true });
 
     constructor() {
-        // While this state asks for elevation in place of content, the page is closed to the person.
+        // While this state asks for elevation in place of content -- as drawn, so an error holding an elevation
+        // refusal counts -- the page is closed to the person. A state beside text (inline) closes nothing.
         const closure = inject(PAGE_CLOSURE, { optional: true });
         if (closure) {
-            effect(() => (this.kind() === 'elevation-required' ? closure.close(this) : closure.open(this)));
+            effect(() => (this.shownKind() === 'elevation-required' && this.placement() !== 'inline'
+                ? closure.close(this) : closure.open(this)));
             inject(DestroyRef).onDestroy(() => closure.open(this));
         }
     }
