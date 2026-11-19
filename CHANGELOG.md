@@ -11,6 +11,7 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **The pane toolbar cuts nothing off at the row's edge, and More actions is always reached.** Where the row still cannot hold the rest and More actions once every numbered action has gone behind it, the actions with no overflow number go too, one by one from the end of the row back, the fewest that fit, and More actions lists them after the numbered ones, in the row's order. One action alone goes behind More actions where that alone saves room (one wider than an icon, such as one that keeps its label). As the design-tokens contract now states it; before, such a row was clipped.
 - **What was refused for want of elevation runs again, once, after Elevate.** The state component's Elevate, once
   granted, runs the state's own action (its Retry) once, in place, so a screen in a dialog loads again where it is.
   Where the state offers no action, the page loads again where the shell can (`RELOAD_PAGE`), else the host is told

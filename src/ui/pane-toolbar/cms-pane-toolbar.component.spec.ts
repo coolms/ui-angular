@@ -9,11 +9,12 @@ import { ContextMenuComponent } from '../../context-menu/context-menu.component'
 import { ContextMenuService } from '../../context-menu/context-menu.service';
 import { CmsPaneToolbarComponent } from './cms-pane-toolbar.component';
 import { type PaneToolbarAction, type PaneToolbarWidths } from './cms-pane-toolbar.types';
-import { actionsWidth, groupsOf, labelSteps, overflowSteps, paneToolbarLayout, rowWidth } from './pane-toolbar-layout';
+import { actionsWidth, groupsOf, labelSteps, overflowSteps, paneToolbarLayout, pinnedFromEnd, rowWidth } from './pane-toolbar-layout';
 import { BOOTSTRAP_ICONS, iconForName } from '../icons/bootstrap-icons';
 
 /**
- * Nodes as a server could send them: three groups, the first two with no overflow number (they never go), the third
+ * Nodes as a server could send them: three groups, the first two with no overflow number (they go only where the row
+ * cannot hold them otherwise), the third
  * going Star first, then Move, then Mark unread. The row knows nothing of mail; these are only its data.
  */
 function nodes(over: Partial<Record<string, Partial<PaneToolbarAction>>> = {}): PaneToolbarAction[] {
@@ -84,6 +85,12 @@ describe('CmsPaneToolbarComponent', () => {
     async function at(width: number): Promise<void> {
         f.componentInstance.width.set(width);
         await settle();
+    }
+    /** The narrowest width that holds the row with every numbered action behind More actions: the rest all stay. */
+    async function atNarrowest(): Promise<void> {
+        await at(1400);
+        const all = f.componentInstance.actions();
+        await at(Math.ceil(actionsWidth(all, widths(), false, new Set(all.filter((a) => a.overflow !== undefined).map((a) => a.id)))));
     }
     const root = () => f.nativeElement as HTMLElement;
     const row = () => root().querySelector<HTMLElement>('.cms-pane-toolbar')!;
@@ -277,16 +284,33 @@ describe('CmsPaneToolbarComponent', () => {
         expect(overflowed()).toEqual(['star', 'move', 'mark-unread']);
     });
 
-    it('never sends an action with no overflow number behind More actions, however narrow', async () => {
-        await at(40);
-        expect(overflowed()).toEqual(['star', 'move', 'mark-unread']);
+    it('sends the actions with no overflow number behind More actions only where the row cannot hold them, from the end back', async () => {
+        await atNarrowest();
+        expect(overflowed()).withContext('the row holds the rest').toEqual(['star', 'move', 'mark-unread']);
         for (const id of ['reply', 'forward', 'archive', 'delete']) {
             expect(button(id).hasAttribute('data-overflowed')).withContext(id).toBeFalse();
             expect(button(id).hidden).withContext(id).toBeFalse();
         }
+        await at(f.componentInstance.width() - 1);
+        expect(overflowed()).withContext('one pixel less: the last in the row goes').toEqual(['star', 'move', 'mark-unread', 'delete']);
+        expect(button('archive').hidden).toBeFalse();
+        const edge = row().getBoundingClientRect().right;
+        expect(more()!.getBoundingClientRect().right).withContext('More actions is inside the row').toBeLessThanOrEqual(edge + 0.5);
+        more()!.click();
+        await settle();
+        expect(menuItems().map((i) => i.textContent!.trim())).withContext('numbered first, then the rest in the row\'s order')
+            .toEqual(['Star', 'Move', 'Mark unread', 'Delete']);
     });
 
-    it('goes by overflow number, not by place in the row; actions sharing a number go together; none means never', () => {
+    it('cuts nothing off however narrow: every action goes behind More actions, numbered first, then the rest in the row\'s order', async () => {
+        await at(40);
+        expect(overflowed()).toEqual(['star', 'move', 'mark-unread', 'delete', 'archive', 'forward', 'reply']);
+        more()!.click();
+        await settle();
+        expect(menuItems().map((i) => i.textContent!.trim())).toEqual(['Star', 'Move', 'Mark unread', 'Reply', 'Forward', 'Archive', 'Delete']);
+    });
+
+    it('goes by overflow number, not by place in the row; actions sharing a number go together; none means last, from the end', () => {
         const groups: PaneToolbarAction[] = [
             { id: 'a', label: 'A', icon: 'a', group: 1, overflow: 2 }, { id: 'b', label: 'B', icon: 'b', group: 1, overflow: 1 },
             { id: 'p', label: 'P', icon: 'p', group: 1 }, { id: 's', label: 'S', icon: 's', group: 1 }, { id: 'c', label: 'C', icon: 'c', group: 1, overflow: 3 }];
@@ -302,7 +326,24 @@ describe('CmsPaneToolbarComponent', () => {
         expect(paneToolbarLayout(5 * 80 + 4 * 4, groups, w)).toEqual({ labelsHidden: false, bare: [], overflowed: [] });
         expect(paneToolbarLayout(5 * 36 + 4 * 4, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: [] });
         expect(paneToolbarLayout(5 * 36 + 4 * 4 - 1, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a'] });
-        expect(paneToolbarLayout(10, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a', 'c'] });
+        expect(paneToolbarLayout(3 * 36 + 2 * 4, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a', 'c'] });
+        expect(paneToolbarLayout(3 * 36 + 2 * 4 - 1, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a', 'c', 's'] });
+        expect(paneToolbarLayout(10, groups, w)).toEqual({ labelsHidden: true, bare: all, overflowed: ['b', 'a', 'c', 's', 'p'] });
+        expect(pinnedFromEnd(groups)).toEqual(['s', 'p']);
+    });
+
+    it('sends one action alone behind More actions where that alone saves room: one wider than an icon', () => {
+        const acts: PaneToolbarAction[] = [
+            { id: 'p', label: 'P', icon: 'p', group: 1 }, { id: 'q', label: 'Q', icon: 'q', group: 1 },
+            { id: 'x', label: 'Show message', icon: 'no-such-icon', group: 1, overflow: 1 }];
+        const w: PaneToolbarWidths = {
+            labelled: new Map([['p', 80], ['q', 80], ['x', 100]]),
+            icon: new Map([['p', 36], ['q', 36], ['x', 100]]),
+            more: 36, separator: 9, gap: 4,
+        };
+        // Every label hidden: 36 + 36 + 100 + 2 x 4 = 180. With x alone behind More actions: 3 x 36 + 2 x 4 = 116.
+        expect(paneToolbarLayout(180, acts, w).overflowed).toEqual([]);
+        expect(paneToolbarLayout(179, acts, w)).toEqual({ labelsHidden: true, bare: ['x', 'q', 'p'], overflowed: ['x'] });
     });
 
     it('takes a toggle pair, two actions sharing a number, behind More actions in one step', () => {
@@ -325,7 +366,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('lists what is behind More actions by overflow number, with icons and labels, and danger on Delete alone', async () => {
-        await at(40);
+        await atNarrowest();
         expect(row().querySelectorAll('.cms-pane-toolbar__action--danger').length).toBe(1);
         expect(button('delete').classList).toContain('cms-pane-toolbar__action--danger');
         more()!.click();
@@ -337,7 +378,7 @@ describe('CmsPaneToolbarComponent', () => {
 
     it('draws a destructive action as danger in the menu too, were it ever behind More actions', async () => {
         f.componentInstance.actions.set(nodes({ delete: { overflow: 0 } }));
-        await at(40);
+        await atNarrowest();
         more()!.click();
         await settle();
         expect(menuItems().map((i) => i.textContent!.trim())).toEqual(['Delete', 'Star', 'Move', 'Mark unread']);
@@ -345,7 +386,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('names More actions and makes it a menu button', async () => {
-        await at(40);
+        await atNarrowest();
         expect(more()!.getAttribute('aria-label')).toBe('More actions');
         expect(more()!.getAttribute('aria-haspopup')).toBe('menu');
         expect(more()!.getAttribute('aria-expanded')).toBe('false');
@@ -355,7 +396,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('has one Tab stop; Left, Right, Home and End move inside, and Down on More actions opens its menu on the first item', async () => {
-        await at(40);
+        await atNarrowest();
         expect(actions().concat(more()!).filter((b) => b.getAttribute('tabindex') === '0').map((b) => b.dataset['action'])).toEqual(['reply']);
         button('reply').focus();
         key(button('reply'), 'ArrowRight');
@@ -382,7 +423,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('Up on More actions opens its menu on the last item; choosing one emits it once the menu has closed', async () => {
-        await at(40);
+        await atNarrowest();
         more()!.focus();
         key(more()!, 'ArrowUp');
         await settle();
@@ -421,7 +462,7 @@ describe('CmsPaneToolbarComponent', () => {
         await settle();
         const tall = row().getBoundingClientRect().height;
         f.componentInstance.status.set('Synced at 14:32');
-        await at(40);
+        await atNarrowest();
         expect(row().getBoundingClientRect().height).toBe(tall);
         expect(tall).toBeGreaterThan(0);
     });
@@ -438,7 +479,7 @@ describe('CmsPaneToolbarComponent', () => {
         const g = (id: string, group: string, overflow?: number): PaneToolbarAction =>
             ({ id, label: id, icon: 'star', group, ...(overflow === undefined ? {} : { overflow }) });
         f.componentInstance.actions.set([g('a', 'one'), g('b1', 'two', 1), g('b2', 'two', 1), g('c', 'three')]);
-        await at(40);
+        await atNarrowest();
         expect(overflowed()).toEqual(['b1', 'b2']);
         expect(reading()).toBe('g|g');
         f.componentInstance.actions.set([g('b1', 'two', 1), g('b2', 'two', 1), g('a', 'one'), g('c', 'three')]);
@@ -450,7 +491,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('draws no separator in the More actions menu, leading, trailing or between', async () => {
-        await at(40);
+        await atNarrowest();
         more()!.click();
         await settle();
         expect(menuItems().length).toBe(3);
@@ -473,16 +514,22 @@ describe('CmsPaneToolbarComponent', () => {
         expect(star.getAttribute('aria-label')).toBe('Star');
     });
 
-    it('keeps a lone action in the row when it is the only one that could go: no More actions, nothing marked', async () => {
+    it('keeps a lone icon action in the row while the row holds it: a menu of one icon saves no room', async () => {
         const g = (id: string, overflow?: number): PaneToolbarAction =>
             ({ id, label: id, icon: 'star', group: 'one', ...(overflow === undefined ? {} : { overflow }) });
         f.componentInstance.actions.set([g('a'), g('b'), g('c'), g('x', 1)]);
-        await at(40);
+        await at(1400);
+        const bare = Math.ceil(actionsWidth(f.componentInstance.actions(), widths(), false, new Set()));
+        await at(bare);
         expect(row().classList).toContain('cms-pane-toolbar--labels-hidden');
         expect(toolbar().layout().overflowed).toEqual([]);
         expect(root().querySelectorAll('[data-overflowed]').length).toBe(0);
         expect(more()).toBeNull();
         expect(button('x').hidden).toBeFalse();
+        // One pixel less: x alone would save nothing, so the last of the rest goes with it.
+        await at(bare - 1);
+        expect(overflowed()).toEqual(['x', 'c']);
+        expect(more()).not.toBeNull();
     });
 
     it('never draws a menu-only action (overflow 0) in the row, at any width: it is behind More actions, first', async () => {
@@ -550,7 +597,7 @@ describe('CmsPaneToolbarComponent', () => {
     });
 
     it('puts data-action on the drawn controls only, never on the measuring copies', async () => {
-        await at(40);
+        await atNarrowest();
         const all = Array.from(root().querySelectorAll('[data-action]'));
         expect(all.every((el) => el.closest('.cms-pane-toolbar') !== null)).toBeTrue();
         expect(root().querySelectorAll('[data-action="reply"]').length).toBe(1);

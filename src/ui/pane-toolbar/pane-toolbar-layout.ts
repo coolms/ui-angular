@@ -80,12 +80,20 @@ export function actionsWidth(
     return rowWidth(actions, widths, labelled ? new Set() : new Set(actions.map((a) => a.id)), behind);
 }
 
+/** The actions with no overflow number in the row's order as drawn, the last first: the order they go behind More actions. */
+export function pinnedFromEnd(actions: readonly PaneToolbarAction[]): string[] {
+    return groupsOf(actions).flat().filter((a) => a.overflow === undefined).map((a) => a.id).reverse();
+}
+
 /**
  * How the row gives way at this width: labels hide one step at a time (labelSteps), the fewest steps that let the row
  * fit; only once every label is hidden do actions go behind More actions by their overflow number, the fewest steps
- * that let the rest and More actions fit, and never one action alone -- More actions takes an icon's width itself, so
- * a menu of one saves no room. An action with no number never goes. Each width gives one answer from the measured
- * widths alone, so widening undoes the steps in the reverse order. A width not yet measured shows all.
+ * that let the rest and More actions fit, never one action alone while another can go with it -- More actions takes
+ * an icon's width itself, so a menu of one icon saves no room. Only where the row still cannot hold the rest and More
+ * actions once every numbered action has gone do the actions with no number go too, one by one from the end of the row
+ * back, the fewest that fit: nothing is ever cut off at the row's edge, and More actions is always reached. Each width
+ * gives one answer from the measured widths alone, so widening undoes the steps in the reverse order. A width not yet
+ * measured shows all.
  *
  * Menu-only actions (overflow 0) are behind More actions at every width, first, and take no part in the giving way:
  * their labels are not counted, and the rule that one action never goes alone counts only the actions that could have
@@ -110,14 +118,18 @@ export function paneToolbarLayout(
         }
     }
     const all = new Set(bare);
+    const fits = (gone: readonly string[]): boolean => rowWidth(actions, widths, all, new Set([...menu, ...gone])) <= width;
     let behind: string[] = [];
     for (const step of overflowSteps(inRow)) {
         behind = [...behind, ...step];
-        if (behind.length < 2) continue;
-        if (rowWidth(actions, widths, all, new Set([...menu, ...behind])) <= width) {
-            return { labelsHidden: true, bare, overflowed: [...menu, ...behind] };
+        if (behind.length >= 2 && fits(behind)) return { labelsHidden: true, bare, overflowed: [...menu, ...behind] };
+    }
+    if (!fits(behind)) {
+        for (const id of pinnedFromEnd(inRow)) {
+            behind = [...behind, id];
+            if (fits(behind)) break;
         }
     }
 
-    return { labelsHidden: true, bare, overflowed: [...menu, ...(behind.length >= 2 ? behind : [])] };
+    return { labelsHidden: true, bare, overflowed: [...menu, ...behind] };
 }
