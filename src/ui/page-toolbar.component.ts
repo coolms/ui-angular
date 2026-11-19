@@ -465,7 +465,7 @@ export class PageToolbarComponent {
     protected tooltip(action: ToolbarAction): string {
         const name = action.title ?? action.label ?? '';
         if (true === action.locked) {
-            return name + ' -- needs an elevated session';
+            return name + ' \u2014 needs an elevated session';
         }
 
         return undefined !== action.refusal ? name + ' -- ' + action.refusal : name;

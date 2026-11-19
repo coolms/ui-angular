@@ -47,7 +47,7 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
                                 [class.ctx-item--danger]="item.danger"
                                 [class.ctx-item--locked]="item.locked"
                                 [disabled]="item.disabled ?? false"
-                                [attr.title]="item.locked ? item.label + ' -- needs an elevated session'
+                                [attr.title]="item.locked ? item.label + ' \u2014 needs an elevated session'
                                     : (item.refusal ? item.label + ' -- ' + item.refusal : null)"
                                 (click)="ctx.onAction(item.id); svc.close()">
                             @if (item.icon) {

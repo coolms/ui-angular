@@ -341,7 +341,7 @@ describe('PageToolbarComponent capability state', () => {
         expect(action.disabled).toBe(false);
         expect(action.locked).toBe(true);
         const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
-        expect(button.title).toBe('Title for /chmod -- needs an elevated session');
+        expect(button.title).toBe('Title for /chmod \u2014 needs an elevated session');
         expect(button.disabled).toBe(false);
         expect(button.classList).toContain('toolbar-btn--locked');
         expect(button.querySelector('.toolbar-btn__lock')).not.toBeNull();
@@ -358,7 +358,7 @@ describe('PageToolbarComponent capability state', () => {
         const button = host.querySelector('.toolbar-btn') as HTMLButtonElement;
 
         expect(button.textContent?.replace(/\s+/g, ' ').trim()).toBe('Title for /chmod (needs an elevated session)');
-        expect(button.title).toBe('Title for /chmod -- needs an elevated session');
+        expect(button.title).toBe('Title for /chmod \u2014 needs an elevated session');
     });
 
     it('says on a denied action how many of the selection refuse it: in its title, and to a screen reader', () => {
