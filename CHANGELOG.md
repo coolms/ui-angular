@@ -11,6 +11,19 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **A channel the server ends is asked for afresh, never with the token it held.** When the server unsubscribes a
+  channel (codes 2000-2499), as it does when a person's access changed, `CentrifugoClientService` drops that channel's
+  held subscription token and subscribes once more, so the token endpoint answers as the account is now: a refusal
+  (403) ends it for good, and a channel ended again within 30 s is not asked again. When the server ends the
+  connection (codes from 3000 up), the connection token and every held subscription token are dropped before the
+  reconnect; a dropped network keeps them. centrifuge-js keeps a subscription token across unsubscribe, subscribe and
+  reconnect and offers no public way to forget it, so `dropHeldToken` clears the field the SDK reads; a spec pins it
+  against the real SDK.
+- **A channel that comes back is announced, so a screen re-reads what it missed.** `resubscribed` names each channel
+  whose subscription became active again after its first (a reconnect, or a fresh subscribe after a server
+  unsubscribe), and `resubscribedTo(channel)` follows one. Nothing published meanwhile is replayed. The data grid's
+  live list reads itself again (as for the server's `grid.refresh_required`), and the notification stream ticks.
+
 - **The pane toolbar cuts nothing off at the row's edge, and More actions is always reached.** Where the row still cannot hold the rest and More actions once every numbered action has gone behind it, the actions with no overflow number go too, one by one from the end of the row back, the fewest that fit, and More actions lists them after the numbered ones, in the row's order. One action alone goes behind More actions where that alone saves room (one wider than an icon, such as one that keeps its label). As the design-tokens contract now states it; before, such a row was clipped.
 - **What was refused for want of elevation runs again, once, after Elevate.** The state component's Elevate, once
   granted, runs the state's own action (its Retry) once, in place, so a screen in a dialog loads again where it is.

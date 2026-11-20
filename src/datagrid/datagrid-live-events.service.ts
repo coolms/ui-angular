@@ -25,6 +25,10 @@ export class DataGridLiveEventsService {
         return new Observable<DataGridChangeEvent>(subscriber => {
             let unsubscribed = false;
             let publicationHandler: ((ctx: { data: unknown }) => void) | null = null;
+            // Back after a reconnect or a server unsubscribe: what changed meanwhile was not replayed, so the list is
+            // read again, as for the server's own refresh_required.
+            const resynced = this.client.resubscribedTo(channel).subscribe(() =>
+                subscriber.next({ type: 'grid.refresh_required', entityAlias, entityId: null }));
 
             this.client.connect()
                 .then(() => {
@@ -48,6 +52,7 @@ export class DataGridLiveEventsService {
 
             return () => {
                 unsubscribed = true;
+                resynced.unsubscribe();
                 const sub = this.tryGetSubscription(channel);
                 if (sub !== null) {
                     if (publicationHandler !== null) {
