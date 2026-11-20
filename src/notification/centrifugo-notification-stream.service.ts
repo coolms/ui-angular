@@ -30,6 +30,9 @@ export class CentrifugoNotificationStreamService implements NotificationStreamSe
         return new Observable<void>(subscriber => {
             let unsubscribed = false;
             let publicationHandler: ((..._args: unknown[]) => void) | null = null;
+            // Back after a reconnect or a server unsubscribe: what was published meanwhile is not replayed, so the
+            // consumer reads again, as for a publication.
+            const resynced = this.client.resubscribedTo(channel).subscribe(() => subscriber.next());
 
             this.client.connect()
                 .then(client => {
@@ -54,6 +57,7 @@ export class CentrifugoNotificationStreamService implements NotificationStreamSe
 
             return () => {
                 unsubscribed = true;
+                resynced.unsubscribe();
                 const sub = this.tryGetSubscription(channel);
                 if (sub !== null) {
                     if (publicationHandler !== null) {

@@ -15,7 +15,7 @@ import { Injectable, OnDestroy, Signal, inject, signal } from '@angular/core';
 import type * as CentrifugeSdk from 'centrifuge';
 import type { Centrifuge, Subscription } from 'centrifuge';
 import { Store } from '@ngxs/store';
-import { firstValueFrom } from 'rxjs';
+import { Observable, Subject, filter, firstValueFrom, map } from 'rxjs';
 import { AuthRefreshCoordinator, AuthState, RealtimeTokenClient } from '@coolms/core-angular';
 import { SessionEndedOnDisconnect } from './session-ended-on-disconnect';
 
@@ -25,6 +25,23 @@ import { SessionEndedOnDisconnect } from './session-ended-on-disconnect';
  * next protected request from a `getToken` callback.
  */
 const ACCESS_TOKEN_REFRESH_GRACE_MS = 30_000;
+
+/** Centrifugo's server-side unsubscribe codes: the server ended one subscription (its policy said no, or could not answer). */
+const SERVER_UNSUBSCRIBE_MIN = 2000;
+const SERVER_UNSUBSCRIBE_MAX = 2499;
+/** From this code up, the server ended the connection (Centrifugo's 3000-4999). */
+const SERVER_DISCONNECT_MIN = 3000;
+/** A channel asks for a fresh token after a server unsubscribe at most once in this long. */
+const FRESH_ASK_INTERVAL_MS = 30_000;
+
+/**
+ * Forget the subscription token a Subscription holds, so its next subscribe asks `getToken` again. centrifuge-js keeps
+ * the token across unsubscribe, subscribe and reconnect, and resets it only when the server answers "token expired";
+ * it offers no public setter, so the field is cleared here (pinned by the spec against the real SDK).
+ */
+export function dropHeldToken(sub: Subscription): void {
+    (sub as unknown as { _token: string })._token = '';
+}
 
 /**
  * sub-phase 2d -- root-level singleton that owns one
@@ -82,6 +99,22 @@ export class CentrifugoClientService implements OnDestroy {
     readonly isConnected: Signal<boolean> = this._isConnected.asReadonly();
 
     /**
+     * Each channel whose subscription became active again -- after a reconnect, or after a server unsubscribe answered
+     * by a fresh token. Nothing published in between is replayed, so a screen re-reads the state its channel nudges
+     * about when its channel is named here.
+     */
+    private readonly _resubscribed = new Subject<string>();
+    readonly resubscribed: Observable<string> = this._resubscribed.asObservable();
+
+    /** Each time `channel`'s subscription becomes active again: the moment to re-read what it nudges about. */
+    resubscribedTo(channel: string): Observable<void> {
+        return this.resubscribed.pipe(filter((c) => c === channel), map(() => undefined));
+    }
+
+    /** When each channel last asked for a fresh token after a server unsubscribe. */
+    private readonly freshAskAt = new Map<string, number>();
+
+    /**
      * Connect к Centrifugo and return the underlying client. Safe to
      * call from every subscriber -- the second and later calls reuse
      * the first one's promise / client.
@@ -123,7 +156,7 @@ export class CentrifugoClientService implements OnDestroy {
         if (existing !== null) {
             return existing;
         }
-        return this.centrifuge.newSubscription(channel, {
+        const sub = this.centrifuge.newSubscription(channel, {
             getToken: async (ctx) => {
                 await this.ensureFreshAccessToken();
                 try {
@@ -149,6 +182,53 @@ export class CentrifugoClientService implements OnDestroy {
                 }
             },
         });
+        this.followServerEnd(sub);
+        return sub;
+    }
+
+    /**
+     * A subscription the server ends (2000-2499) asks for a fresh token once -- never the held one, which would bring a
+     * revoked channel back without its policy being asked; a refusal there (403) ends it for good. Every activation
+     * after the first is announced on `resubscribed`.
+     */
+    private followServerEnd(sub: Subscription): void {
+        let active = false;
+        sub.on('subscribed', () => {
+            if (active) {
+                this._resubscribed.next(sub.channel);
+            }
+            active = true;
+        });
+        sub.on('unsubscribed', (ctx) => {
+            if (ctx.code < SERVER_UNSUBSCRIBE_MIN || ctx.code > SERVER_UNSUBSCRIBE_MAX) {
+                return;
+            }
+            const now = Date.now();
+            const last = this.freshAskAt.get(sub.channel);
+            if (last !== undefined && now - last < FRESH_ASK_INTERVAL_MS) {
+                return;
+            }
+            this.freshAskAt.set(sub.channel, now);
+            dropHeldToken(sub);
+            queueMicrotask(() => sub.subscribe());
+        });
+    }
+
+    /** When the server ends the connection, tokens issued before it did may no longer hold: all are asked again. */
+    private followConnection(client: Centrifuge): void {
+        client.on('connecting', (ctx) => {
+            if (ctx.code >= SERVER_DISCONNECT_MIN) {
+                this.dropHeldTokens(client);
+            }
+        });
+    }
+
+    /** The connection token and every subscription's, forgotten: the next connect and subscribes ask for each again. */
+    private dropHeldTokens(client: Centrifuge): void {
+        client.setToken('');
+        for (const sub of Object.values(client.subscriptions())) {
+            dropHeldToken(sub);
+        }
     }
 
     ngOnDestroy(): void {
@@ -175,6 +255,7 @@ export class CentrifugoClientService implements OnDestroy {
                 return fresh.token;
             },
         });
+        this.followConnection(client);
         client.on('state', (ctx) => {
             this._isConnected.set(ctx.newState === 'connected');
         });
