@@ -162,6 +162,11 @@ describe('calendarPrefsFromSettings()', () => {
         });
     });
 
+    it('reads the interface language from region; an empty one is left out', () => {
+        expect(calendarPrefsFromSettings({ region: { language: 'ru' } })).toEqual({ language: 'ru' });
+        expect(calendarPrefsFromSettings({ region: { language: '' } })).toEqual({});
+    });
+
     it('reads automatic as no zone of the person\'s: null, so a reader leaves the zone it had', () => {
         expect(calendarPrefsFromSettings({ region: { timezone: 'automatic' } }).tz).toBeNull();
     });

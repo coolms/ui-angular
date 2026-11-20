@@ -11,6 +11,11 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **A list row's date reads as the person reads it, in the interface's language.** `DateTimeFormatService.row(iso)`
+  and the `appDateTime: 'row'` pipe mode: the time today (12- or 24-hour as the person set it), "Yesterday" in the
+  interface's language (`Intl.RelativeTimeFormat`), the weekday within the week, the day and month within the year,
+  and the date with its year before that, all in the person's time zone. `UserCalendarPreferencesService` gains the
+  person's interface `language` (their region setting, else the platform's default locale).
 - **A channel the server ends is asked for afresh, never with the token it held.** When the server unsubscribes a
   channel (codes 2000-2499), as it does when a person's access changed, `CentrifugoClientService` drops that channel's
   held subscription token and subscribes once more, so the token endpoint answers as the account is now: a refusal

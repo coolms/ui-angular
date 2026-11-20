@@ -11,6 +11,7 @@ import { DateTimeFormatService } from './date-time-format.service';
  *   {{ savedAt      | appDateTime:'time' }}       -> time only
  *   {{ savedAt      | appDateTime:'date' }}       -> date only
  *   {{ deployedAt   | appDateTime:'datetime' }}   -> always date + time
+ *   {{ message.sentAt | appDateTime:'row' }}      -> a list row's: time today, yesterday, weekday, day and month
  *
  * Marked `pure: false` so it re-renders when the user changes their format pref
  * mid-session (the prefs are signals read inside the service; an impure pipe
@@ -21,11 +22,12 @@ import { DateTimeFormatService } from './date-time-format.service';
 export class DateTimePipe implements PipeTransform {
     private readonly fmt = inject(DateTimeFormatService);
 
-    transform(iso: string | null | undefined, mode: 'auto' | 'time' | 'date' | 'datetime' = 'auto'): string {
+    transform(iso: string | null | undefined, mode: 'auto' | 'time' | 'date' | 'datetime' | 'row' = 'auto'): string {
         switch (mode) {
             case 'time':     return this.fmt.time(iso);
             case 'date':     return this.fmt.date(iso);
             case 'datetime': return this.fmt.dateTime(iso);
+            case 'row':      return this.fmt.row(iso);
             default:         return this.fmt.auto(iso);
         }
     }

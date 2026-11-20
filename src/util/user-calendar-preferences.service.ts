@@ -9,7 +9,7 @@ import { AuthState, AppConfigState, IdentityApiClient } from '@coolms/core-angul
  * Calendar preferences (timezone, date/time format, week start,
  * default calendar).
  *
- * The time zone, date and time formats and week start are the person's
+ * The time zone, date and time formats, week start and interface language are the person's
  * `region` settings, and the default calendar is in their `calendar`
  * section; both reach the FE through `GET /auth/me/settings`, read by
  * {@link calendarPrefsFromSettings}. We
@@ -32,6 +32,8 @@ export interface CalendarPrefs {
     readonly timeFormat:          '12h' | '24h';
     readonly defaultCalendarSlug: string | null; // null = personal-{uid}
     readonly weekStart:           'monday' | 'sunday';
+    /** The interface language the person chose (a BCP 47 tag): dates and times are written in it. */
+    readonly language?:           string;
 }
 
 /**
@@ -46,6 +48,7 @@ const HARDCODED_FALLBACK: CalendarPrefs = {
     timeFormat:          '24h',
     defaultCalendarSlug: null,
     weekStart:           'monday',
+    language:            'en',
 };
 
 /** The word a time zone setting holds when the person follows their device: never a zone. */
@@ -85,6 +88,9 @@ export function calendarPrefsFromSettings(all: Record<string, unknown> | null | 
     if (region['weekStart'] === 'monday' || region['weekStart'] === 'sunday') {
         out.weekStart = region['weekStart'];
     }
+    if (typeof region['language'] === 'string' && region['language'] !== '') {
+        out.language = region['language'];
+    }
     if (typeof calendar['defaultCalendarSlug'] === 'string') {
         out.defaultCalendarSlug = calendar['defaultCalendarSlug'];
     }
@@ -121,6 +127,7 @@ export class UserCalendarPreferencesService {
     readonly dateFormat         = computed(() => this._prefs().dateFormat);
     readonly timeFormat         = computed(() => this._prefs().timeFormat);
     readonly weekStart          = computed(() => this._prefs().weekStart);
+    readonly language           = computed(() => this._prefs().language ?? 'en');
 
     /**
      * Default calendar slug. When the user has not chosen one we fall
@@ -272,6 +279,7 @@ export class UserCalendarPreferencesService {
             timeFormat:          pd.timeFormat === '12h' ? '12h' : '24h',
             weekStart:           pd.weekStart  === 'sunday' ? 'sunday' : 'monday',
             defaultCalendarSlug: null,
+            language:            this.coerceString(pd.locale, 'en'),
         };
     }
 
