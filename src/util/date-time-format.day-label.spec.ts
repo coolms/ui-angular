@@ -71,7 +71,7 @@ describe('DateTimeFormatService.dayLabel(): a chat\'s date separator', () => {
 describe('Full dates follow the date format a person chose; words stay for today, yesterday and the weekday', () => {
     const chosen = signal(false);
     const dateFormat = signal('dd/MM/yyyy');
-    // Friday 2026-11-20, 10:00 in Moscow.
+    // A Friday, 10:00 in Moscow.
     const now = new Date('2026-11-20T07:00:00Z');
 
     function service(): DateTimeFormatService {
