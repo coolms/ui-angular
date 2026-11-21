@@ -135,6 +135,8 @@ export class UserCalendarPreferencesService {
      */
     readonly dateFormatChosen   = computed(() => this._dateFormatChosen());
     private readonly _dateFormatChosen = signal(false);
+    /** Moves on each reset, so a read of the date-format choice that answers after it is dropped. */
+    private choiceGeneration = 0;
 
     /**
      * Default calendar slug. When the user has not chosen one we fall
@@ -236,6 +238,7 @@ export class UserCalendarPreferencesService {
     reset(): void {
         this.deviceZone = null;
         this.sectionZone = null;
+        this.choiceGeneration++;
         this._dateFormatChosen.set(false);
         this._prefs.set(this.platformDefaults());
         this.loadOnce$ = undefined;
@@ -248,7 +251,10 @@ export class UserCalendarPreferencesService {
         // Optional: a client stand-in that reads only the merged settings answers nothing here.
         const read$ = this.api.getDeclaredSettings?.();
         if (read$ === undefined) return;
+        // An answer that arrives after a reset (a sign-out, another account) is the previous person's: dropped.
+        const generation = this.choiceGeneration;
         read$.pipe(catchError(() => of(null))).subscribe(sections => {
+            if (generation !== this.choiceGeneration) return;
             const region = sections?.find(s => s.section === 'region');
             const own = region?.keys.find(k => k.key === 'dateFormat')?.own;
             this._dateFormatChosen.set(typeof own === 'string' && own !== '');

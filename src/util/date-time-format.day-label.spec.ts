@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { Store } from '@ngxs/store';
 import { IdentityApiClient } from '@coolms/core-angular';
 
@@ -144,6 +144,14 @@ describe('UserCalendarPreferencesService.dateFormatChosen(): the person\'s own d
 
     it('is false when the declared settings cannot be read', () => {
         const service = prefs(() => throwError(() => new Error('offline')));
+        expect(service.dateFormatChosen()).toBeFalse();
+    });
+
+    it('an answer that arrives after a reset (a sign-out) is the previous person\'s, and is dropped', () => {
+        const late = new Subject<unknown>();
+        const service = prefs(() => late);
+        service.reset();
+        late.next([{ section: 'region', keys: [{ key: 'dateFormat', value: 'dd/MM/yyyy', own: 'dd/MM/yyyy', locked: false }] }]);
         expect(service.dateFormatChosen()).toBeFalse();
     });
 });
