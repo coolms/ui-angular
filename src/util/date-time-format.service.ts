@@ -102,6 +102,10 @@ export class DateTimeFormatService {
         if (days > 1 && days < 7) {
             return write({ weekday: 'short' });
         }
+        // A full date in the person's own date format when they chose one; else the interface language's form.
+        if (this.prefs.dateFormatChosen?.() === true) {
+            return formatLocalDate(p.ymd, this.prefs.dateFormat());
+        }
         if (p.ymd.slice(0, 4) === today.slice(0, 4)) {
             return write({ day: 'numeric', month: 'short' });
         }
