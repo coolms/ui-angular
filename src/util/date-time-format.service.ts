@@ -76,6 +76,39 @@ export class DateTimeFormatService {
     }
 
     /**
+     * When, as a row in a list says it, in the person's interface language, time zone and clock: the time today,
+     * yesterday, the weekday within the last week, the day and month this year, and the day, month and year before.
+     * The same rule as the workspace's rows.
+     */
+    row(iso: string | null | undefined, now: Date = new Date()): string {
+        const p = this.parts(iso);
+        if (!p || !iso) {
+            return '';
+        }
+        const at = new Date(iso);
+        const tz = this.prefs.tz();
+        const language = this.prefs.language();
+        const today = this.ymdInTz(now, tz);
+        const days = dayNumber(today) - dayNumber(p.ymd);
+        const write = (options: Intl.DateTimeFormatOptions): string =>
+            new Intl.DateTimeFormat(language, { timeZone: tz, ...options }).format(at);
+        if (days === 0) {
+            return write({ hour: '2-digit', minute: '2-digit', hourCycle: this.prefs.timeFormat() === '12h' ? 'h12' : 'h23' });
+        }
+        if (days === 1) {
+            const word = new Intl.RelativeTimeFormat(language, { numeric: 'auto' }).format(-1, 'day');
+            return word.charAt(0).toLocaleUpperCase(language) + word.slice(1);
+        }
+        if (days > 1 && days < 7) {
+            return write({ weekday: 'short' });
+        }
+        if (p.ymd.slice(0, 4) === today.slice(0, 4)) {
+            return write({ day: 'numeric', month: 'short' });
+        }
+        return write({ day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    /**
      * The calendar-day key of an instant in the user's tz -- canonical
      * `YYYY-MM-DD`. Stable bucket key for grouping a message thread into
      * per-day sections (see {@link groupByDay}); '' for an unparseable input.
@@ -154,4 +187,10 @@ export class DateTimeFormatService {
     private todayYmd(): string {
         return this.ymdInTz(new Date(), this.prefs.tz());
     }
+}
+
+/** A canonical `YYYY-MM-DD` as a count of days, for the difference between two days. */
+function dayNumber(ymd: string): number {
+    const [y, m, d] = ymd.split('-').map(Number);
+    return Date.UTC(y, m - 1, d) / 86_400_000;
 }
