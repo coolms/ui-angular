@@ -118,39 +118,21 @@ export class DateTimeFormatService {
     }
 
     /**
-     * A human day label for a date separator (the chat convention): **Today** /
-     * **Yesterday** for the two most recent days (compared in the user's tz),
-     * else the full date in the user's date-format pref. '' for an unparseable
-     * input.
+     * A date separator's words for its day (a chat thread's): today, then the list row's rule ({@link row}) for any
+     * other day -- yesterday, the weekday within the last week, the day and month this year, and the year before --
+     * in the person's interface language and time zone. '' for an unparseable input.
      */
-    dayLabel(iso: string | null | undefined): string {
+    dayLabel(iso: string | null | undefined, now: Date = new Date()): string {
         const p = this.parts(iso);
-        if (!p) {
+        if (!p || !iso) {
             return '';
         }
-        const today = this.todayYmd();
-        if (p.ymd === today) {
-            return 'Today';
+        if (p.ymd !== this.ymdInTz(now, this.prefs.tz())) {
+            return this.row(iso, now);
         }
-        if (p.ymd === this.shiftYmd(today, -1)) {
-            return 'Yesterday';
-        }
-        return formatLocalDate(p.ymd, this.prefs.dateFormat());
-    }
-
-    /**
-     * Shift a canonical `YYYY-MM-DD` by whole days using pure calendar
-     * arithmetic (UTC, no tz/DST involvement -- the input is already a tz-local
-     * day key), returning another canonical `YYYY-MM-DD`.
-     */
-    private shiftYmd(ymd: string, deltaDays: number): string {
-        const [y, m, d] = ymd.split('-').map(Number);
-        const dt = new Date(Date.UTC(y, m - 1, d));
-        dt.setUTCDate(dt.getUTCDate() + deltaDays);
-        const yy = dt.getUTCFullYear();
-        const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
-        const dd = String(dt.getUTCDate()).padStart(2, '0');
-        return `${yy}-${mm}-${dd}`;
+        const language = this.prefs.language();
+        const word = new Intl.RelativeTimeFormat(language, { numeric: 'auto' }).format(0, 'day');
+        return word.charAt(0).toLocaleUpperCase(language) + word.slice(1);
     }
 
     /** Project an ISO instant into the user's tz as canonical `YYYY-MM-DD` + `HH:mm`. */

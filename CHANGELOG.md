@@ -11,6 +11,9 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **A chat's date separator says its day as a list row does.** `DateTimeFormatService.dayLabel(iso)`: today in the
+  interface language ("Today", "Сегодня"), and any other day by `row()`'s rule (yesterday, the weekday within the last
+  week, the day and month, then the year), never in the date-format preference (an ISO date before).
 - **A list row's date reads as the person reads it, in the interface's language.** `DateTimeFormatService.row(iso)`
   and the `appDateTime: 'row'` pipe mode: the time today (12- or 24-hour as the person set it), "Yesterday" in the
   interface's language (`Intl.RelativeTimeFormat`), the weekday within the week, the day and month within the year,
