@@ -14,6 +14,9 @@ predate this file would be a worse record than not having them.
 - **Full dates follow the date format a person chose.** `row()` and `dayLabel()`: when the person set their own date
   format (`UserCalendarPreferencesService.dateFormatChosen()`, read from the declared settings), a date older than the
   last week is written in it; otherwise in the interface language's form. Today, yesterday and the weekday stay words.
+- **A date format the installation locks counts as chosen.** `dateFormatChosen()` is true when the declared
+  `dateFormat` is locked, else when the person set their own; an installation default that is not locked is no choice.
+  The order: the installation's locked format, then the person's own, then the interface language's form.
   The choice is read once the page starts: until it answers, a full date shows in the language's form, then in the
   chosen format. A reset (a sign-out) drops an answer still on its way.
 - **A chat's date separator says its day as a list row does.** `DateTimeFormatService.dayLabel(iso)`: today in the

@@ -130,8 +130,9 @@ export class UserCalendarPreferencesService {
     readonly language           = computed(() => this._prefs().language ?? 'en');
 
     /**
-     * Whether the person chose their date format themselves (their own value in the declared `region` section), not
-     * the installation's: full dates follow the date format only then, and the interface language's own form otherwise.
+     * Whether a date format is chosen for the person: one the installation locks, else their own value in the declared
+     * `region` section. Full dates follow the date format in force only then; an installation default that is not
+     * locked is no choice, and the interface language's own form applies.
      */
     readonly dateFormatChosen   = computed(() => this._dateFormatChosen());
     private readonly _dateFormatChosen = signal(false);
@@ -246,7 +247,7 @@ export class UserCalendarPreferencesService {
 
     // -- Internals -------------------------------------------------------------
 
-    /** The person's own date format from the declared settings; a read that fails leaves it as not chosen. */
+    /** Whether a date format is chosen, from the declared settings; a read that fails leaves it as not chosen. */
     private readDateFormatChoice(): void {
         // Optional: a client stand-in that reads only the merged settings answers nothing here.
         const read$ = this.api.getDeclaredSettings?.();
@@ -256,8 +257,10 @@ export class UserCalendarPreferencesService {
         read$.pipe(catchError(() => of(null))).subscribe(sections => {
             if (generation !== this.choiceGeneration) return;
             const region = sections?.find(s => s.section === 'region');
-            const own = region?.keys.find(k => k.key === 'dateFormat')?.own;
-            this._dateFormatChosen.set(typeof own === 'string' && own !== '');
+            const key = region?.keys.find(k => k.key === 'dateFormat');
+            // The installation's locked format first, then the person's own.
+            const chosen = key?.locked === true ? key.value : key?.own;
+            this._dateFormatChosen.set(typeof chosen === 'string' && chosen !== '');
         });
     }
 
