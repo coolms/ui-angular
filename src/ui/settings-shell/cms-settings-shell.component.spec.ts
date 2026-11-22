@@ -17,6 +17,7 @@ const SECTIONS: CmsSettingsSection[] = [
     template: `
         <cms-settings-shell title="Settings" [sections]="sections" [selectedId]="selected()" [filterable]="true"
                             (picked)="picked.push($event)">
+            <div cmsSettingsListHead class="host-head">The subject's card</div>
             <cms-settings-pane title="Page cache" settingKey="web.page_cache" [dirty]="dirty()" [editable]="editable()"
                                (save)="saved = saved + 1" (discard)="discarded = discarded + 1" />
         </cms-settings-shell>
@@ -61,6 +62,16 @@ describe('CmsSettingsShellComponent and CmsSettingsPaneComponent', () => {
             fixture.detectChanges();
             expect(entries(el)).withContext(query).toEqual([...expected]);
         }
+    });
+
+    it('a head the page gives goes above the sections, in the list\'s column, and not into the pane', () => {
+        const el = render().nativeElement as HTMLElement;
+        const head = el.querySelector('.host-head');
+        const list = el.querySelector('.cms-settings-shell__list');
+        expect(head?.parentElement).withContext('in the list').toBe(list);
+        const first = el.querySelector('.cms-settings-shell__item')!;
+        expect(head!.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING).withContext('above the sections').toBeTruthy();
+        expect(el.querySelector('.cms-settings-shell__pane .host-head')).withContext('not in the pane').toBeNull();
     });
 
     it('picking another entry is told to the host; picking the open one is not', () => {

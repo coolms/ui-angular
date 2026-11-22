@@ -66,6 +66,8 @@ interface SectionGroup {
 
             <div class="cms-settings-shell__body">
                 <nav class="cms-settings-shell__list" [attr.aria-label]="listLabel()">
+                    <!-- The head: what the page shows of its subject above the sections (My Profile's card). -->
+                    <ng-content select="[cmsSettingsListHead]" />
                     @if (filterable()) {
                         <input type="search"
                                class="cms-input cms-input-sm cms-settings-shell__filter"

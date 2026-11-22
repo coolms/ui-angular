@@ -11,6 +11,9 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **The settings shell takes a head above its sections.** Content marked `cmsSettingsListHead` goes at the top of the
+  list's column, above the filter and the sections (design-tokens' `settings-shell`, `head`): what a page shows of its
+  subject whatever section is open, such as My Profile's avatar, colour and name card.
 - **Full dates follow the date format a person chose.** `row()` and `dayLabel()`: when the person set their own date
   format (`UserCalendarPreferencesService.dateFormatChosen()`, read from the declared settings), a date older than the
   last week is written in it; otherwise in the interface language's form. Today, yesterday and the weekday stay words.
