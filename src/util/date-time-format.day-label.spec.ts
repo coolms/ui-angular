@@ -142,6 +142,14 @@ describe('UserCalendarPreferencesService.dateFormatChosen(): the person\'s own d
         expect(service.dateFormatChosen()).toBeFalse();
     });
 
+    it('is true when the installation locks the date format, whatever the person had set', () => {
+        const locked = prefs(() => of([{ section: 'region', keys: [{ key: 'dateFormat', value: 'dd/MM/yyyy', own: null, locked: true }] }]));
+        expect(locked.dateFormatChosen()).toBeTrue();
+        TestBed.resetTestingModule();
+        const over = prefs(() => of([{ section: 'region', keys: [{ key: 'dateFormat', value: 'dd/MM/yyyy', own: 'yyyy-MM-dd', locked: true }] }]));
+        expect(over.dateFormatChosen()).toBeTrue();
+    });
+
     it('is false when the declared settings cannot be read', () => {
         const service = prefs(() => throwError(() => new Error('offline')));
         expect(service.dateFormatChosen()).toBeFalse();
