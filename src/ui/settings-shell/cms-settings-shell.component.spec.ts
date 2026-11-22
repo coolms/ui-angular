@@ -66,8 +66,8 @@ describe('CmsSettingsShellComponent and CmsSettingsPaneComponent', () => {
 
     it('a head the page gives goes above the sections, in the list\'s column, and not into the pane', () => {
         const el = render().nativeElement as HTMLElement;
-        const head = el.querySelector('.host-head');
-        const list = el.querySelector('.cms-settings-shell__list');
+        const head = el.querySelector<HTMLElement>('.host-head');
+        const list = el.querySelector<HTMLElement>('.cms-settings-shell__list');
         expect(head?.parentElement).withContext('in the list').toBe(list);
         const first = el.querySelector('.cms-settings-shell__item')!;
         expect(head!.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING).withContext('above the sections').toBeTruthy();
