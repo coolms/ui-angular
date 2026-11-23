@@ -19,6 +19,7 @@ import { from, isObservable, type Subscription } from 'rxjs';
 import { StateComponent } from '../state/state.component';
 import {
     FilesPickerDenied,
+    FilesPickerRestart,
     FilesPickerFailure,
     type FilesPickerChoice,
     type FilesPickerEntry,
@@ -654,11 +655,18 @@ export class CmsFilesPickerComponent implements OnInit {
         const token = this.readCount;
         this.subscribe(l.next, (page) => {
             if (token !== this.readCount) return;
+            this.restarted = false;
             const now = this.listing();
             const shown = now.status === 'ready' ? now.entries : l.entries;
             this.listing.set({ status: 'ready', entries: [...shown, ...page.entries], next: page.next ?? null, paging: false });
         }, (err) => {
             if (token !== this.readCount) return;
+            // The page link is no longer valid: the folder from its first page, once, the selection kept by id.
+            if (err instanceof FilesPickerRestart && !this.restarted) {
+                this.restarted = true;
+                this.load(true);
+                return;
+            }
             // What is shown stays, with the same cursor: the next scroll near the end, or Retry, asks again.
             const now = this.listing();
             const failure = this.failed(err);
@@ -668,7 +676,15 @@ export class CmsFilesPickerComponent implements OnInit {
         });
     }
 
-    private load(): void {
+    /**
+     * A restart was made in this folder and no next page has been read since: a second one shows the failure with
+     * Retry, never a loop. Cleared by a next page read, another folder or space, and the person's Retry.
+     */
+    private restarted = false;
+
+    /** The folder's first page; `restart` keeps the restart guard as it is, every other reading clears it. */
+    private load(restart = false): void {
+        if (!restart) this.restarted = false;
         const token = ++this.readCount;
         this.active.set(0);
         this.listing.set({ status: 'loading' });

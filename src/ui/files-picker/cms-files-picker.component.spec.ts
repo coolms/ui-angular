@@ -8,6 +8,7 @@ import { CmsFilesPickerService } from './cms-files-picker.service';
 import {
     FilesPickerDenied,
     FilesPickerFailure,
+    FilesPickerRestart,
     type FilesPickerChoice,
     type FilesPickerEntry,
     type FilesPickerOptions,
@@ -307,6 +308,53 @@ describe('CmsFilesPickerComponent', () => {
         expect(qa(f, '[data-test="fp-row"]').length).toBe(3);
         expect(rowNamed(f, 'p2-0')).toBeTruthy();
         expect(q(f, '[data-test="fp-page-failed"]')).toBeNull();
+    });
+
+    it('reads the folder again from its first page, once, when a next page link is no longer valid, the selection kept', () => {
+        const asked: string[] = [];
+        let refused = false;
+        const f = create({
+            list: (_space, _path, cursor) => {
+                asked.push(cursor ?? 'first');
+                if (!cursor) return of({ entries: [file('p1-0', 10), file('p1-1', 10)], next: refused ? 'fresh' : 'stale' });
+                if (cursor === 'stale') {
+                    refused = true;
+
+                    return throwError(() => new FilesPickerRestart());
+                }
+
+                return of({ entries: [file('p2-0', 10)], next: null });
+            },
+        });
+        rowNamed(f, 'p1-0').click();
+        f.componentInstance.loadMore();
+        f.detectChanges();
+        expect(asked).toEqual(['first', 'stale', 'first']);
+        expect(q(f, '[data-test="fp-page-failed"]')).toBeNull();
+        expect(rowNamed(f, 'p1-0').getAttribute('aria-selected')).toBe('true');
+        f.componentInstance.loadMore();
+        f.detectChanges();
+        expect(asked).toEqual(['first', 'stale', 'first', 'fresh']);
+        expect(rowNamed(f, 'p2-0')).toBeTruthy();
+    });
+
+    it('shows the failure with Retry on a second restart before a next page is read: never a loop', () => {
+        const asked: string[] = [];
+        const f = create({
+            list: (_space, _path, cursor) => {
+                asked.push(cursor ?? 'first');
+                if (!cursor) return of({ entries: [file('p1-0', 10), file('p1-1', 10)], next: 'stale' });
+
+                return throwError(() => new FilesPickerRestart());
+            },
+        });
+        f.componentInstance.loadMore();
+        f.detectChanges();
+        f.componentInstance.loadMore();
+        f.detectChanges();
+        expect(asked).toEqual(['first', 'stale', 'first', 'stale']);
+        expect(q(f, '[data-test="fp-page-failed"]')).not.toBeNull();
+        expect(qa(f, '[data-test="fp-row"]').length).toBe(2);
     });
 
     it('goes up a folder on Backspace only from the list: on a focused Cancel it does nothing', () => {
