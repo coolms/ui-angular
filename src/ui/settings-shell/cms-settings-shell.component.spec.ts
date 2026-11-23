@@ -64,11 +64,13 @@ describe('CmsSettingsShellComponent and CmsSettingsPaneComponent', () => {
         }
     });
 
-    it('a head the page gives goes above the sections, in the list\'s column, and not into the pane', () => {
+    it('a head the page gives goes above the sections, in the list\'s column, outside their navigation, and not into the pane', () => {
         const el = render().nativeElement as HTMLElement;
         const head = el.querySelector<HTMLElement>('.host-head');
         const list = el.querySelector<HTMLElement>('.cms-settings-shell__list');
-        expect(head?.parentElement).withContext('in the list').toBe(list);
+        expect(head?.parentElement).withContext('in the list\'s column').toBe(list);
+        expect(head!.closest('nav')).withContext('not inside the sections\' navigation landmark').toBeNull();
+        expect(el.querySelector('nav')?.getAttribute('aria-label')).withContext('the landmark keeps its name').toBe('Sections');
         const first = el.querySelector('.cms-settings-shell__item')!;
         expect(head!.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING).withContext('above the sections').toBeTruthy();
         expect(el.querySelector('.cms-settings-shell__pane .host-head')).withContext('not in the pane').toBeNull();
