@@ -65,47 +65,50 @@ interface SectionGroup {
                 (actionClick)="actionClick.emit($event)" />
 
             <div class="cms-settings-shell__body">
-                <nav class="cms-settings-shell__list" [attr.aria-label]="listLabel()">
-                    <!-- The head: what the page shows of its subject above the sections (My Profile's card). -->
+                <div class="cms-settings-shell__list">
+                    <!-- The head: what the page shows of its subject above the sections (My Profile's card). It is
+                         the list's column, outside the sections' navigation landmark. -->
                     <ng-content select="[cmsSettingsListHead]" />
-                    @if (filterable()) {
-                        <input type="search"
-                               class="cms-input cms-input-sm cms-settings-shell__filter"
-                               [placeholder]="filterPlaceholder()"
-                               [attr.aria-label]="filterPlaceholder()"
-                               [value]="query()"
-                               (input)="query.set($any($event.target).value)" />
-                    }
-                    @if (groups().length === 0) {
-                        <p class="cms-settings-shell__empty">{{ query() ? noMatchText() : emptyText() }}</p>
-                    }
-                    @for (group of groups(); track group.id) {
-                        <div class="cms-settings-shell__group">
-                            @if (group.label) {
-                                <div class="cms-settings-shell__group-head">
-                                    @if (group.icon) {
-                                        <i class="bi" [class]="'bi-' + group.icon"></i>
-                                    }
-                                    <span>{{ group.label }}</span>
-                                </div>
-                            }
-                            @for (section of group.sections; track section.id) {
-                                <button type="button"
-                                        class="cms-settings-shell__item"
-                                        [class.cms-settings-shell__item--active]="section.id === selectedId()"
-                                        [class.cms-settings-shell__item--danger]="section.danger"
-                                        [class.cms-settings-shell__item--nested]="!!group.label"
-                                        [attr.aria-current]="section.id === selectedId() ? 'page' : null"
-                                        (click)="pick(section)">
-                                    <span class="cms-settings-shell__label">{{ section.label }}</span>
-                                    @if (section.marker) {
-                                        <span class="cms-settings-shell__marker" [title]="section.marker"></span>
-                                    }
-                                </button>
-                            }
-                        </div>
-                    }
-                </nav>
+                    <nav class="cms-settings-shell__nav" [attr.aria-label]="listLabel()">
+                        @if (filterable()) {
+                            <input type="search"
+                                   class="cms-input cms-input-sm cms-settings-shell__filter"
+                                   [placeholder]="filterPlaceholder()"
+                                   [attr.aria-label]="filterPlaceholder()"
+                                   [value]="query()"
+                                   (input)="query.set($any($event.target).value)" />
+                        }
+                        @if (groups().length === 0) {
+                            <p class="cms-settings-shell__empty">{{ query() ? noMatchText() : emptyText() }}</p>
+                        }
+                        @for (group of groups(); track group.id) {
+                            <div class="cms-settings-shell__group">
+                                @if (group.label) {
+                                    <div class="cms-settings-shell__group-head">
+                                        @if (group.icon) {
+                                            <i class="bi" [class]="'bi-' + group.icon"></i>
+                                        }
+                                        <span>{{ group.label }}</span>
+                                    </div>
+                                }
+                                @for (section of group.sections; track section.id) {
+                                    <button type="button"
+                                            class="cms-settings-shell__item"
+                                            [class.cms-settings-shell__item--active]="section.id === selectedId()"
+                                            [class.cms-settings-shell__item--danger]="section.danger"
+                                            [class.cms-settings-shell__item--nested]="!!group.label"
+                                            [attr.aria-current]="section.id === selectedId() ? 'page' : null"
+                                            (click)="pick(section)">
+                                        <span class="cms-settings-shell__label">{{ section.label }}</span>
+                                        @if (section.marker) {
+                                            <span class="cms-settings-shell__marker" [title]="section.marker"></span>
+                                        }
+                                    </button>
+                                }
+                            </div>
+                        }
+                    </nav>
+                </div>
 
                 <cms-pane-splitter [storageKey]="splitterKey()" [minWidth]="200" [maxWidth]="440" />
 
@@ -164,9 +167,11 @@ interface SectionGroup {
         @media (max-width: 599.98px) {
             .cms-settings-shell__body { flex-direction: column; }
             .cms-settings-shell__list {
-                width: auto !important; max-height: 33vh; padding: 4px 12px 12px;
+                width: auto !important; overflow-y: visible; padding: 4px 12px 12px;
                 border-bottom: 1px solid var(--cms-border);
             }
+            /* The sections, not the head, take the third of the height: a tall card leaves them all of it. */
+            .cms-settings-shell__nav { max-height: 33vh; overflow-y: auto; }
             .cms-settings-shell__body cms-pane-splitter { display: none; }
         }
     `],
