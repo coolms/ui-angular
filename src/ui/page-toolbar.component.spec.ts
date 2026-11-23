@@ -63,6 +63,35 @@ describe('PageToolbarComponent state conditions', () => {
         return emitted;
     }
 
+    it('emits the title node of the tree as the section title, never as an action; null without one', () => {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PageToolbarComponent],
+            providers: [
+                { provide: HttpClient, useValue: {} },
+                { provide: Router, useValue: {} },
+                { provide: ErrorHandlerService, useValue: {} },
+                { provide: Store, useValue: { selectSnapshot: () => ({ navi: { graphBySlug: '/api/v1/navi/graph/{slug}' } }) } },
+            ],
+        });
+        const title = { ...node('/title', { action: 'title', label: 'Mail' }), meta: { action: 'title', label: 'Mail' } } as NaviGraphNode;
+        const load = spyOn(TestBed.inject(NaviGraphService), 'loadTree').and.returnValue(of([title, node('/compose', { action: 'compose', label: 'Compose' })]));
+        const fixture = TestBed.createComponent(PageToolbarComponent);
+        let said: string | null | undefined;
+        let actions: ToolbarAction[] = [];
+        fixture.componentInstance.titleChanged.subscribe(t => said = t);
+        fixture.componentInstance.headerActionsChanged.subscribe(a => actions = a);
+        fixture.componentRef.setInput('treeSlug', 'navi.toolbar.test');
+        fixture.detectChanges();
+        expect(said).toBe('Mail');
+        expect(actions.map(a => a.id)).toEqual(['compose']);
+
+        load.and.returnValue(of([node('/compose', { action: 'compose', label: 'Compose' })]));
+        fixture.componentRef.setInput('treeSlug', 'navi.toolbar.other');
+        fixture.detectChanges();
+        expect(said).toBeNull();
+    });
+
     it('leaves disabled undefined when the node declares no condition', () => {
         const [action] = headerActionsFor([node('/plain', { action: 'plain', label: 'Plain' })], {});
 
@@ -82,6 +111,25 @@ describe('PageToolbarComponent state conditions', () => {
 
         expect(headerActionsFor(nodes, { _importing: true })[0].disabled).toBe(true);
         expect(headerActionsFor(nodes, { _importing: false })[0].disabled).toBe(false);
+    });
+
+    it('a disabled action carries the server\'s sentence for it, or the kit\'s words when it gives none', () => {
+        const worded = [node('/compose', {
+            action:             'compose',
+            label:              'Compose',
+            disabledWhen:       { field: '_mailboxNeedsReconnect', op: 'eq', value: true },
+            disabledReasonText: 'This mailbox needs a new sign-in before it can send.',
+        })];
+        expect(headerActionsFor(worded, { _mailboxNeedsReconnect: true })[0].refusal)
+            .toBe('This mailbox needs a new sign-in before it can send.');
+        expect(headerActionsFor(worded, { _mailboxNeedsReconnect: false })[0].refusal).toBeUndefined();
+
+        const unworded = [node('/compose', {
+            action:       'compose',
+            label:        'Compose',
+            disabledWhen: { field: '_mailboxNeedsReconnect', op: 'eq', value: true },
+        })];
+        expect(headerActionsFor(unworded, { _mailboxNeedsReconnect: true })[0].refusal).toBe('Not available right now');
     });
 
     it('swaps in busyLabel only while busy, and disables with it', () => {

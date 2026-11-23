@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
 import { AppConfigState, NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
 import { capabilityStateOf, refusalPhraseOf } from './capability-state';
+import { UNWORDED_REASON } from '../context-menu/context-menu.service';
 export interface ToolbarAction {
     id:       string;
     icon:     string;      // Bootstrap Icons name WITHOUT 'bi-': 'upload', 'trash'
@@ -313,6 +314,11 @@ export class PageToolbarComponent {
      * Only fired when operating in NaviGraph mode (treeSlug is set).
      */
     headerActionsChanged = output<ToolbarAction[]>();
+    /**
+     * Emitted with the tree's title node's label (the node whose meta.action is title), or null when the tree has none:
+     * the section's declared title, for its section head.
+     */
+    titleChanged = output<string | null>();
 
     // -- NaviGraph self-loading ------------------------------------------------
     /** When set, loads actions from the NaviGraph tree with this slug. */
@@ -352,7 +358,19 @@ export class PageToolbarComponent {
             const headerActions = this.resolvedHeader();
             untracked(() => this.headerActionsChanged.emit(headerActions));
         });
+        effect(() => {
+            const title = this.resolvedTitle();
+            untracked(() => this.titleChanged.emit(title));
+        });
     }
+
+    /** The tree's title node's label, its node title when it has no label; null without one. */
+    readonly resolvedTitle = computed((): string | null => {
+        const node = this.toolbarNodes().find(n => (n.meta['action'] as string | undefined) === 'title');
+        if (node === undefined) return null;
+        const label = node.meta['label'];
+        return typeof label === 'string' && label !== '' ? label : (node.title || null);
+    });
 
     /** True when operating in NaviGraph mode (treeSlug is provided). */
     private readonly usesNaviGraph = computed(() => this.treeSlug() !== null);
@@ -521,6 +539,10 @@ export class PageToolbarComponent {
             disabled,
             ...(locked ? { locked: true } : {}),
             ...(denied ? { refusal: refusalPhraseOf(meta, ctx) } : {}),
+            // Unavailable by the node's own condition: the server's sentence for it, as given, or the kit's words.
+            ...(!denied && true === unavailable
+                ? { refusal: typeof meta['disabledReasonText'] === 'string' && meta['disabledReasonText'] !== '' ? meta['disabledReasonText'] : UNWORDED_REASON }
+                : {}),
         };
     }
 
