@@ -92,12 +92,13 @@ describe('Full dates follow the date format a person chose; words stay for today
         dateFormat.set('dd/MM/yyyy');
     });
 
-    it('a chosen format writes the full dates of rows and separators', () => {
+    it('a chosen format writes only the full dates, those before this year; this year stays day and month', () => {
         const fmt = service();
         chosen.set(true);
-        expect(fmt.row('2026-11-12T09:00:00Z', now)).toBe('12/11/2026');
+        expect(fmt.row('2026-11-12T09:00:00Z', now)).toBe('Nov 12');
+        expect(fmt.dayLabel('2026-07-10T09:00:00Z', now)).toBe('Jul 10');
         expect(fmt.row('2025-07-10T09:00:00Z', now)).toBe('10/07/2025');
-        expect(fmt.dayLabel('2026-07-10T09:00:00Z', now)).toBe('10/07/2026');
+        expect(fmt.dayLabel('2025-07-10T09:00:00Z', now)).toBe('10/07/2025');
     });
 
     it('today, yesterday and the weekday stay words, chosen format or not', () => {

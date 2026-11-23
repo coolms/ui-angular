@@ -11,6 +11,19 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- **A section head, the components contract's `section-header`** (`cms-section-head`; `cms-section-header` stays the
+  heading of a group inside a page). Row 1: the declared title, then the primary action (its icon and label, always
+  shown; a split ▾ menu when it has entries) and More (⋯) for the section's other actions, a disabled one kept in the
+  menu with the server's reason. Row 2: the section's context, projected through `[section-context]`, drawn only when
+  something is projected. No divider lines. `fullWidth` spans a one-column page.
+- **`cms-page-header` is the section head at full width.** Its title and its first `primary` action on row 1, every
+  other action under More (`sectionActionsOf()`), the subtitle on row 2; `[header-meta]` and `[header-actions]` as
+  before. It no longer draws a line under itself.
+- **The page toolbar carries the server's reason for a disabled action** (`refusal`: the node's `disabledReasonText`,
+  or "Not available right now" when it gives none), and emits the tree's title node (`titleChanged`: the label of the
+  node whose action is `title`).
+- **A chosen date format writes only dates before this year.** `row()` and `dayLabel()` keep the day and month for
+  every date earlier this year, chosen format or not, as the components contract's date convention says.
 - **The settings shell takes a head above its sections.** Content marked `cmsSettingsListHead` goes at the top of the
   list's column, above the filter and the sections (design-tokens' `settings-shell`, `head`): what a page shows of its
   subject whatever section is open, such as My Profile's avatar, colour and name card.

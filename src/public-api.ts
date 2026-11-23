@@ -18,6 +18,7 @@
 export * from './ui/cms-detail-footer.component';
 export * from './ui/cms-list-page.component';
 export * from './ui/cms-page-header.component';
+export * from './ui/section-head/cms-section-head.component';
 export * from './ui/cms-section-header.component';
 export * from './ui/code-editor/code-editor.component';
 export * from './ui/confirm-dialog.service';

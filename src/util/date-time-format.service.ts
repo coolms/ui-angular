@@ -77,8 +77,8 @@ export class DateTimeFormatService {
 
     /**
      * When, as a row in a list says it, in the person's interface language, time zone and clock: the time today,
-     * yesterday, the weekday within the last week, the day and month this year, and the day, month and year before.
-     * The same rule as the workspace's rows.
+     * yesterday, the weekday within the last week, the day and month this year, and the full date before this year,
+     * in the person's chosen date format when they chose one. The components contract's convention for dates.
      */
     row(iso: string | null | undefined, now: Date = new Date()): string {
         const p = this.parts(iso);
@@ -102,12 +102,12 @@ export class DateTimeFormatService {
         if (days > 1 && days < 7) {
             return write({ weekday: 'short' });
         }
-        // A full date in the person's own date format when they chose one; else the interface language's form.
-        if (this.prefs.dateFormatChosen?.() === true) {
-            return formatLocalDate(p.ymd, this.prefs.dateFormat());
-        }
         if (p.ymd.slice(0, 4) === today.slice(0, 4)) {
             return write({ day: 'numeric', month: 'short' });
+        }
+        // Before this year: the full date, in the person's own date format when they chose one.
+        if (this.prefs.dateFormatChosen?.() === true) {
+            return formatLocalDate(p.ymd, this.prefs.dateFormat());
         }
         return write({ day: 'numeric', month: 'short', year: 'numeric' });
     }
