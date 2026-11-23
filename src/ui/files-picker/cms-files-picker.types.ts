@@ -45,6 +45,18 @@ export class FilesPickerDenied extends Error {
     }
 }
 
+/**
+ * Thrown or emitted by `list` for a next page the server refused because its page link is no longer valid (its declared
+ * problem, /errors/page-link-invalid, 409): the folder is read again from its first page, once, the selection kept.
+ * Only for that problem; any other refusal is a failure.
+ */
+export class FilesPickerRestart extends Error {
+    constructor(message = 'restart') {
+        super(message);
+        this.name = 'FilesPickerRestart';
+    }
+}
+
 /** Thrown or emitted by `list` with the host's own words for a failure; anything else shows the kit's words. */
 export class FilesPickerFailure extends Error {
     constructor(message: string) {
