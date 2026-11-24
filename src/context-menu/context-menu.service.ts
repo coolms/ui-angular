@@ -12,6 +12,8 @@ export interface ContextMenuItem {
     locked?:   boolean;
     /** Why a denied item is disabled, in words ("not allowed for 2 of 5 selected items"): its title, and said. */
     refusal?:  string;
+    /** A submenu: the item opens these instead of acting (a node with children, New with its kinds). */
+    children?: ContextMenuItem[];
 }
 
 /** What an item disabled by its node says when the node gives no sentence for it (a server older than the field). */
@@ -102,14 +104,7 @@ export class ContextMenuService {
         event.preventDefault();
         event.stopPropagation();
 
-        const surface = (n: NaviGraphNode): boolean => {
-            const s = n.meta['surface'];
-            return s === 'context' || s === 'both' || s === undefined || s === null || s === '';
-        };
-
-        const visible = nodes.filter(
-            n => this.naviGraph.isVisible(n, record) && surface(n),
-        );
+        const visible = this.shown(nodes, record);
 
         if (visible.length === 0) { this.close(); return; }
 
@@ -144,7 +139,20 @@ export class ContextMenuService {
      * A node naming a `capability` takes its state from the record's subjects, as on the toolbar
      * (capability-state.ts): `denied` disables the item, `elevate` locks it, no answer leaves it as it was.
      */
-    private buildItems(nodes: NaviGraphNode[], record: Record<string, unknown>): ContextMenuItem[] {
+    /** The nodes a context menu shows: those whose showWhen holds and whose surface includes the menu. */
+    private shown(nodes: readonly NaviGraphNode[], record: Record<string, unknown>): NaviGraphNode[] {
+        const surface = (n: NaviGraphNode): boolean => {
+            const s = n.meta['surface'];
+            return s === 'context' || s === 'both' || s === undefined || s === null || s === '';
+        };
+        return nodes.filter(n => this.naviGraph.isVisible(n, record) && surface(n));
+    }
+
+    /**
+     * The items for these nodes. A submenu's entries are named by their node's path, which is theirs alone: the
+     * entries of one menu share an action (New's kinds are each `new-file`), and the host finds the node by its path.
+     */
+    private buildItems(nodes: NaviGraphNode[], record: Record<string, unknown>, entries = false): ContextMenuItem[] {
         const result: ContextMenuItem[] = [];
         for (let i = 0; i < nodes.length; i++) {
             const n = nodes[i];
@@ -155,19 +163,23 @@ export class ContextMenuService {
                 result.push({ id: n.path, divider: true });
                 continue;
             }
+            // A node with children is a submenu of its shown children; with none shown it is left out, never empty.
+            const children = (n.children ?? []).length === 0 ? null : this.buildItems(this.shown(n.children, record), record, true);
+            if (children !== null && children.filter(c => !c.divider).length === 0) continue;
             const capability = capabilityStateOf(n.meta, record);
             const unavailable = conditionOf(n.meta['disabledWhen']);
             const off = unavailable !== null && this.naviGraph.matchesShowWhen(unavailable, record);
             const sentence = n.meta['disabledReasonText'];
             const why = off ? (typeof sentence === 'string' && sentence.trim() !== '' ? sentence : UNWORDED_REASON) : null;
             result.push({
-                id:       String(n.meta['action'] ?? n.path),
+                id:       entries ? n.path : String(n.meta['action'] ?? n.path),
                 label:    n.title,
                 icon:     n.meta['icon'] ? String(n.meta['icon']) : undefined,
                 danger:   Boolean(n.meta['danger']),
                 disabled: Boolean(n.meta['disabled']) || 'denied' === capability || off,
                 ...('elevate' === capability ? { locked: true } : {}),
                 ...('denied' === capability ? { refusal: refusalPhraseOf(n.meta, record) } : why !== null ? { refusal: why } : {}),
+                ...(children === null ? {} : { children }),
             });
         }
         return result;

@@ -5,6 +5,7 @@ import { Store } from '@ngxs/store';
 import { of } from 'rxjs';
 import { PageToolbarComponent, ToolbarAction } from './page-toolbar.component';
 import { NaviGraphService, NaviGraphNode, ErrorHandlerService } from '@coolms/core-angular';
+import { ContextMenuService } from '../context-menu/context-menu.service';
 /**
  * Pins how a NaviGraph node becomes a ToolbarAction -- specifically the
  * conditions that decide an action's STATE rather than its existence.
@@ -448,5 +449,65 @@ describe('PageToolbarComponent capability state', () => {
         const { actions } = barFor(nodes, { _hasClipboard: false, _capabilities: { 'vfs.node.chmod': 'allowed' } });
 
         expect(actions[0].disabled).toBe(true);
+    });
+});
+
+describe('PageToolbarComponent: a menu button (New)', () => {
+    function setUp(nodes: NaviGraphNode[], context: Record<string, unknown>) {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            imports: [PageToolbarComponent],
+            providers: [
+                { provide: HttpClient, useValue: {} },
+                { provide: Router, useValue: {} },
+                { provide: ErrorHandlerService, useValue: {} },
+                { provide: Store, useValue: { selectSnapshot: () => ({ navi: { graphBySlug: '/api/v1/navi/graph/{slug}' } }) } },
+            ],
+        });
+        spyOn(TestBed.inject(NaviGraphService), 'loadTree').and.returnValue(of(nodes));
+        const fixture = TestBed.createComponent(PageToolbarComponent);
+        const emitted: string[] = [];
+        fixture.componentInstance.actionClick.subscribe(id => emitted.push(id));
+        fixture.componentRef.setInput('treeSlug', 'navi.toolbar.test');
+        fixture.componentRef.setInput('context', context);
+        fixture.detectChanges();
+        return { fixture, emitted, menus: TestBed.inject(ContextMenuService) };
+    }
+    const inBar = (path: string, meta: Record<string, unknown>, children: NaviGraphNode[] = []): NaviGraphNode =>
+        ({ ...node(path, {}), meta, children } as NaviGraphNode);
+    const refused = { disabledWhen: { field: '_canWrite', op: 'eq', value: false }, disabledReasonText: 'You do not have permission to do this here.' };
+    const newMenu = (kinds: NaviGraphNode[]) => inBar('/new', { action: 'new', label: 'New', icon: 'plus-lg', ...refused }, kinds);
+    const kind = (id: string, label: string, extra: Record<string, unknown> = {}) =>
+        inBar('/new/' + id, { action: 'new-file', label, icon: 'file-earmark-plus', kind: id, ...refused, ...extra });
+
+    it('a node with children is a menu button: pressing it opens its entries, choosing one emits its id', () => {
+        const { fixture, emitted, menus } = setUp([newMenu([kind('docx', 'Document'), kind('xlsx', 'Spreadsheet')])], { _canWrite: true });
+        const button = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.toolbar-btn')!;
+        expect(button.getAttribute('aria-haspopup')).toBe('menu');
+        expect(button.querySelector('.toolbar-btn__caret')).not.toBeNull();
+        button.click();
+        fixture.detectChanges();
+        expect(menus.menu()?.items.map(i => i.label)).toEqual(['Document', 'Spreadsheet']);
+        expect(button.getAttribute('aria-expanded')).toBe('true');
+        expect(emitted).toEqual([]);
+        // Each entry by its node's path: the kinds share the action new-file.
+        expect(menus.menu()?.items.map(i => i.id)).toEqual(['/new/docx', '/new/xlsx']);
+        menus.menu()!.onAction('/new/xlsx');
+        expect(emitted).toEqual(['/new/xlsx']);
+    });
+
+    it('in a read-only folder the button and its entries stay, disabled, with the server\'s reason', () => {
+        const { fixture, menus } = setUp([newMenu([kind('docx', 'Document')])], { _canWrite: false });
+        const actions = fixture.componentInstance.resolvedLeft();
+        expect(actions[0]).toEqual(jasmine.objectContaining({ disabled: true, refusal: 'You do not have permission to do this here.' }));
+        expect(actions[0].entries?.[0]).toEqual(jasmine.objectContaining({ disabled: true, refusal: 'You do not have permission to do this here.' }));
+        expect(menus.menu()).toBeNull();
+    });
+
+    it('with no entry shown the menu button is absent, never an empty menu', () => {
+        const hiddenKind = kind('docx', 'Document', { showWhen: { field: '_hasKinds', op: 'eq', value: true } });
+        const { fixture } = setUp([newMenu([hiddenKind]), inBar('/upload', { action: 'upload', label: 'Upload' })], { _canWrite: true });
+        expect(fixture.componentInstance.resolvedLeft().find(a => a.id === 'new')?.hidden).toBeTrue();
+        expect(Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.toolbar-btn')).length).toBe(1);
     });
 });
