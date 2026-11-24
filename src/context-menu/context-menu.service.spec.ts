@@ -131,3 +131,55 @@ describe('ContextMenuService disabled for a reason', () => {
         expect(item.refusal).toBeUndefined();
     });
 });
+
+describe('ContextMenuService: a node with children is a submenu', () => {
+    const DENIED = 'You do not have permission to do this here.';
+    const refused = { disabledWhen: { field: '_canWrite', op: 'eq', value: false }, disabledReasonText: DENIED };
+    const kinds = (...ids: string[]) => ids.map((id) => ({
+        ...node('/new/' + id, { action: 'new-file', kind: id, ...refused, showWhen: { field: '_creatable', op: 'cn', value: id } }),
+        title: id,
+    } as NaviGraphNode));
+    function itemsFor(record: Record<string, unknown>, children: NaviGraphNode[]): ContextMenuItem[] {
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: HttpClient, useValue: {} },
+                { provide: Router, useValue: {} },
+                { provide: ErrorHandlerService, useValue: {} },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+        const svc = TestBed.inject(ContextMenuService);
+        svc.openFromNodes(
+            new MouseEvent('contextmenu', { clientX: 10, clientY: 20 }),
+            [
+                node('/upload', { action: 'upload', ...refused }),
+                node('/new-folder', { action: 'VfsNewFolder', ...refused }),
+                { ...node('/new', { action: 'new', ...refused }), title: 'New', children } as NaviGraphNode,
+            ],
+            record,
+            () => undefined,
+        );
+        return svc.menu()?.items ?? [];
+    }
+
+    it('its shown children are the submenu, in order, each with its own state', () => {
+        const items = itemsFor({ _canWrite: true, _creatable: ['txt', 'docx'] }, kinds('txt', 'docx', 'xlsx'));
+        expect(items.map(i => i.id)).toEqual(['upload', 'VfsNewFolder', 'new']);
+        expect(items[2].children?.map(c => c.label)).toEqual(['txt', 'docx']);
+        // Each entry by its node's path: the kinds share the action new-file.
+        expect(items[2].children?.map(c => c.id)).toEqual(['/new/txt', '/new/docx']);
+        expect(items[2].disabled).toBeFalse();
+    });
+
+    it('in a read-only folder the item and its entries stay, disabled with the server\'s reason', () => {
+        const [, , item] = itemsFor({ _canWrite: false, _creatable: ['txt'] }, kinds('txt'));
+        expect(item).toEqual(jasmine.objectContaining({ disabled: true, refusal: DENIED }));
+        expect(item.children?.[0]).toEqual(jasmine.objectContaining({ disabled: true, refusal: DENIED }));
+    });
+
+    it('with no child shown the item is left out, never an empty submenu', () => {
+        const items = itemsFor({ _canWrite: true, _creatable: [] }, kinds('txt', 'docx'));
+        expect(items.map(i => i.id)).toEqual(['upload', 'VfsNewFolder']);
+    });
+});

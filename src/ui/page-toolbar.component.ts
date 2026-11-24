@@ -15,7 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
 import { AppConfigState, NaviGraphService, NaviGraphNode } from '@coolms/core-angular';
 import { capabilityStateOf, refusalPhraseOf } from './capability-state';
-import { UNWORDED_REASON } from '../context-menu/context-menu.service';
+import { ContextMenuService, UNWORDED_REASON, type ContextMenuItem } from '../context-menu/context-menu.service';
 export interface ToolbarAction {
     id:       string;
     icon:     string;      // Bootstrap Icons name WITHOUT 'bi-': 'upload', 'trash'
@@ -38,6 +38,8 @@ export interface ToolbarAction {
      * tooltip and said to a screen reader after the label, as a lock's reason is.
      */
     refusal?: string;
+    /** A menu button's entries (New): its node's children this context shows, each with its own state. */
+    entries?: ToolbarAction[];
 }
 
 @Component({
@@ -64,13 +66,18 @@ export interface ToolbarAction {
                                     [class.toolbar-btn--locked]="action.locked"
                                     [disabled]="action.disabled ?? false"
                                     [title]="tooltip(action)"
-                                    (click)="actionClick.emit(action.id)">
+                                    [attr.aria-haspopup]="action.entries?.length ? 'menu' : null"
+                                    [attr.aria-expanded]="action.entries?.length ? openEntriesOf() === action.id : null"
+                                    (click)="press($event, action)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
                                 @if (action.locked) {
                                     <i class="bi bi-lock-fill toolbar-btn__lock" aria-hidden="true"></i>
                                 }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.entries?.length) {
+                                    <i class="bi bi-chevron-down toolbar-btn__caret" aria-hidden="true"></i>
                                 }
                                 @if (action.locked || action.refusal) {
                                     <span class="toolbar-btn__sr"> {{ reasonPhrase(action) }}</span>
@@ -110,13 +117,18 @@ export interface ToolbarAction {
                                     [class.toolbar-btn--primary]="action.primary"
                                     [disabled]="action.disabled ?? false"
                                     [title]="tooltip(action)"
-                                    (click)="actionClick.emit(action.id)">
+                                    [attr.aria-haspopup]="action.entries?.length ? 'menu' : null"
+                                    [attr.aria-expanded]="action.entries?.length ? openEntriesOf() === action.id : null"
+                                    (click)="press($event, action)">
                                 <i class="bi" [ngClass]="'bi-' + action.icon"></i>
                                 @if (action.locked) {
                                     <i class="bi bi-lock-fill toolbar-btn__lock" aria-hidden="true"></i>
                                 }
                                 @if (action.label && !iconsOnly()) {
                                     <span>{{ action.label }}</span>
+                                }
+                                @if (action.entries?.length) {
+                                    <i class="bi bi-chevron-down toolbar-btn__caret" aria-hidden="true"></i>
                                 }
                                 @if (action.locked || action.refusal) {
                                     <span class="toolbar-btn__sr"> {{ reasonPhrase(action) }}</span>
@@ -204,6 +216,9 @@ export interface ToolbarAction {
         }
         .toolbar-btn:disabled { opacity: .45; cursor: not-allowed; }
         /* Allowed once elevated: a small lock tucked against the action's icon. */
+        /* A menu button: the caret after its label says it opens its entries. */
+        .toolbar-btn__caret { font-size: .625rem; margin-left: 2px; }
+
         .toolbar-btn__lock {
             font-size: .625rem;
             margin-left: -4px;
@@ -327,6 +342,7 @@ export class PageToolbarComponent {
     readonly context  = input<Record<string, unknown>>({});
 
     private readonly store      = inject(Store);
+    private readonly menus      = inject(ContextMenuService);
     private readonly naviGraph  = inject(NaviGraphService);
     private readonly destroyRef = inject(DestroyRef);
 
@@ -479,6 +495,36 @@ export class PageToolbarComponent {
         this.rightActions().length > 0,
     );
 
+    /** The menu button whose entries are open, if one of this row's is. */
+    protected readonly openEntriesOf = computed(() => {
+        const open = this.menus.menu();
+        return open !== null && open.owner === this ? this.entriesOwner() : null;
+    });
+    private readonly entriesOwner = signal<string | null>(null);
+
+    /** A press: a menu button opens its entries under it; any other action is emitted. */
+    protected press(event: MouseEvent, action: ToolbarAction): void {
+        const entries = action.entries ?? [];
+        if (entries.length === 0) {
+            this.actionClick.emit(action.id);
+            return;
+        }
+        if (this.openEntriesOf() === action.id) {
+            this.menus.close();
+            return;
+        }
+        this.entriesOwner.set(action.id);
+        this.menus.openFrom(event.currentTarget as HTMLElement, entries.map((e): ContextMenuItem => ({
+            id:       e.id,
+            label:    e.label ?? e.title ?? e.id,
+            icon:     e.icon,
+            danger:   e.danger,
+            disabled: e.disabled,
+            ...(e.locked ? { locked: true } : {}),
+            ...(e.refusal ? { refusal: e.refusal } : {}),
+        })), (id) => this.actionClick.emit(id), { owner: this });
+    }
+
     /** The button's tooltip: its title, and for a locked or refused action why it is so. */
     protected tooltip(action: ToolbarAction): string {
         const name = action.title ?? action.label ?? '';
@@ -527,10 +573,19 @@ export class PageToolbarComponent {
             ? String(meta['busyLabel'])
             : (undefined !== meta['label'] ? String(meta['label']) : undefined);
 
+        // A node with children is a menu button: its entries are the children this context shows. With none shown it
+        // is absent, never an empty menu.
+        const children = node.children ?? [];
+        const entries = children
+            .filter(c => this.naviGraph.isVisible(c, ctx) && (c.meta['surface'] as string | undefined) !== 'context')
+            // An entry is named by its node's path, which is its alone: a menu's entries can share an action.
+            .map(c => ({ ...this.nodeToAction(c, ctx), id: c.path }));
+
         return {
             id:      actionId,
             icon:    String(meta['icon'] ?? ''),
             label,
+            ...(children.length === 0 ? {} : entries.length === 0 ? { hidden: true } : { entries }),
             title:   node.title,
             danger:  Boolean(meta['danger']),
             primary: Boolean(meta['primary']),

@@ -11,6 +11,7 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+- Menu buttons and submenus from NaviGraph trees (components contract 0.18.0 and 0.19.0). In the page toolbar a node with children is a menu button: its shown children are its entries, each with its own state, and with none shown it is hidden, never an empty menu. In the context menu such a node opens a submenu beside its item (hover, click, Right or Enter; Left goes back), hidden the same way, disabled with the server's reason when the node is. An entry is named by its node's path, since entries can share an action (New's kinds are each `new-file`).
 - **The files picker restarts a folder whose page link is no longer valid** (design-tokens 0.22.0, `file-picker`): `list` throws or emits the new `FilesPickerRestart` for the server's declared problem (`/errors/page-link-invalid`, 409), and the picker reads the folder's first page again, once, the selection kept by id. A second restart before a next page is read is the failure with Retry, never a loop; any other refusal is as before.
 - **A section head, the components contract's `section-header`** (`cms-section-head`; `cms-section-header` stays the
   heading of a group inside a page). Row 1: the declared title, then the primary action (its icon and label, always
