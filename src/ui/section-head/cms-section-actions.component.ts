@@ -115,7 +115,9 @@ let nextId = 0;
             color: var(--cms-text-muted);
             cursor: pointer;
         }
-        .cms-section-head__more:hover { background: var(--cms-btn-hover-bg); }
+        @media (hover: hover) and (pointer: fine) {
+            .cms-section-head__more:hover { background: var(--cms-btn-hover-bg); }
+        }
         .cms-section-head__more:focus-visible { outline: 2px solid var(--cms-focus-ring); outline-offset: 1px; }
     `],
 })

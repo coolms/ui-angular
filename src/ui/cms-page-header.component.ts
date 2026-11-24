@@ -41,7 +41,7 @@ export function sectionActionsOf(actions: readonly ToolbarAction[]): { primary: 
             <div class="page-header__main">
                 <div class="page-header__title">
                     @if (icon()) {
-                        <i class="bi" [ngClass]="'bi-' + icon()"></i>
+                        <i class="bi" [ngClass]="'bi-' + icon()" aria-hidden="true"></i>
                     }
                     <h1 class="cms-page-title">{{ title() }}</h1>
                     <!-- Title-adjacent meta (chips, badges), on the title's baseline. -->
@@ -130,17 +130,17 @@ export function sectionActionsOf(actions: readonly ToolbarAction[]): { primary: 
             margin-top: 2px;
         }
 
-        /* When the page-header has at least 720px of inline-size,
-           collapse the two-row layout back into a single row: title
-           and subtitle sit side-by-side separated by a soft divider.
-           This is the wide-monitor default; narrow viewports / open
-           drawers fall back to the stacked layout automatically. */
         /* On a phone the actions take their own row: beside a title they cover it. */
         @media (max-width: 768px) {
             .page-header { flex-wrap: wrap; }
             .page-header__main { flex: 1 1 100%; }
             .page-header__actions { flex-wrap: wrap; }
         }
+        /* When the page-header has at least 720px of inline-size,
+           collapse the two-row layout back into a single row: title
+           and subtitle sit side-by-side separated by a soft divider.
+           This is the wide-monitor default; narrow viewports / open
+           drawers fall back to the stacked layout automatically. */
         @container (min-width: 720px) {
             .page-header--with-subtitle {
                 align-items: center;

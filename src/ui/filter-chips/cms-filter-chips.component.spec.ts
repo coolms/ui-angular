@@ -48,6 +48,13 @@ describe('CmsFilterChipsComponent', () => {
         expect(chips().map((c) => c.tabIndex)).toEqual([0, -1, -1]);
     });
 
+    it('a value that names no chip leaves the first chip the one tab stop', () => {
+        f.componentInstance.value.set('nothing');
+        f.detectChanges();
+        expect(chips().map((c) => c.getAttribute('aria-checked'))).toEqual(['false', 'false', 'false']);
+        expect(chips().map((c) => c.tabIndex)).toEqual([0, -1, -1]);
+    });
+
     it('a click chooses one chip; choosing the chosen one emits nothing', () => {
         chip('unread').click();
         f.detectChanges();
