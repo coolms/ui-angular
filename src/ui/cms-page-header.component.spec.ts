@@ -81,12 +81,9 @@ describe('CmsPageHeaderComponent', () => {
         const actions = q('.page-header__actions');
         expect(band.lastElementChild).withContext('the actions close the band').toBe(actions);
         expect(title.getBoundingClientRect().left - band.getBoundingClientRect().left).toBe(20);
-        if (window.matchMedia('(min-width: 769px)').matches) {
-            // Beside the title, at the band's right edge; on a phone they take a row of their own.
-            expect(band.getBoundingClientRect().right - actions.getBoundingClientRect().right).toBeCloseTo(20, 0);
-        } else {
-            expect(getComputedStyle(band).flexWrap).toBe('wrap');
-        }
+        // On the title's line at any width, at the band's right edge.
+        expect(getComputedStyle(band).flexWrap).toBe('nowrap');
+        expect(band.getBoundingClientRect().right - actions.getBoundingClientRect().right).toBeCloseTo(20, 0);
     });
 
     it('the actions are the projected status, then the one primary filled, then More with the others', () => {
