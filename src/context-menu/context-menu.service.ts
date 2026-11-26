@@ -12,9 +12,14 @@ export interface ContextMenuItem {
     locked?:   boolean;
     /** Why a denied item is disabled, in words ("not allowed for 2 of 5 selected items"): its title, and said. */
     refusal?:  string;
+    /** One choice of a single choice: drawn with a check on the current one, and said (menuitemradio, aria-checked). */
+    checked?:  boolean;
     /** A submenu: the item opens these instead of acting (a node with children, New with its kinds). */
     children?: ContextMenuItem[];
 }
+
+/** The item a menu button's menu focuses on opening; `checked` is the current choice, else the first. */
+export type ContextMenuFocus = 'first' | 'last' | 'checked';
 
 /** What an item disabled by its node says when the node gives no sentence for it (a server older than the field). */
 export const UNWORDED_REASON = 'Not available right now';
@@ -32,21 +37,23 @@ export class ContextMenuService {
         items:    ContextMenuItem[];
         onAction: (id: string) => void;
         /** Opened from a menu button (openFrom): the item focused on opening, and the button focus returns to. */
-        focus?:   'first' | 'last';
+        focus?:   ContextMenuFocus;
         opener?:  HTMLElement;
         /** Who opened it, so a menu button can say whether the open menu is its own (aria-expanded). */
         owner?:   unknown;
+        /** The menu's accessible name, when it has one. */
+        label?:   string;
     } | null>(null);
 
     /**
      * Open as a menu button's menu: under the button, with focus on the first or the last enabled
-     * item; closing it returns focus to the button.
+     * item, or on the current choice; closing it returns focus to the button.
      */
     openFrom(
         opener:   HTMLElement,
         items:    ContextMenuItem[],
         onAction: (id: string) => void,
-        options:  { focus?: 'first' | 'last'; owner?: unknown } = {},
+        options:  { focus?: ContextMenuFocus; owner?: unknown; label?: string } = {},
     ): void {
         if (items.length === 0) { this.close(); return; }
         const rect = opener.getBoundingClientRect();
@@ -58,6 +65,7 @@ export class ContextMenuService {
             focus: options.focus ?? 'first',
             opener,
             owner: options.owner,
+            ...(options.label === undefined ? {} : { label: options.label }),
         });
     }
 

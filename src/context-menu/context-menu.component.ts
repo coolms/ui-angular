@@ -8,7 +8,7 @@ import {
     signal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { ContextMenuService, type ContextMenuItem } from './context-menu.service';
+import { ContextMenuService, type ContextMenuFocus, type ContextMenuItem } from './context-menu.service';
 import { EscCoordinatorService } from '../ui/esc-coordinator/esc-coordinator.service';
 import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.service';
 
@@ -35,6 +35,7 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
 
             <div #menuEl class="ctx-menu"
                  role="menu"
+                 [attr.aria-label]="ctx.label ?? null"
                  [style.left.px]="ctx.x"
                  [style.top.px]="ctx.y"
                  (click)="$event.stopPropagation()"
@@ -63,7 +64,8 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
 
                 <ng-template #entry let-item let-top="top">
                     <button class="ctx-item"
-                            role="menuitem"
+                            [attr.role]="item.checked === undefined ? 'menuitem' : 'menuitemradio'"
+                            [attr.aria-checked]="item.checked ?? null"
                             tabindex="-1"
                             [class.ctx-item--danger]="item.danger"
                             [class.ctx-item--locked]="item.locked"
@@ -74,6 +76,9 @@ import { KeyboardScopeService } from '../ui/keyboard-scope/keyboard-scope.servic
                             [attr.title]="item.locked ? item.label + ' \u2014 needs an elevated session'
                                 : (item.refusal ? item.label + ' \u2014 ' + item.refusal : null)"
                             (click)="choose(item, top)">
+                        @if (item.checked !== undefined) {
+                            <i class="bi ctx-icon ctx-check" [class.bi-check-lg]="item.checked" aria-hidden="true"></i>
+                        }
                         @if (item.icon) {
                             <i class="bi ctx-icon" [class]="'bi-' + item.icon"></i>
                         }
@@ -185,6 +190,9 @@ export class ContextMenuComponent {
 
     @ViewChild('menuEl') menuElRef?: ElementRef<HTMLElement>;
 
+    /** The open menu's items once its first focus is given. */
+    private focusedItems: ContextMenuItem[] | null = null;
+
     /** The item whose submenu is open, if one is. */
     protected readonly openSub = signal<string | null>(null);
 
@@ -216,6 +224,7 @@ export class ContextMenuComponent {
         effect(() => {
             if (!this.svc.menu()) {
                 this.openSub.set(null);
+                this.focusedItems = null;
                 return;
             }
             setTimeout(() => {
@@ -231,7 +240,11 @@ export class ContextMenuComponent {
                     ? Math.max(0, window.innerHeight - rect.height - margin)
                     : m.y;
                 this.svc.setPosition(newX, newY);
-                if (m.focus) this.items()[m.focus === 'first' ? 0 : this.items().length - 1]?.focus();
+                // Once per opening: the menu moved into the window keeps the focus where the keys have taken it.
+                if (m.focus && this.focusedItems !== m.items) {
+                    this.focusedItems = m.items;
+                    this.focusTarget(m.focus)?.focus();
+                }
             });
         });
 
@@ -265,6 +278,13 @@ export class ContextMenuComponent {
         const el = this.menuElRef?.nativeElement;
 
         return el ? Array.from(el.querySelectorAll<HTMLButtonElement>(':scope > .ctx-row > .ctx-item:not(:disabled)')) : [];
+    }
+
+    /** The item to focus on opening. */
+    private focusTarget(focus: ContextMenuFocus): HTMLButtonElement | undefined {
+        const items = this.items();
+        if (focus === 'last') return items[items.length - 1];
+        return (focus === 'checked' ? items.find(i => i.getAttribute('aria-checked') === 'true') : undefined) ?? items[0];
     }
 
     /** The open submenu's enabled items, in order. */
