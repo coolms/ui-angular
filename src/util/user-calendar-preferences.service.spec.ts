@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngxs/store';
-import { of } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { IdentityApiClient } from '@coolms/core-angular';
-import { calendarPrefsFromSettings, UserCalendarPreferencesService } from './user-calendar-preferences.service';
+import { browserClock, calendarPrefsFromSettings, clockInForce, UserCalendarPreferencesService } from './user-calendar-preferences.service';
 
 /**
  * `update()` is the seam the Profile page saves through, and fed it a
@@ -134,6 +134,7 @@ describe('UserCalendarPreferencesService.update()', () => {
     it('keeps wire junk out of the VO — a keyless bag stores nothing and changes nothing', () => {
         const svc = setup();
         svc.update(STORED);
+        const before = svc.language();
 
         // The ld+json rendering of the very same section: same values, no keys.
         const hydra = { member: Object.values(STORED), totalItems: 5 };
@@ -142,8 +143,9 @@ describe('UserCalendarPreferencesService.update()', () => {
         // Nothing from the bag reached the VO -- not as a stray property, and
         // not as an `undefined` where a widget expects a string.
         expect(Object.keys(svc.prefs()).sort()).toEqual(
-            ['dateFormat', 'defaultCalendarSlug', 'timeFormat', 'tz', 'weekStart'],
+            ['dateFormat', 'defaultCalendarSlug', 'language', 'timeFormat', 'tz', 'weekStart'],
         );
+        expect(svc.language()).toBe(before);
         // ...and nothing changed, which is the part the user saw: the save
         // succeeded server-side and the calendar kept its previous settings
         // until something re-fetched /auth/me/settings.
@@ -248,5 +250,108 @@ describe('UserCalendarPreferencesService: a zone set back to automatic', () => {
         expect(service.tz()).toBe('Asia/Tokyo');
         service.followDeviceZone(null);
         expect(service.tz()).toBe('UTC');
+    });
+});
+
+describe('clockInForce()', () => {
+    const at = (over: Record<string, unknown>) => ({ value: '24h', own: null, locked: false, declared: '24h', ...over });
+
+    it('takes the installation\'s locked clock before the person\'s own', () => {
+        expect(clockInForce(at({ value: '12h', own: '24h', locked: true }), '24h')).toBe('12h');
+        expect(clockInForce(at({ value: '24h', locked: true }), '12h')).withContext('locked to the declared one').toBe('24h');
+    });
+
+    it('then the person\'s own, before the installation\'s default and the browser\'s', () => {
+        expect(clockInForce(at({ value: '24h', own: '24h' }), '12h')).toBe('24h');
+        expect(clockInForce(at({ value: '12h', own: '12h' }), '24h')).toBe('12h');
+    });
+
+    it('then the installation\'s default when it set one, before the browser\'s', () => {
+        expect(clockInForce(at({ value: '12h' }), '24h')).toBe('12h');
+        expect(clockInForce(at({ value: '24h', declared: '12h' }), '12h')).toBe('24h');
+    });
+
+    it('then the browser\'s, and the declared one where the browser does not say', () => {
+        expect(clockInForce(at({}), '12h')).toBe('12h');
+        expect(clockInForce(at({ value: '12h', declared: '12h' }), '24h')).toBe('24h');
+        expect(clockInForce(at({}), null)).toBe('24h');
+        expect(clockInForce(at({ value: '12h', declared: '12h' }), null)).toBe('12h');
+    });
+});
+
+describe('browserClock()', () => {
+    it('is the language\'s own hour cycle', () => {
+        expect(['en-US', 'en-GB', 'ru', 'de', 'ar-EG', 'ja'].map(l => browserClock(l))).toEqual(['12h', '24h', '24h', '24h', '12h', '24h']);
+        expect(browserClock('not a language')).toBeNull();
+    });
+});
+
+describe('UserCalendarPreferencesService: the clock and the language', () => {
+    const declared = (over: Record<string, unknown>) => [{
+        section: 'region', keys: [{ key: 'timeFormat', value: '24h', own: null, locked: false, declared: '24h', ...over }],
+    }];
+    const browser = browserClock() ?? '24h';
+    const other = browser === '12h' ? '24h' : '12h';
+
+    function make(settings: Record<string, unknown>, read: () => Observable<unknown>): UserCalendarPreferencesService {
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: IdentityApiClient, useValue: { getSettings: () => of(settings), getDeclaredSettings: read } },
+                { provide: Store, useValue: { selectSnapshot: () => null } },
+            ],
+        });
+
+        return TestBed.inject(UserCalendarPreferencesService);
+    }
+
+    it('with nothing said takes the browser\'s, whatever the settings answer as in force', () => {
+        const service = make({ region: { timeFormat: other } }, () => of(declared({ value: other, declared: other })));
+        service.ensureLoaded().subscribe();
+        expect(service.timeFormat()).toBe(browser);
+    });
+
+    it('keeps the settings\' answer until the declared ones come, and when they cannot be read', () => {
+        const answer = new Subject<unknown>();
+        const service = make({ region: { timeFormat: other } }, () => answer);
+        service.ensureLoaded().subscribe();
+        expect(service.timeFormat()).withContext('not answered yet').toBe(other);
+        answer.next(declared({ value: other, declared: other }));
+        expect(service.timeFormat()).toBe(browser);
+
+        TestBed.resetTestingModule();
+        const failed = make({ region: { timeFormat: other } }, () => throwError(() => new Error('no')));
+        failed.ensureLoaded().subscribe();
+        expect(failed.timeFormat()).toBe(other);
+    });
+
+    it('a saved choice shows at once, and a later answer that says it is the person\'s keeps it', () => {
+        const answers: Array<Subject<unknown>> = [];
+        const service = make({ region: { timeFormat: '24h' } }, () => (answers[answers.length] = new Subject<unknown>()));
+        service.ensureLoaded().subscribe();
+        answers[0].next(declared({}));
+        service.update({ timeFormat: other });
+        expect(service.timeFormat()).toBe(other);
+        answers[0].next(declared({}));
+        expect(service.timeFormat()).withContext('the earlier read is dropped').toBe(other);
+        answers[1].next(declared({ value: other, own: other }));
+        expect(service.timeFormat()).toBe(other);
+    });
+
+    it('a sign-out drops the clock, and an answer that comes after it', () => {
+        const answer = new Subject<unknown>();
+        const service = make({ region: {} }, () => answer);
+        service.ensureLoaded().subscribe();
+        service.reset();
+        answer.next(declared({ value: '12h', own: '12h' }));
+        expect(service.timeFormat()).toBe('24h');
+    });
+
+    it('keeps the interface language the settings answer', () => {
+        const service = make({ region: { language: 'uk' } }, () => of(declared({})));
+        expect(service.language()).toBe('en');
+        service.ensureLoaded().subscribe();
+        expect(service.language()).toBe('uk');
+        service.update({ weekStart: 'sunday' });
+        expect(service.language()).withContext('a save of another key keeps it').toBe('uk');
     });
 });
