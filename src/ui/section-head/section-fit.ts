@@ -91,8 +91,8 @@ function onlyHereChips(row: HTMLElement): HTMLElement[] {
 /** About one character and the ellipsis, inside the chip's own padding and border. */
 function chipFloor(chip: HTMLElement): number {
     const css = getComputedStyle(chip);
-    const frame = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth']
-        .reduce((sum, p) => sum + (parseFloat(css[p as keyof CSSStyleDeclaration] as string) || 0), 0);
+    const frame = ['padding-left', 'padding-right', 'border-left-width', 'border-right-width']
+        .reduce((sum, p) => sum + (parseFloat(css.getPropertyValue(p)) || 0), 0);
 
     return Math.ceil(frame + 1.6 * parseFloat(css.fontSize));
 }
