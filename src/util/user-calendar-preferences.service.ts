@@ -97,43 +97,6 @@ export function calendarPrefsFromSettings(all: Record<string, unknown> | null | 
     return out;
 }
 
-/** A clock as the settings name one. */
-type Clock = CalendarPrefs['timeFormat'];
-
-/** One declared setting as the server answers it; `declared` is the value the setting is declared with. */
-interface DeclaredValue {
-    readonly value?: unknown;
-    readonly own?: unknown;
-    readonly locked?: boolean;
-    readonly declared?: unknown;
-}
-
-const clockOf = (value: unknown): Clock | null => (value === '12h' || value === '24h' ? value : null);
-
-/** The clock a browser's own language uses; null where it does not say. */
-export function browserClock(language: string = navigator.language): Clock | null {
-    try {
-        const cycle = new Intl.DateTimeFormat(language, { hour: 'numeric' }).resolvedOptions().hourCycle;
-
-        return cycle === undefined ? null : cycle === 'h11' || cycle === 'h12' ? '12h' : '24h';
-    } catch {
-        return null;
-    }
-}
-
-/**
- * The clock in force, in this order: the one the installation locks, the person's own, the installation's default when
- * it set one (a value other than the declared one), the browser's, and the one the setting is declared with.
- */
-export function clockInForce(setting: DeclaredValue, browser: Clock | null): Clock | null {
-    if (setting.locked === true) {
-        return clockOf(setting.value) ?? browser ?? clockOf(setting.declared);
-    }
-    const installation = setting.value !== setting.declared ? clockOf(setting.value) : null;
-
-    return clockOf(setting.own) ?? installation ?? browser ?? clockOf(setting.declared);
-}
-
 @Injectable({ providedIn: 'root' })
 export class UserCalendarPreferencesService {
     // `ApiService.getSettings()` was already a pass-through to this client, so
@@ -173,10 +136,8 @@ export class UserCalendarPreferencesService {
      */
     readonly dateFormatChosen   = computed(() => this._dateFormatChosen());
     private readonly _dateFormatChosen = signal(false);
-    /** Moves on each read of the choices and each reset, so an answer that arrives after the next one is dropped. */
+    /** Moves on each reset, so a read of the date-format choice that answers after it is dropped. */
     private choiceGeneration = 0;
-    /** The clock in force by the declared settings ({@link clockInForce}); null until they answer. */
-    private clock: Clock | null = null;
 
     /**
      * Default calendar slug. When the user has not chosen one we fall
@@ -207,7 +168,7 @@ export class UserCalendarPreferencesService {
     ensureLoaded(): Observable<CalendarPrefs> {
         if (this.loadOnce$) return this.loadOnce$;
 
-        this.readChoices();
+        this.readDateFormatChoice();
         this.loadOnce$ = this.api.getSettings().pipe(
             map(all => {
                 const read = calendarPrefsFromSettings(all);
@@ -241,11 +202,6 @@ export class UserCalendarPreferencesService {
     update(partial: CalendarPrefsRead): void {
         // A zone of null is none of the person's: the one held before goes, and the device's zone or the default applies.
         this.sectionZone = null === partial.tz ? null : partial.tz ?? this.sectionZone;
-        // A section saved: what is written holds until the declared settings say whose the formats are now.
-        if (partial.timeFormat !== undefined || partial.dateFormat !== undefined) {
-            this.clock = null;
-            this.readChoices();
-        }
         this._prefs.update(prev => this.merge({ ...prev, ...partial, tz: null === partial.tz ? null : partial.tz ?? prev.tz }));
         // Also push the new value into the loaded$ stream so any
         // observable-based consumers (current or future) see the change
@@ -285,23 +241,19 @@ export class UserCalendarPreferencesService {
         this.sectionZone = null;
         this.choiceGeneration++;
         this._dateFormatChosen.set(false);
-        this.clock = null;
         this._prefs.set(this.platformDefaults());
         this.loadOnce$ = undefined;
     }
 
     // -- Internals -------------------------------------------------------------
 
-    /**
-     * Whether a date format is chosen, and the clock in force, from the declared settings. A read that fails leaves the
-     * format as not chosen and the clock as the settings answer it.
-     */
-    private readChoices(): void {
+    /** Whether a date format is chosen, from the declared settings; a read that fails leaves it as not chosen. */
+    private readDateFormatChoice(): void {
         // Optional: a client stand-in that reads only the merged settings answers nothing here.
         const read$ = this.api.getDeclaredSettings?.();
         if (read$ === undefined) return;
         // An answer that arrives after a reset (a sign-out, another account) is the previous person's: dropped.
-        const generation = ++this.choiceGeneration;
+        const generation = this.choiceGeneration;
         read$.pipe(catchError(() => of(null))).subscribe(sections => {
             if (generation !== this.choiceGeneration) return;
             const region = sections?.find(s => s.section === 'region');
@@ -309,13 +261,6 @@ export class UserCalendarPreferencesService {
             // The installation's locked format first, then the person's own.
             const chosen = key?.locked === true ? key.value : key?.own;
             this._dateFormatChosen.set(typeof chosen === 'string' && chosen !== '');
-            const time = region?.keys.find(k => k.key === 'timeFormat');
-            const clock = time === undefined ? null : clockInForce(time, browserClock());
-            if (clock !== null) {
-                this.clock = clock;
-                this._prefs.update(prev => this.merge(prev));
-                this.loaded$.next(this._prefs());
-            }
         });
     }
 
@@ -328,8 +273,9 @@ export class UserCalendarPreferencesService {
             dateFormat:          this.coerceString(overrides.dateFormat, defaults.dateFormat),
             // Validate the enum: an unrecognised stored value falls to the
             // platform default, not silently through.
-            timeFormat:          this.clock ?? clockOf(overrides.timeFormat) ?? defaults.timeFormat,
-            language:            this.coerceString(overrides.language, defaults.language ?? 'en'),
+            timeFormat:          overrides.timeFormat === '12h' || overrides.timeFormat === '24h'
+                                    ? overrides.timeFormat
+                                    : defaults.timeFormat,
             weekStart:           overrides.weekStart === 'monday' || overrides.weekStart === 'sunday'
                                     ? overrides.weekStart
                                     : defaults.weekStart,
