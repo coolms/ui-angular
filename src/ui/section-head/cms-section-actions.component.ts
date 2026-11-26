@@ -1,5 +1,6 @@
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Injector,
     computed,
@@ -10,6 +11,7 @@ import {
 } from '@angular/core';
 import { ContextMenuService, type ContextMenuItem } from '../../context-menu/context-menu.service';
 import { iconForName } from '../icons/bootstrap-icons';
+import { SectionRowFit } from './section-fit';
 
 /** One of a section's declared actions, as the section header draws it. */
 export interface SectionHeadAction {
@@ -39,7 +41,9 @@ let nextId = 0;
 
 /**
  * A header's actions: the one primary (filled; a split button when it has entries), then More holding the other
- * actions, a disabled one kept with its reason. Drawn inline in the host's actions row.
+ * actions, a disabled one kept with its reason. Drawn inline in the host's actions row. Where the header's line has no
+ * room (section-fit), the primary is its icon alone, its label its tooltip and accessible name; and where the icon does
+ * not fit either, it is More's first entry, with its own entries after it.
  */
 @Component({
     selector: 'cms-section-actions',
@@ -49,15 +53,16 @@ let nextId = 0;
         @if (primary(); as p) {
             <span class="cms-section-head__primary" [class.cms-section-head__primary--split]="hasMenu()">
                 <button type="button" class="cms-btn cms-btn-primary cms-section-head__primary-btn"
+                        [class.cms-section-head__primary-btn--icon]="!!p.icon"
                         data-action="primary"
                         [attr.aria-disabled]="isOff(p) ? 'true' : null"
                         [attr.aria-describedby]="p.disabled && p.reason ? uid + '-primary-reason' : null"
-                        [attr.title]="p.disabled && p.reason ? p.reason : null"
+                        [attr.title]="tooltip()"
                         (click)="choose(p)">
                     @if (p.icon) {
-                        <i class="bi" [class]="'bi bi-' + p.icon" aria-hidden="true"></i>
+                        <i class="bi" [class]="'bi bi-' + p.icon" data-part="icon" aria-hidden="true"></i>
                     }
-                    <span>{{ p.busy && p.busyLabel ? p.busyLabel : p.label }}</span>
+                    <span class="cms-section-head__label">{{ labelOf(p) }}</span>
                     @if (p.locked) {
                         <i class="bi bi-lock-fill cms-section-head__lock" aria-hidden="true"></i>
                     }
@@ -76,7 +81,7 @@ let nextId = 0;
                 }
             </span>
         }
-        @if (more().length > 0) {
+        @if (drawMore()) {
             <button #moreBtn type="button" class="cms-section-head__more" data-action="more"
                     aria-haspopup="menu"
                     [attr.aria-expanded]="menuOwner() === 'more'"
@@ -96,6 +101,16 @@ let nextId = 0;
         .cms-section-head__split { border-start-start-radius: 0; border-end-start-radius: 0; margin-inline-start: 1px; padding-inline: var(--cms-space-2, 8px); }
         .cms-section-head__primary-btn[aria-disabled='true'] { opacity: .55; cursor: not-allowed; }
         .cms-section-head__lock { font-size: .75em; }
+        /* Its icon alone: the label is kept for assistive technology. */
+        :host-context([data-fit='3']) .cms-section-head__primary-btn--icon { padding-inline: var(--cms-space-2, 8px); }
+        :host-context([data-fit='3']) .cms-section-head__primary-btn--icon .cms-section-head__label {
+            position: absolute;
+            clip: rect(0 0 0 0);
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        :host-context([data-fit='4']) .cms-section-head__primary, :host-context([data-fit='5']) .cms-section-head__primary { display: none; }
         .cms-section-head__reason {
             position: absolute;
             clip: rect(0 0 0 0);
@@ -131,6 +146,9 @@ export class CmsSectionActionsComponent {
     readonly action = output<string>();
 
     private readonly injector = inject(Injector);
+    /** The header's line; none where the actions are drawn outside a header. */
+    private readonly fit = inject(SectionRowFit, { optional: true });
+    private readonly level = computed(() => this.fit?.level() ?? 0);
     private readonly menuService = signal<ContextMenuService | null>(null);
     protected readonly uid = `cms-section-head-${++nextId}`;
     protected readonly moreIcon = iconForName('three-dots') ?? 'three-dots';
@@ -138,6 +156,29 @@ export class CmsSectionActionsComponent {
     private readonly opened = signal<'primary' | 'more' | null>(null);
     /** Which of these menus is open, if one is. */
     protected readonly menuOwner = computed(() => (this.menuService()?.menu()?.owner === this ? this.opened() : null));
+
+    /** More holds the primary while the line has no room for even its icon. */
+    private readonly holdsPrimary = computed(() => this.level() >= 4 && this.primary() !== null);
+    protected readonly drawMore = computed(() => this.more().length > 0 || this.holdsPrimary());
+    /** The primary's reason while it is disabled; for its icon alone, its label first. */
+    protected readonly tooltip = computed(() => {
+        const p = this.primary();
+        if (p === null) return null;
+        const reason = p.disabled && p.reason ? p.reason : null;
+        if (this.level() !== 3 || !p.icon) return reason;
+        const label = this.labelOf(p);
+
+        return reason === null ? label : `${label}: ${reason}`;
+    });
+
+    constructor() {
+        const view = inject(ChangeDetectorRef);
+        this.fit?.onChange(() => view.detectChanges());
+    }
+
+    protected labelOf(a: SectionHeadAction): string {
+        return a.busy && a.busyLabel ? a.busyLabel : a.label;
+    }
 
     protected isOff(a: SectionHeadAction): boolean {
         return a.disabled === true || a.busy === true;
@@ -155,10 +196,13 @@ export class CmsSectionActionsComponent {
             menu.close();
             return;
         }
-        const actions = which === 'more' ? this.more() : (this.primary()?.menu ?? []);
+        const primary = this.primary();
+        const entries = primary?.menu ?? [];
+        const held = this.holdsPrimary() && primary !== null ? [primary, ...entries] : [];
+        const actions = which === 'more' ? [...held, ...this.more()] : entries;
         const items: ContextMenuItem[] = actions.map((a) => ({
             id: a.id,
-            label: a.busy && a.busyLabel ? a.busyLabel : a.label,
+            label: this.labelOf(a),
             icon: a.icon ? (iconForName(a.icon) ?? a.icon) : undefined,
             danger: a.danger ?? false,
             disabled: this.isOff(a),
