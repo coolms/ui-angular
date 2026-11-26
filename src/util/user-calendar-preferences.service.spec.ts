@@ -254,7 +254,7 @@ describe('UserCalendarPreferencesService: a zone set back to automatic', () => {
 });
 
 describe('clockInForce()', () => {
-    const at = (over: Record<string, unknown>) => ({ value: '24h', own: null, locked: false, declared: '24h', ...over });
+    const at = (over: Record<string, unknown>) => ({ value: '24h', own: null, locked: false, default: '24h', ...over });
 
     it('takes the installation\'s locked clock before the person\'s own', () => {
         expect(clockInForce(at({ value: '12h', own: '24h', locked: true }), '24h')).toBe('12h');
@@ -268,14 +268,14 @@ describe('clockInForce()', () => {
 
     it('then the installation\'s default when it set one, before the browser\'s', () => {
         expect(clockInForce(at({ value: '12h' }), '24h')).toBe('12h');
-        expect(clockInForce(at({ value: '24h', declared: '12h' }), '12h')).toBe('24h');
+        expect(clockInForce(at({ value: '24h', default: '12h' }), '12h')).toBe('24h');
     });
 
     it('then the browser\'s, and the declared one where the browser does not say', () => {
         expect(clockInForce(at({}), '12h')).toBe('12h');
-        expect(clockInForce(at({ value: '12h', declared: '12h' }), '24h')).toBe('24h');
+        expect(clockInForce(at({ value: '12h', default: '12h' }), '24h')).toBe('24h');
         expect(clockInForce(at({}), null)).toBe('24h');
-        expect(clockInForce(at({ value: '12h', declared: '12h' }), null)).toBe('12h');
+        expect(clockInForce(at({ value: '12h', default: '12h' }), null)).toBe('12h');
     });
 });
 
@@ -288,7 +288,7 @@ describe('browserClock()', () => {
 
 describe('UserCalendarPreferencesService: the clock and the language', () => {
     const declared = (over: Record<string, unknown>) => [{
-        section: 'region', keys: [{ key: 'timeFormat', value: '24h', own: null, locked: false, declared: '24h', ...over }],
+        section: 'region', keys: [{ key: 'timeFormat', value: '24h', own: null, locked: false, default: '24h', ...over }],
     }];
     const browser = browserClock() ?? '24h';
     const other = browser === '12h' ? '24h' : '12h';
@@ -305,7 +305,7 @@ describe('UserCalendarPreferencesService: the clock and the language', () => {
     }
 
     it('with nothing said takes the browser\'s, whatever the settings answer as in force', () => {
-        const service = make({ region: { timeFormat: other } }, () => of(declared({ value: other, declared: other })));
+        const service = make({ region: { timeFormat: other } }, () => of(declared({ value: other, default: other })));
         service.ensureLoaded().subscribe();
         expect(service.timeFormat()).toBe(browser);
     });
@@ -315,7 +315,7 @@ describe('UserCalendarPreferencesService: the clock and the language', () => {
         const service = make({ region: { timeFormat: other } }, () => answer);
         service.ensureLoaded().subscribe();
         expect(service.timeFormat()).withContext('not answered yet').toBe(other);
-        answer.next(declared({ value: other, declared: other }));
+        answer.next(declared({ value: other, default: other }));
         expect(service.timeFormat()).toBe(browser);
 
         TestBed.resetTestingModule();

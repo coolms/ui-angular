@@ -100,12 +100,12 @@ export function calendarPrefsFromSettings(all: Record<string, unknown> | null | 
 /** A clock as the settings name one. */
 type Clock = CalendarPrefs['timeFormat'];
 
-/** One declared setting as the server answers it; `declared` is the value the setting is declared with. */
+/** One declared setting as the server answers it; `default` is the value the setting is declared with. */
 interface DeclaredValue {
     readonly value?: unknown;
     readonly own?: unknown;
     readonly locked?: boolean;
-    readonly declared?: unknown;
+    readonly default?: unknown;
 }
 
 const clockOf = (value: unknown): Clock | null => (value === '12h' || value === '24h' ? value : null);
@@ -127,11 +127,11 @@ export function browserClock(language: string = navigator.language): Clock | nul
  */
 export function clockInForce(setting: DeclaredValue, browser: Clock | null): Clock | null {
     if (setting.locked === true) {
-        return clockOf(setting.value) ?? browser ?? clockOf(setting.declared);
+        return clockOf(setting.value) ?? browser ?? clockOf(setting.default);
     }
-    const installation = setting.value !== setting.declared ? clockOf(setting.value) : null;
+    const installation = setting.value !== setting.default ? clockOf(setting.value) : null;
 
-    return clockOf(setting.own) ?? installation ?? browser ?? clockOf(setting.declared);
+    return clockOf(setting.own) ?? installation ?? browser ?? clockOf(setting.default);
 }
 
 @Injectable({ providedIn: 'root' })
