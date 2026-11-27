@@ -39,7 +39,9 @@ export class UserAvatarComponent {
     @Input() user?: {
         avatarUrl?:   string | null;
         avatarColor?: string | null;
+        /** The name the initial is taken from. */
         firstName?:   string | null;
+        /** Never shown; with no name the avatar shows "?". */
         identifier?:  string;
     } | null;
 
@@ -64,8 +66,8 @@ export class UserAvatarComponent {
     }
 
     get initial(): string {
-        const name = this.user?.firstName || this.user?.identifier || '';
-        return name ? name.charAt(0).toUpperCase() : '?';
+        const name = (this.user?.firstName ?? '').trim();
+        return name ? Array.from(name)[0].toUpperCase() : '?';
     }
 
     /** Dot color for the current status, or null when unset/unknown (no dot). */
