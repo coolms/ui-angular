@@ -33,6 +33,11 @@ describe('UserAvatarComponent initial', () => {
         expect(initialOf({ firstName: '\u{1D4D0}lex' })).toBe('\u{1D4D0}');
     });
 
+    it('shows "?" for a name of signs only, and skips signs before the first letter', () => {
+        expect(initialOf({ firstName: '--' })).toBe('?');
+        expect(initialOf({ firstName: '(Ann)' })).toBe('A');
+    });
+
     it('ignores leading spaces in the name', () => {
         expect(initialOf({ firstName: '  lena' })).toBe('L');
     });

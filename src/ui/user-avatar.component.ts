@@ -66,8 +66,8 @@ export class UserAvatarComponent {
     }
 
     get initial(): string {
-        const name = (this.user?.firstName ?? '').trim();
-        return name ? Array.from(name)[0].toUpperCase() : '?';
+        const letter = (this.user?.firstName ?? '').match(/[\p{L}\p{N}]/u);
+        return letter ? letter[0].toUpperCase() : '?';
     }
 
     /** Dot color for the current status, or null when unset/unknown (no dot). */
